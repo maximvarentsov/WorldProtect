@@ -7,10 +7,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
-
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 final public class RegionManager {
 
@@ -20,7 +21,7 @@ final public class RegionManager {
     public RegionManager(final ConfigurationSection config) throws IOException {
         MongoClient mongoClient = new MongoClient(config.getString("host", "localhost"), config.getInt("port", 27017));
         this.db = mongoClient.getDB(config.getString("name", "worldprotect"));
-        this.regions = new ConcurrentHashMap<>();
+        this.regions = new HashMap<>();
     }
     /**
      * Load regions for world.
@@ -49,7 +50,7 @@ final public class RegionManager {
      * @param world World
      * @param name Region name
      */
-    public void delete(final World world, String name) {
+    public void delete(final World world, final String name) {
         get(world).remove(name);
         DBCollection coll = db.getCollection(world.getName());
         coll.remove(new BasicDBObject("name", name));
@@ -112,15 +113,16 @@ final public class RegionManager {
      * @param world World.
      * @param name Region name.
      */
-    public Region get(final World world, String name) {
+    public Region get(final World world, final String name) {
         return get(world).get(name.toLowerCase());
     }
     /**
      * Return regions owned by player in current world.
      *
      * @param player Player.
+     * @param role Player role in region.
      */
-    public List<Region> get(final Player player, Players.role role) {
+    public List<Region> get(final Player player, final Players.role role) {
         ArrayList<Region> result = new ArrayList<>();
         for (Map.Entry<String, Region> entry : get(player.getWorld()).entrySet()) {
             Region region = entry.getValue();

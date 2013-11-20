@@ -6,7 +6,7 @@ import java.util.Map;
 final public class Players extends BasicDBList {
 
     public static enum role {
-        owner, member, guest, admin
+        owner, member, guest
     }
 
     public Players() {}

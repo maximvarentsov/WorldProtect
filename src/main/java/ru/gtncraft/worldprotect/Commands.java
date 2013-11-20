@@ -33,17 +33,13 @@ final public class Commands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
-
         if ( ! (commandSender instanceof Player) ) {
             return false;
         }
-
         Player player = (Player) commandSender;
-
-        if ( ! player.hasPermission("worldprotect.use") ) {
+        if ( ! player.hasPermission(plugin.PERMISSION_USE) ) {
             return false;
         }
-
         try {
             switch (args[0].toLowerCase()) {
                 case "define":
@@ -70,12 +66,12 @@ final public class Commands implements CommandExecutor {
                     return commandInfo(player, args);
                 case "list":
                     return commandList(player);
-                // usage for unknow subcommands.
                 case "flag":
                     switch (args[2].toLowerCase()) {
                         case "set":
                             return commandFlagSet(player, args);
                     }
+                // usage for unknow subcommands.
                 default:
                     return false;
             }
@@ -112,14 +108,14 @@ final public class Commands implements CommandExecutor {
         /**
          *  Check region have overlay with another
          */
-         if ( ! sender.hasPermission("worldprotect.admin") ) {
+         if (!sender.hasPermission(plugin.PERMISSION_ADMIN)) {
             for (Region regionMin : plugin.getRegionManager().get(p1)) {
-                if ( ! regionMin.is(sender, Players.role.owner) ) {
+                if (!regionMin.is(sender, Players.role.owner)) {
                     throw new CommandException(Lang.REGION_OVERLAY_WITH_ANOTHER);
                 }
             }
             for (Region regionMax : plugin.getRegionManager().get(p2)) {
-                if ( ! regionMax.is(sender, Players.role.owner) ) {
+                if (!regionMax.is(sender, Players.role.owner)) {
                     throw new CommandException(Lang.REGION_OVERLAY_WITH_ANOTHER);
                 }
             }
@@ -137,7 +133,7 @@ final public class Commands implements CommandExecutor {
             throw new CommandException(String.format(Lang.REGION_NOT_FOUND, name));
         }
 
-        if ( (! region.is(sender, Players.role.owner)) || (! region.is(sender, Players.role.admin))) {
+        if ((!region.is(sender, Players.role.owner)) || (!sender.hasPermission(plugin.PERMISSION_ADMIN))) {
             throw new CommandException(Lang.REGION_NO_PERMISSION);
         }
 
@@ -166,7 +162,7 @@ final public class Commands implements CommandExecutor {
         } else if (args.length == 1) {
             List<Region> regions = plugin.getRegionManager().get(sender.getLocation());
             if (regions.size() == 0) {
-                throw new CommandException(Lang.REGION_NOT_FOUND_2);
+                throw new CommandException(Lang.REGION_NOT_FOUND_IN_AREA);
             }
             for (Region region : regions) {
                 showRegionInfo(sender, region);
@@ -206,7 +202,7 @@ final public class Commands implements CommandExecutor {
         }
 
         try {
-            if ( ( ! region.is(sender, Players.role.owner) ) || ( ! region.is(sender, Players.role.admin) ) ) {
+            if ((!region.is(sender, Players.role.owner)) || (!sender.hasPermission(plugin.PERMISSION_ADMIN))) {
                 throw new CommandException(Lang.REGION_NO_PERMISSION);
             }
             region.set(Flags.prevent.valueOf(flag), valueFlag);
@@ -228,11 +224,11 @@ final public class Commands implements CommandExecutor {
 
         String player = getParam(args, 2, Lang.PLAYER_NAME_MISSING);
 
-        if ( ( ! region.is(sender, Players.role.owner) ) || ( ! region.is(sender, Players.role.admin) ) ) {
+        if ((!region.is(sender, Players.role.owner)) || (!sender.hasPermission(plugin.PERMISSION_ADMIN))) {
             throw new CommandException(Lang.REGION_NO_PERMISSION);
         }
 
-        if ( ! region.add(player, role) ) {
+        if (!region.add(player, role)) {
             throw new CommandException(Lang.PLAYER_ALREADY_IN_REGION);
         }
 
@@ -250,11 +246,11 @@ final public class Commands implements CommandExecutor {
 
         String player = getParam(args, 2, Lang.PLAYER_NAME_MISSING);
 
-        if ( ( ! region.is(sender, Players.role.owner) ) || ( ! region.is(sender, Players.role.admin) ) ) {
+        if ((!region.is(sender, Players.role.owner)) || (!sender.hasPermission(plugin.PERMISSION_ADMIN))) {
             throw new CommandException(Lang.REGION_NO_PERMISSION);
         }
 
-        if ( ! region.remove(player, role) ) {
+        if (!region.remove(player, role)) {
             throw new CommandException(Lang.PLAYER_NOT_FOUND_IN_REGION);
         }
 

@@ -7,7 +7,7 @@ final public class Lang {
     final public static String REGION_MISSING_NAME = "Введите имя региона.";
     final public static String PLAYER_NAME_MISSING = "Укажите игрока.";
     final public static String REGION_OVERLAY_WITH_ANOTHER = "Регион пересекается с другим.";
-    final public static String REGION_NOT_FOUND_2  = "Регион в этой области не существует.";
+    final public static String REGION_NOT_FOUND_IN_AREA = "Регион в этой области не существует.";
     final public static String REGION_OWNERS = "Владельцы:";
     final public static String REGION_MEMBERS = "Игроки:";
     final public static String REGION_FLAGS = "Флаги:";

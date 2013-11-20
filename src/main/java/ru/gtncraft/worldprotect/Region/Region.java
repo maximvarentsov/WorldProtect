@@ -53,8 +53,6 @@ final public class Region extends BasicDBObject {
                 return members.contains(name);
             case guest:
                 return ! contains(name);
-            case admin:
-                return player.hasPermission("worldprotect.admin");
         }
         return false;
     }

@@ -15,26 +15,24 @@ final public class WorldProtect extends JavaPlugin {
 
     private RegionManager rm;
 
+    final public String PERMISSION_ADMIN = "worldprotect.admin";
+    final public String PERMISSION_USE = "worldprotect.use";
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
         try {
-
             rm = new RegionManager(getConfig().getConfigurationSection("db"));
-
             for (World world : Bukkit.getServer().getWorlds()) {
                 getRegionManager().load(world);
             }
-
             new BlockListener(this);
             new EntityListener(this);
             new PlayerListener(this);
             new VehicleListener(this);
             new HandingListener(this);
             new WorldListener(this);
-
             new Commands(this);
-
         } catch (IOException ex) {
             getLogger().severe(ex.getMessage());
             setEnabled(false);
@@ -48,15 +46,16 @@ final public class WorldProtect extends JavaPlugin {
             getRegionManager().save(world);
         }
     }
-
     /**
      * API stuff.
      *
      */
-
     public boolean prevent(final Location location, final Player player, final Flags.prevent flag) {
+        if (player.hasPermission(PERMISSION_ADMIN)) {
+            return false;
+        }
         for (Region region : getRegionManager().get(location)) {
-            if (region.is(flag) && ( region.is(player, Players.role.guest) || region.is(player, Players.role.admin)) ) {
+            if (region.is(flag) && region.is(player, Players.role.guest)) {
                 return true;
             }
         }

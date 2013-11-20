@@ -2,3 +2,6 @@ database:
     host: 127.0.0.1
     port: 27017
     name: worldprotect
+region:
+    size: 8192
+    max: 4
