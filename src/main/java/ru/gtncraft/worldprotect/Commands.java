@@ -133,7 +133,7 @@ final public class Commands implements CommandExecutor {
             throw new CommandException(String.format(Lang.REGION_NOT_FOUND, name));
         }
 
-        if ((!region.is(sender, Players.role.owner)) || (!sender.hasPermission(plugin.PERMISSION_ADMIN))) {
+        if (!(region.is(sender, Players.role.owner) && sender.hasPermission(plugin.PERMISSION_ADMIN))) {
             throw new CommandException(Lang.REGION_NO_PERMISSION);
         }
 
@@ -202,7 +202,7 @@ final public class Commands implements CommandExecutor {
         }
 
         try {
-            if ((!region.is(sender, Players.role.owner)) || (!sender.hasPermission(plugin.PERMISSION_ADMIN))) {
+            if (!(region.is(sender, Players.role.owner) && sender.hasPermission(plugin.PERMISSION_ADMIN))) {
                 throw new CommandException(Lang.REGION_NO_PERMISSION);
             }
             region.set(Flags.prevent.valueOf(flag), valueFlag);
@@ -224,7 +224,7 @@ final public class Commands implements CommandExecutor {
 
         String player = getParam(args, 2, Lang.PLAYER_NAME_MISSING);
 
-        if ((!region.is(sender, Players.role.owner)) || (!sender.hasPermission(plugin.PERMISSION_ADMIN))) {
+        if (!(region.is(sender, Players.role.owner) && sender.hasPermission(plugin.PERMISSION_ADMIN))) {
             throw new CommandException(Lang.REGION_NO_PERMISSION);
         }
 
@@ -246,7 +246,7 @@ final public class Commands implements CommandExecutor {
 
         String player = getParam(args, 2, Lang.PLAYER_NAME_MISSING);
 
-        if ((!region.is(sender, Players.role.owner)) || (!sender.hasPermission(plugin.PERMISSION_ADMIN))) {
+        if (!(region.is(sender, Players.role.owner) && sender.hasPermission(plugin.PERMISSION_ADMIN))) {
             throw new CommandException(Lang.REGION_NO_PERMISSION);
         }
 
