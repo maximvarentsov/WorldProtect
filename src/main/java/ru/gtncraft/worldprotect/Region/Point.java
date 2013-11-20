@@ -7,9 +7,9 @@ import java.util.Map;
 final public class Point extends BasicDBObject {
 
     public Point(Location location) {
-        this.put("x", location.getX());
-        this.put("y", location.getY());
-        this.put("z", location.getZ());
+        this.put("x", Math.ceil(location.getX()));
+        this.put("y", Math.ceil(location.getY()));
+        this.put("z", Math.ceil(location.getZ()));
     }
 
     public Point(Map map) {
