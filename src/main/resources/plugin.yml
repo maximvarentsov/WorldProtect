@@ -17,13 +17,13 @@ commands:
         description: Commands for manipulating regions.
         permission: worldprotect.use
         usage: |
-             /<command> define [регион] - Создать регион.
-             /<command> del [регион] - Удалить регион.
-             /<command> addowner [регион] [игрок] - Добавить владельца региона.
-             /<command> delowner [регион] [игрок] - Удалить владельца региона.
-             /<command> addmember [регион] [игрок] - Добавить игрока в регион.
-             /<command> delmember [регион] [игрок] - Удалить игрока из региона.
-             /<command> info <регион> - Показать информацию о регионе.
+             /<command> define <регион> - Создать регион.
+             /<command> del <регион> - Удалить регион.
+             /<command> addowner <регион> <игрок> - Добавить владельца региона.
+             /<command> delowner <регион> <игрок> - Удалить владельца региона.
+             /<command> addmember <регион> <игрок> - Добавить игрока в регион.
+             /<command> delmember <регион> <игрок> - Удалить игрока из региона.
+             /<command> info [регион] - Показать информацию о регионе.
              /<command> list - Показать список доступных вам регионов.
-             /<command> flag [регион] set [flag] [значение] - Установить флаг для региона.
+             /<command> flag <регион> set <flag> <true|false> - Установить флаг для региона.
 
