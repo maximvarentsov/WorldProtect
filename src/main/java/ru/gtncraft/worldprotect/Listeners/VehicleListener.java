@@ -32,7 +32,7 @@ final public class VehicleListener implements Listener {
             Player player = (Player) attacker;
             if (plugin.prevent(event.getVehicle().getLocation(), player, Flags.prevent.build)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_IS_PROTECTED);
+                player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
             event.setCancelled(
@@ -50,7 +50,7 @@ final public class VehicleListener implements Listener {
             Player player = (Player) passenger;
             if (plugin.prevent(event.getVehicle().getLocation(), player, Flags.prevent.use)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_IS_PROTECTED);
+                player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         }
     }

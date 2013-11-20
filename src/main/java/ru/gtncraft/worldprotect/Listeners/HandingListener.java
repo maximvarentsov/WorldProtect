@@ -31,7 +31,7 @@ final public class HandingListener implements Listener {
             Player player = (Player) event.getRemover();
             if (plugin.prevent(location, player, Flags.prevent.build)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_IS_PROTECTED);
+                player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
             event.setCancelled(
@@ -47,7 +47,7 @@ final public class HandingListener implements Listener {
         Player player = event.getPlayer();
         if (plugin.prevent(event.getEntity().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_IS_PROTECTED);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
     }
 }

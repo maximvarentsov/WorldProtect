@@ -4,17 +4,9 @@ final public class Lang {
 
     final public static String WORLDEDIT_NOT_INSTALLED = "Плагин WorldEdit не найден.";
     final public static String WORLDEDIT_NO_SELECTION = "Сначала выделите регион.";
-
     final public static String REGION_MISSING_NAME = "Введите имя региона.";
-    final public static String REGION_MISSING_OWNER = "Введите владельца региона.";
-    final public static String REGION_MISSING_MEMBER = "Укажите игрока.";
-    final public static String YOU_DONT_OWN_THIS_REGION = "Вы не можете удалить этот регион.";
+    final public static String PLAYER_NAME_MISSING = "Укажите игрока.";
     final public static String REGION_OVERLAY_WITH_ANOTHER = "Регион пересекается с другим.";
-    final public static String REGION_ERROR_MEMBER_DELETE = "You don't have persmission to delete member in this region.";
-    final public static String REGION_ERROR_MEMBER_ADD = "You don't have persmission to add member in this region.";
-
-    final public static String REGION_IS_PROTECTED = "Вы не можете делать это в данном регионе.";
-    final public static String REGION_NOT_FOUND = "Регион с таким именем не существует.";
     final public static String REGION_NOT_FOUND_2  = "Регион в этой области не существует.";
     final public static String REGION_OWNERS = "Владельцы:";
     final public static String REGION_MEMBERS = "Игроки:";
@@ -25,35 +17,17 @@ final public class Lang {
     final public static String PLAYER_ALREADY_IN_REGION = "Игрок уже добавлен в этот регион.";
     final public static String PLAYER_NOT_FOUND_IN_REGION = "Игрока с таким именем нет в регионе.";
 
-    final public static String regionNotFound(String name) {
-        return "Регион '" + name + "' не найден.";
-    }
+    final public static String FLAG_UNKNOWN = "Неизвестный флаг %s.";
+    final public static String FLAG_INVALID_VALUE = "Некорректное значение флага %s.";
+    final public static String FLAG_MISSING = "Введите название флага.";
+    final public static String FLAG_NO_VALUE = "Введите значение флага.";
+    final public static String FLAG_CHANGED = "Флаг %s для региона %s установлен.";
 
-    final public static String regionExists(String name) {
-        return "Регион с именем '" + name + "' уже был создан.";
-    }
-
-    final public static String regionSuccessCreated(String name) {
-        return "Регион '" + name + "' создан.";
-    }
-
-    final public static String regionSuccessDeleted(String name) {
-        return "Регион '" + name + "' удален.";
-    }
-
-    final public static String regionSuccessOwnerAdded(String player, String name) {
-        return  "Владелец '" + player + "' добавлен в регион '" + name + "'.";
-    }
-
-    final public static String regionSuccessOwnerRemoved(String player, String name) {
-        return "Владелец '" + player + "' удален из региона '" + name + "'.";
-    }
-
-    final public static String regionSuccessMemberAdded(String player, String name) {
-        return "Игрок '" + player + "' добавлен в регион '" + name + "'.";
-    }
-
-    final public static String regionSuccessMemberRemoved(String player, String name) {
-        return "Игрок '" + player + "' удален из региона '" + name + "'.";
-    }
+    final public static String REGION_NOT_FOUND = "Регион %s не найден.";
+    final public static String REGION_NO_PERMISSION = "У вас нет прав на редактирование этого региона.";
+    final public static String REGION_EXISTS = "Регион с именем %s уже создан.";
+    final public static String REGION_CREATED = "Регион %s создан.";
+    final public static String REGION_DELETED = "Регион %s удален.";
+    final public static String REGION_PLAYER_ADDED = "Игрок %s добавлен в регион %s.";
+    final public static String REGION_PLAYER_DELETED = "Игрок %s удален из региона %s.";
 }

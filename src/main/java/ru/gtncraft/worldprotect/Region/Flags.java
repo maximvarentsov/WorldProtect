@@ -25,8 +25,8 @@ final public class Flags extends BasicDBObject {
      * Set default flags state.
      */
     public Flags() {
-        put(prevent.build.name(), true);
-        put(prevent.use.name(), true);
+        set(prevent.build, true);
+        set(prevent.use, true);
     }
     /**
      * Change flag state.
@@ -35,7 +35,7 @@ final public class Flags extends BasicDBObject {
         put(flag.name(), value);
     }
     /**
-     * Get flage state.
+     * Get flag state.
      */
     public boolean get(prevent flag) {
         return getBoolean(flag.name(), false);

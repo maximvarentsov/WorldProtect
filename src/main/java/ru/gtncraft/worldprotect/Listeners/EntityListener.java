@@ -28,7 +28,7 @@ final public class EntityListener implements Listener {
             Player player = (Player) event.getEntity();
             if (plugin.prevent(player.getLocation(), player, Flags.prevent.damage)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_IS_PROTECTED);
+                player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
             event.setCancelled(
@@ -105,7 +105,7 @@ final public class EntityListener implements Listener {
             Player player = (Player) damager;
             if (plugin.prevent(target.getLocation(), player, Flags.prevent.damage)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_IS_PROTECTED);
+                player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
             event.setCancelled(

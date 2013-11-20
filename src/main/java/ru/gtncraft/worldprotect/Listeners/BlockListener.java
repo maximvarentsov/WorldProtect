@@ -28,7 +28,7 @@ final public class BlockListener implements Listener {
         Player player = event.getPlayer();
         if (plugin.prevent(event.getBlock().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_IS_PROTECTED);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
     }
     /**
@@ -41,7 +41,7 @@ final public class BlockListener implements Listener {
         Player player = event.getPlayer();
         if (plugin.prevent(event.getBlock().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_IS_PROTECTED);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
     }
     /**
@@ -55,7 +55,7 @@ final public class BlockListener implements Listener {
         Player player = event.getPlayer();
         if (plugin.prevent(event.getBlock().getLocation(), player, Flags.prevent.burn)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_IS_PROTECTED);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
     }
     /**
@@ -68,7 +68,7 @@ final public class BlockListener implements Listener {
         Player player = event.getPlayer();
         if (plugin.prevent(event.getBlock().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_IS_PROTECTED);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
     }
     /**

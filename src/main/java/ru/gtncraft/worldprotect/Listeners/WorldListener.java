@@ -22,10 +22,7 @@ final public class WorldListener implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                String world = event.getWorld().getName();
-                plugin.getLogger().fine("Begin world saving " + world + ".");
-                plugin.getRegionManager().save(world);
-                plugin.getLogger().fine("End world saving for " + world + ".");
+                plugin.getRegionManager().save(event.getWorld());
             }
         });
     }
@@ -35,7 +32,7 @@ final public class WorldListener implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                plugin.getRegionManager().load(event.getWorld().getName());
+                plugin.getRegionManager().load(event.getWorld());
             }
         });
     }
@@ -45,7 +42,7 @@ final public class WorldListener implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                plugin.getRegionManager().unload(event.getWorld().getName());
+                plugin.getRegionManager().unload(event.getWorld());
             }
         });
     }

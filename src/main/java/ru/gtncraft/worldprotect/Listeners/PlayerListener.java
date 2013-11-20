@@ -74,9 +74,8 @@ final public class PlayerListener implements Listener {
         }
         if (prevent && plugin.prevent(location, player, Flags.prevent.use)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_IS_PROTECTED);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
-
     }
     /**
      * This event is fired when the player is almost about to enter the bed.
@@ -86,18 +85,29 @@ final public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (plugin.prevent(event.getBed().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_IS_PROTECTED);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
     }
     /**
-     * Called when a player interacts with a Bucket.
+     * Called when a player fill a Bucket.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBucket(final PlayerBucketEvent event) {
+    public void onBucketFill(final PlayerBucketFillEvent event) {
         Player player = event.getPlayer();
         if (plugin.prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_IS_PROTECTED);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
+        }
+    }
+    /**
+     * Called when a player empty a Bucket.
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBucketEmpty(final PlayerBucketEmptyEvent event) {
+        Player player = event.getPlayer();
+        if (plugin.prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
+            event.setCancelled(true);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
     }
     /**
@@ -108,7 +118,7 @@ final public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (plugin.prevent(event.getRightClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_IS_PROTECTED);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
     }
     /**
@@ -120,7 +130,7 @@ final public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (plugin.prevent(player.getLocation(), player, Flags.prevent.command)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_IS_PROTECTED);
+            player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
     }
     /**
@@ -132,7 +142,7 @@ final public class PlayerListener implements Listener {
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)) {
             if (plugin.prevent(player.getLocation(), player, Flags.prevent.teleport)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_IS_PROTECTED);
+                player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         }
     }

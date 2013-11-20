@@ -7,11 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.gtncraft.worldprotect.Listeners.*;
 import ru.gtncraft.worldprotect.Region.Flags;
+import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
-import ru.gtncraft.worldprotect.Region.Regions;
-
 import java.io.IOException;
-import java.util.Map;
 
 final public class WorldProtect extends JavaPlugin {
 
@@ -25,7 +23,7 @@ final public class WorldProtect extends JavaPlugin {
             rm = new RegionManager(getConfig().getConfigurationSection("db"));
 
             for (World world : Bukkit.getServer().getWorlds()) {
-                rm.load(world.getName());
+                getRegionManager().load(world);
             }
 
             new BlockListener(this);
@@ -47,7 +45,7 @@ final public class WorldProtect extends JavaPlugin {
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
         for (World world : Bukkit.getWorlds()) {
-            getRegionManager().save(world.getName());
+            getRegionManager().save(world);
         }
     }
 
@@ -57,8 +55,8 @@ final public class WorldProtect extends JavaPlugin {
      */
 
     public boolean prevent(final Location location, final Player player, final Flags.prevent flag) {
-        for (Region region : getRegionManager().getRegions(location)) {
-            if (region.flags.get(flag) && region.isGuest(player)) {
+        for (Region region : getRegionManager().get(location)) {
+            if (region.is(flag) && ( region.is(player, Players.role.guest) || region.is(player, Players.role.admin)) ) {
                 return true;
             }
         }
@@ -66,8 +64,8 @@ final public class WorldProtect extends JavaPlugin {
     }
 
     public boolean prevent(final Location location, final Flags.prevent flag) {
-        for (Region region : getRegionManager().getRegions(location)) {
-            if (region.flags.get(flag)) {
+        for (Region region : getRegionManager().get(location)) {
+            if (region.is(flag)) {
                 return true;
             }
         }
