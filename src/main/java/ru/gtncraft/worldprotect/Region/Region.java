@@ -125,9 +125,9 @@ final public class Region extends BasicDBObject {
     }
 
     public boolean contains(final Location location) {
-        double lx = location.getX();
-        double ly = location.getY();
-        double lz = location.getZ();
+        int lx = location.getBlockX();
+        int ly = location.getBlockY();
+        int lz = location.getBlockZ();
         return ! ( (lx < p1.getX() || lx > p2.getX()) || (ly < p1.getY() || ly > p2.getY()) || (lz < p1.getZ() || lz > p2.getZ()) );
     }
 

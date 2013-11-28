@@ -7,25 +7,25 @@ import java.util.Map;
 final public class Point extends BasicDBObject {
 
     public Point(final Location location) {
-        this.put("x", location.getX() + 1);
-        this.put("y", location.getY());
-        this.put("z", location.getZ() + 1);
+        this.put("x", location.getBlockX());
+        this.put("y", location.getBlockY());
+        this.put("z", location.getBlockZ());
     }
 
     public Point(final Map map) {
         this.putAll(map);
     }
 
-    public double getX() {
-        return getDouble("x");
+    public int getX() {
+        return getInt("x");
     }
 
-    public double getY() {
-        return getDouble("y");
+    public int getY() {
+        return getInt("y");
     }
 
-    public double getZ() {
-        return getDouble("z");
+    public int getZ() {
+        return getInt("z");
     }
 
     @Override
