@@ -33,6 +33,7 @@ final public class PlayerListener implements Listener {
             Material.ANVIL,
             Material.CAULDRON,
             Material.FURNACE,
+            Material.FENCE_GATE,
             Material.DROPPER,
             Material.ENCHANTMENT_TABLE,
             Material.STONE_BUTTON,
