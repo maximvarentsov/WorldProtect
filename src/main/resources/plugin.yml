@@ -26,4 +26,5 @@ commands:
              /<command> info [регион] - Показать информацию о регионе.
              /<command> list - Показать список доступных вам регионов.
              /<command> flag <регион> set <flag> <true|false> - Установить флаг для региона.
+             /<command> save - Сохранить регионы.
 

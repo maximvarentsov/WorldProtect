@@ -5,6 +5,7 @@ import com.sk89q.worldedit.bukkit.selections.Selection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,6 +19,7 @@ final public class Commands implements CommandExecutor {
 
     final private WorldProtect plugin;
     final private WorldEditPlugin we;
+    final private int regionPerPlayer;
 
     private class CommandException extends Exception {
         public CommandException(String message) {
@@ -29,6 +31,7 @@ final public class Commands implements CommandExecutor {
         plugin.getCommand("region").setExecutor(this);
         this.plugin = plugin;
         this.we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+        this.regionPerPlayer = plugin.getConfig().getConfigurationSection("region").getInt("maxPerPlayer");
     }
 
     @Override
@@ -66,6 +69,8 @@ final public class Commands implements CommandExecutor {
                     return commandInfo(player, args);
                 case "list":
                     return commandList(player);
+                case "save":
+                    return commandSave(player);
                 case "flag":
                     switch (args[2].toLowerCase()) {
                         case "set":
@@ -106,39 +111,32 @@ final public class Commands implements CommandExecutor {
         region.setName(name);
         region.add(sender.getName(), Players.role.owner);
         /**
-         *  Check region have overlay with another
+         *  Check region have overlay with another.
          */
-         if (!sender.hasPermission(plugin.PERMISSION_ADMIN)) {
+        if (!sender.hasPermission(plugin.PERMISSION_ADMIN)) {
             for (Region regionMin : plugin.getRegionManager().get(p1)) {
-                if (!regionMin.is(sender, Players.role.owner)) {
+                if (!regionMin.has(sender, Players.role.owner)) {
                     throw new CommandException(Lang.REGION_OVERLAY_WITH_ANOTHER);
                 }
             }
             for (Region regionMax : plugin.getRegionManager().get(p2)) {
-                if (!regionMax.is(sender, Players.role.owner)) {
+                if (!regionMax.has(sender, Players.role.owner)) {
                     throw new CommandException(Lang.REGION_OVERLAY_WITH_ANOTHER);
                 }
             }
-         }
-         plugin.getRegionManager().add(sender.getWorld(), region);
-         sender.sendMessage(ChatColor.GREEN + String.format(Lang.REGION_CREATED, name));
-         return true;
-    }
-
-    private boolean commandDelete(Player sender, String[] args) throws CommandException {
-        String name = getParam(args, 1, Lang.REGION_MISSING_NAME);
-        Region region = plugin.getRegionManager().get(sender.getWorld(), name);
-
-        if (region == null) {
-            throw new CommandException(String.format(Lang.REGION_NOT_FOUND, name));
+        }
+        /**
+         * Check max region per player limit
+         */
+        if (!sender.hasPermission(plugin.PERMISSION_ADMIN)) {
+            int total = plugin.getRegionManager().get(sender, Players.role.owner).size();
+            if (regionPerPlayer > 0 && total >= regionPerPlayer) {
+                throw new CommandException(String.format(Lang.REGION_MAX_LIMIT, regionPerPlayer));
+            }
         }
 
-        if (!(region.is(sender, Players.role.owner) && sender.hasPermission(plugin.PERMISSION_ADMIN))) {
-            throw new CommandException(Lang.REGION_NO_PERMISSION);
-        }
-
-        plugin.getRegionManager().delete(sender.getWorld(), name);
-        sender.sendMessage(ChatColor.GREEN + String.format(Lang.REGION_DELETED, name));
+        plugin.getRegionManager().add(sender.getWorld(), region);
+        sender.sendMessage(ChatColor.GREEN + String.format(Lang.REGION_CREATED, name));
         return true;
     }
 
@@ -157,7 +155,7 @@ final public class Commands implements CommandExecutor {
             if (region == null) {
                 throw new CommandException(String.format(Lang.REGION_NOT_FOUND, name));
             }
-            showRegionInfo(sender, region);
+            Lang.showRegionInfo(sender, region);
             return true;
         } else if (args.length == 1) {
             List<Region> regions = plugin.getRegionManager().get(sender.getLocation());
@@ -165,11 +163,43 @@ final public class Commands implements CommandExecutor {
                 throw new CommandException(Lang.REGION_NOT_FOUND_IN_AREA);
             }
             for (Region region : regions) {
-                showRegionInfo(sender, region);
+                Lang.showRegionInfo(sender, region);
             }
             return true;
         }
         return false;
+    }
+
+    private boolean commandSave(Player sender) throws CommandException {
+        if (!sender.hasPermission(plugin.PERMISSION_ADMIN)) {
+            return false;
+        }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                for (World world : Bukkit.getWorlds()) {
+                    plugin.getLogger().info("Save regions for world " + world.getName() + ".");
+                    plugin.getRegionManager().save(world);
+                }
+            }
+        });
+        sender.sendMessage(ChatColor.GREEN + Lang.SAVE_SUCCESS);
+        return true;
+    }
+
+    private boolean commandDelete(Player sender, String[] args) throws CommandException {
+        String name = getParam(args, 1, Lang.REGION_MISSING_NAME);
+        Region region = plugin.getRegionManager().get(sender.getWorld(), name);
+
+        if (region == null) {
+            throw new CommandException(String.format(Lang.REGION_NOT_FOUND, name));
+        }
+
+        checkPermission(sender, region);
+
+        plugin.getRegionManager().delete(sender.getWorld(), name);
+        sender.sendMessage(ChatColor.GREEN + String.format(Lang.REGION_DELETED, name));
+        return true;
     }
 
     private boolean commandFlagSet(Player sender, String[] args) throws CommandException {
@@ -185,26 +215,25 @@ final public class Commands implements CommandExecutor {
 
         String value = getParam(args, 4, Lang.FLAG_NO_VALUE);
         boolean valueFlag;
-
+        // reverse values, prevent true
         switch (value.toLowerCase()) {
             case "1":
             case "on":
             case "true":
-                valueFlag = true;
+                valueFlag = false;
                 break;
             case "0":
             case "off":
             case "false":
-                valueFlag = false;
+                valueFlag = true;
                 break;
             default:
                 throw new CommandException(String.format(Lang.FLAG_INVALID_VALUE, value));
         }
 
+        checkPermission(sender, region);
+
         try {
-            if (!(region.is(sender, Players.role.owner) && sender.hasPermission(plugin.PERMISSION_ADMIN))) {
-                throw new CommandException(Lang.REGION_NO_PERMISSION);
-            }
             region.set(Flags.prevent.valueOf(flag), valueFlag);
             sender.sendMessage(ChatColor.GREEN + String.format(Lang.FLAG_CHANGED, flag, name));
         } catch (IllegalArgumentException ex) {
@@ -224,9 +253,7 @@ final public class Commands implements CommandExecutor {
 
         String player = getParam(args, 2, Lang.PLAYER_NAME_MISSING);
 
-        if (!(region.is(sender, Players.role.owner) && sender.hasPermission(plugin.PERMISSION_ADMIN))) {
-            throw new CommandException(Lang.REGION_NO_PERMISSION);
-        }
+        checkPermission(sender, region);
 
         if (!region.add(player, role)) {
             throw new CommandException(Lang.PLAYER_ALREADY_IN_REGION);
@@ -246,9 +273,7 @@ final public class Commands implements CommandExecutor {
 
         String player = getParam(args, 2, Lang.PLAYER_NAME_MISSING);
 
-        if (!(region.is(sender, Players.role.owner) && sender.hasPermission(plugin.PERMISSION_ADMIN))) {
-            throw new CommandException(Lang.REGION_NO_PERMISSION);
-        }
+        checkPermission(sender, region);
 
         if (!region.remove(player, role)) {
             throw new CommandException(Lang.PLAYER_NOT_FOUND_IN_REGION);
@@ -258,19 +283,17 @@ final public class Commands implements CommandExecutor {
         return true;
     }
 
-    private void showRegionInfo(Player sender, Region region) {
-        sender.sendMessage(ChatColor.GREEN + Lang.REGION_NAME    + " " + region.getName());
-        sender.sendMessage(ChatColor.GREEN + Lang.REGION_SIZE    + " " + region);
-        sender.sendMessage(ChatColor.GREEN + Lang.REGION_OWNERS  + " " + region.get(Players.role.owner));
-        sender.sendMessage(ChatColor.GREEN + Lang.REGION_MEMBERS + " " + region.get(Players.role.member));
-        sender.sendMessage(ChatColor.GREEN + Lang.REGION_FLAGS);
-    }
-
     private String getParam(String args[], int index, String message) throws CommandException {
         try {
             return args[index];
         } catch (ArrayIndexOutOfBoundsException ex) {
             throw new CommandException(message);
+        }
+    }
+
+    private void checkPermission(Player sender, Region region) throws CommandException {
+        if (!(region.has(sender, Players.role.owner) || sender.hasPermission(plugin.PERMISSION_ADMIN))) {
+            throw new CommandException(Lang.REGION_NO_PERMISSION);
         }
     }
 }

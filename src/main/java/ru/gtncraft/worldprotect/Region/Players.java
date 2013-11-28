@@ -11,7 +11,7 @@ final public class Players extends BasicDBList {
 
     public Players() {}
 
-    public Players(Map map) {
+    public Players(final Map map) {
         putAll(map);
     }
 }

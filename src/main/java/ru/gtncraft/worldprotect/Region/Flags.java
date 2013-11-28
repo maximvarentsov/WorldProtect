@@ -18,7 +18,7 @@ final public class Flags extends BasicDBObject {
         burn,
         snowmanGrief
     }
-    public Flags(Map map) {
+    public Flags(final Map map) {
         putAll(map);
     }
     /**
@@ -31,13 +31,13 @@ final public class Flags extends BasicDBObject {
     /**
      * Change flag state.
      */
-    public void set(prevent flag, boolean value) {
+    public void set(final prevent flag, boolean value) {
         put(flag.name(), value);
     }
     /**
      * Get flag state.
      */
-    public boolean get(prevent flag) {
+    public boolean get(final prevent flag) {
         return getBoolean(flag.name(), false);
     }
 }

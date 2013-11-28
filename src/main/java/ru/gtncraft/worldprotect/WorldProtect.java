@@ -20,29 +20,37 @@ final public class WorldProtect extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
         saveDefaultConfig();
+
         try {
-            rm = new RegionManager(getConfig().getConfigurationSection("db"));
-            for (World world : Bukkit.getServer().getWorlds()) {
-                getRegionManager().load(world);
-            }
-            new BlockListener(this);
-            new EntityListener(this);
-            new PlayerListener(this);
-            new VehicleListener(this);
-            new HandingListener(this);
-            new WorldListener(this);
-            new Commands(this);
+            setRegionManager(new RegionManager(getConfig().getConfigurationSection("db")));
         } catch (IOException ex) {
             getLogger().severe(ex.getMessage());
             setEnabled(false);
+            return;
         }
+
+        for (World world : Bukkit.getServer().getWorlds()) {
+            getLogger().info("Load regions for world " + world.getName() + ".");
+            getRegionManager().load(world);
+        }
+
+        new BlockListener(this);
+        new EntityListener(this);
+        new PlayerListener(this);
+        new VehicleListener(this);
+        new HandingListener(this);
+        new WorldListener(this);
+
+        new Commands(this);
     }
 
     @Override
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
         for (World world : Bukkit.getWorlds()) {
+            getLogger().info("Save regions for world " + world.getName() + ".");
             getRegionManager().save(world);
         }
     }
@@ -55,7 +63,7 @@ final public class WorldProtect extends JavaPlugin {
             return false;
         }
         for (Region region : getRegionManager().get(location)) {
-            if (region.is(flag) && region.is(player, Players.role.guest)) {
+            if (region.has(flag) && region.has(player, Players.role.guest)) {
                 return true;
             }
         }
@@ -64,7 +72,7 @@ final public class WorldProtect extends JavaPlugin {
 
     public boolean prevent(final Location location, final Flags.prevent flag) {
         for (Region region : getRegionManager().get(location)) {
-            if (region.is(flag)) {
+            if (region.has(flag)) {
                 return true;
             }
         }
@@ -73,5 +81,9 @@ final public class WorldProtect extends JavaPlugin {
 
     public RegionManager getRegionManager() {
         return rm;
+    }
+
+    public void setRegionManager(RegionManager value) {
+        rm = value;
     }
 }

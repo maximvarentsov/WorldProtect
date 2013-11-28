@@ -4,6 +4,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 import java.util.Map;
 
 final public class Region extends BasicDBObject {
@@ -14,7 +16,7 @@ final public class Region extends BasicDBObject {
     final private Players owners;
     final private Players members;
 
-    public Region(Map map) {
+    public Region(final Map map) {
         this.putAll(map);
         this.p1 = new Point(((DBObject) this.get("p1")).toMap());
         this.p2 = new Point(((DBObject) this.get("p2")).toMap());
@@ -23,17 +25,21 @@ final public class Region extends BasicDBObject {
         this.members = new Players(((DBObject) this.get("members")).toMap());
     }
 
-    public Region(Location p1, Location p2) {
+    public Region(final Location p1, final Location p2) {
         this.p1 = new Point(p1);
         this.p2 = new Point(p2);
         this.flags = new Flags();
         this.owners = new Players();
         this.members = new Players();
-        this.put("p1", this.p1);
-        this.put("p2", this.p2);
-        this.put("flags", this.flags);
-        this.put("owners", this.owners);
-        this.put("members", this.members);
+        this.update();
+    }
+
+    public Map<String, Boolean> getFlags() {
+        Map<String, Boolean> values = new HashMap<>();
+        for (Flags.prevent flag : Flags.prevent.values()) {
+            values.put(flag.name(), flags.get(flag));
+        }
+        return values;
     }
 
     public void setName(String value) {
@@ -44,7 +50,7 @@ final public class Region extends BasicDBObject {
         return getString("name");
     }
 
-    public boolean is(final Player player, final Players.role role) {
+    public boolean has(final Player player, final Players.role role) {
         String name = player.getName().toLowerCase();
         switch (role) {
             case owner:
@@ -57,7 +63,7 @@ final public class Region extends BasicDBObject {
         return false;
     }
 
-    public boolean is(final Flags.prevent flag) {
+    public boolean has(final Flags.prevent flag) {
         return flags.get(flag);
     }
 
@@ -123,6 +129,14 @@ final public class Region extends BasicDBObject {
         double ly = location.getY();
         double lz = location.getZ();
         return ! ( (lx < p1.getX() || lx > p2.getX()) || (ly < p1.getY() || ly > p2.getY()) || (lz < p1.getZ() || lz > p2.getZ()) );
+    }
+
+    public void update() {
+        this.put("p1", this.p1);
+        this.put("p2", this.p2);
+        this.put("flags", this.flags);
+        this.put("owners", this.owners);
+        this.put("members", this.members);
     }
 
     @Override

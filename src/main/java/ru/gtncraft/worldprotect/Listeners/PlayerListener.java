@@ -13,12 +13,15 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import ru.gtncraft.worldprotect.Lang;
 import ru.gtncraft.worldprotect.Region.Flags;
+import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.WorldProtect;
+
+import java.util.List;
 
 final public class PlayerListener implements Listener {
 
     final private WorldProtect plugin;
-
+    final private Material item;
     final private ImmutableList<Material> materialsProtected = ImmutableList.of(
             Material.CHEST,
             Material.LOCKED_CHEST,
@@ -45,6 +48,22 @@ final public class PlayerListener implements Listener {
     public PlayerListener(WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.plugin = plugin;
+
+        String item = plugin.getConfig().getConfigurationSection("region").getString("item", "STICK");
+        this.item = Material.matchMaterial(item);
+        if (this.item == null) {
+            plugin.getLogger().severe("Region item not found " + item);
+        }
+    }
+
+    private void checkForRegion(Location location, Player player) {
+        List<Region> regions = plugin.getRegionManager().get(location);
+        if (regions.size() == 0) {
+            player.sendMessage(Lang.REGION_NOT_FOUND_IN_AREA);
+        }
+        for (Region region : regions) {
+            Lang.showRegionInfo(player, region);
+        }
     }
     /**
      * Called when a player interacts with an object or air.
@@ -58,6 +77,8 @@ final public class PlayerListener implements Listener {
             case RIGHT_CLICK_BLOCK:
                 if (materialsProtected.contains(event.getClickedBlock().getType())) {
                     prevent = true;
+                } else if (event.getItem() != null && event.getItem().getType() == item) {
+                    checkForRegion(location, player);
                 }
                 break;
             case LEFT_CLICK_BLOCK:

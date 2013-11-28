@@ -6,13 +6,13 @@ import java.util.Map;
 
 final public class Point extends BasicDBObject {
 
-    public Point(Location location) {
-        this.put("x", Math.ceil(location.getX()));
-        this.put("y", Math.ceil(location.getY()));
-        this.put("z", Math.ceil(location.getZ()));
+    public Point(final Location location) {
+        this.put("x", location.getX() + 1);
+        this.put("y", location.getY());
+        this.put("z", location.getZ() + 1);
     }
 
-    public Point(Map map) {
+    public Point(final Map map) {
         this.putAll(map);
     }
 

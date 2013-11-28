@@ -53,7 +53,7 @@ final public class RegionManager {
     public void delete(final World world, final String name) {
         get(world).remove(name);
         DBCollection coll = db.getCollection(world.getName());
-        coll.remove(new BasicDBObject("name", name));
+        coll.remove(new BasicDBObject("name", name).append("unique", true));
     }
     /**
      * Save and unload world regions.
@@ -72,8 +72,10 @@ final public class RegionManager {
     public void save(final World world) {
         DBCollection coll = db.getCollection(world.getName());
         for (Map.Entry<String, Region> entry : get(world).entrySet() ) {
-            DBObject query = new BasicDBObject("name", entry.getKey());
-            coll.findAndModify(query, null, null, false, entry.getValue(), false, true);
+            Region region = entry.getValue();
+            region.update();
+            DBObject query = new BasicDBObject("name", region.getName());
+            coll.findAndModify(query, null, null, false, region, false, true);
         }
     }
     /**
@@ -126,7 +128,7 @@ final public class RegionManager {
         ArrayList<Region> result = new ArrayList<>();
         for (Map.Entry<String, Region> entry : get(player.getWorld()).entrySet()) {
             Region region = entry.getValue();
-            if (region.is(player, role)) {
+            if (region.has(player, role)) {
                 result.add(region);
             }
         }

@@ -53,9 +53,15 @@ final public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onIgnite(final BlockIgniteEvent event) {
         Player player = event.getPlayer();
-        if (plugin.prevent(event.getBlock().getLocation(), player, Flags.prevent.burn)) {
-            event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+        if (player instanceof Player) {
+            if (plugin.prevent(event.getBlock().getLocation(), player, Flags.prevent.burn)) {
+                event.setCancelled(true);
+                player.sendMessage(Lang.REGION_NO_PERMISSION);
+            }
+        } else {
+            if (plugin.prevent(event.getBlock().getLocation(), Flags.prevent.burn)) {
+                event.setCancelled(true);
+            }
         }
     }
     /**
