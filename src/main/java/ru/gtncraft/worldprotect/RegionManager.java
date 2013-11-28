@@ -33,7 +33,7 @@ final public class RegionManager {
         // Init collection.
         DBCollection coll = db.getCollection(world.getName());
         if (coll.count() < 1) {
-            coll.ensureIndex(new BasicDBObject("name", 1));
+            coll.ensureIndex(new BasicDBObject("name", 1).append("unique", true));
         }
         // Get regions.
         try (DBCursor curr = coll.find()) {
@@ -53,7 +53,7 @@ final public class RegionManager {
     public void delete(final World world, final String name) {
         get(world).remove(name);
         DBCollection coll = db.getCollection(world.getName());
-        coll.remove(new BasicDBObject("name", name).append("unique", true));
+        coll.remove(new BasicDBObject("name", name));
     }
     /**
      * Save and unload world regions.
