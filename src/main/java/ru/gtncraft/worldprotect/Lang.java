@@ -47,7 +47,7 @@ final public class Lang {
         List<String> flags = new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : region.getFlags().entrySet()) {
             String value = entry.getValue() ? ChatColor.RED + "запрещено" : ChatColor.GRAY + "разрешено";
-            flags.add(ChatColor.WHITE + entry.getKey() + ": " + value);
+            flags.add(ChatColor.WHITE + entry.getKey() + ": " + value + ChatColor.WHITE);
         }
         sender.sendMessage(ChatColor.YELLOW + "Флаги: " + Joiner.on(", ").join(flags));
     }
