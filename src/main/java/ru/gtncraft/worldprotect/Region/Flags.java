@@ -15,8 +15,7 @@ final public class Flags extends BasicDBObject {
         leavesDecay,
         grow,
         fade,
-        burn,
-        snowmanGrief
+        burn
     }
     public Flags(final Map map) {
         putAll(map);

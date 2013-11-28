@@ -173,7 +173,7 @@ final public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityBlockForm(final EntityBlockFormEvent event) {
         event.setCancelled(
-            plugin.prevent(event.getBlock().getLocation(), Flags.prevent.snowmanGrief)
+            plugin.prevent(event.getBlock().getLocation(), Flags.prevent.build)
         );
     }
     /**
