@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
+
+import java.util.ArrayList;
 import java.util.List;
 
 final public class Commands implements CommandExecutor {
@@ -20,6 +22,7 @@ final public class Commands implements CommandExecutor {
     final private WorldProtect plugin;
     final private WorldEditPlugin we;
     final private int regionPerPlayer;
+    final private int regionMaxSize;
 
     private class CommandException extends Exception {
         public CommandException(String message) {
@@ -31,7 +34,8 @@ final public class Commands implements CommandExecutor {
         plugin.getCommand("region").setExecutor(this);
         this.plugin = plugin;
         this.we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-        this.regionPerPlayer = plugin.getConfig().getConfigurationSection("region").getInt("maxPerPlayer");
+        this.regionPerPlayer = plugin.getConfig().getConfigurationSection("region").getInt("maxPerPlayer", 8);
+        this.regionMaxSize = (int) Math.pow(plugin.getConfig().getConfigurationSection("region").getInt("maxSize", 128), 3);
     }
 
     @Override
@@ -110,28 +114,29 @@ final public class Commands implements CommandExecutor {
         Region region = new Region(p1, p2);
         region.setName(name);
         region.add(sender.getName(), Players.role.owner);
-        /**
-         *  Check region have overlay with another.
-         */
+
         if (!sender.hasPermission(plugin.PERMISSION_ADMIN)) {
-            for (Region regionMin : plugin.getRegionManager().get(p1)) {
-                if (!regionMin.has(sender, Players.role.owner)) {
+            /**
+             *  Check region have overlay with another.
+             */
+            for (Region overlay : plugin.getRegionManager().get(p1, p2)) {
+                plugin.getLogger().info(overlay + " " + overlay.getName());
+                if (!overlay.has(sender, Players.role.owner)) {
                     throw new CommandException(Lang.REGION_OVERLAY_WITH_ANOTHER);
                 }
             }
-            for (Region regionMax : plugin.getRegionManager().get(p2)) {
-                if (!regionMax.has(sender, Players.role.owner)) {
-                    throw new CommandException(Lang.REGION_OVERLAY_WITH_ANOTHER);
-                }
-            }
-        }
-        /**
-         * Check max region per player limit
-         */
-        if (!sender.hasPermission(plugin.PERMISSION_ADMIN)) {
+            /**
+             * Check region per player limit.
+             */
             int total = plugin.getRegionManager().get(sender, Players.role.owner).size();
             if (regionPerPlayer > 0 && total >= regionPerPlayer) {
                 throw new CommandException(String.format(Lang.REGION_MAX_LIMIT, regionPerPlayer));
+            }
+            /**
+             * Check region selection size limit.
+             */
+            if (selection.getArea() > regionMaxSize) {
+                throw new CommandException(String.format(Lang.REGION_MAX_SIZE, regionMaxSize));
             }
         }
 

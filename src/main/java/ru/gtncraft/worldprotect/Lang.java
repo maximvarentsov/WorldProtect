@@ -37,6 +37,7 @@ final public class Lang {
     final public static String REGION_PLAYER_ADDED = "Игрок %s добавлен в регион %s.";
     final public static String REGION_PLAYER_DELETED = "Игрок %s удален из региона %s.";
     final public static String REGION_MAX_LIMIT = "Вы создали максимальное количество регионов %d.";
+    final public static String REGION_MAX_SIZE = "Максимальный размер региона %dx%dx%s";
     final public static String SAVE_SUCCESS = "Регионы сохранены.";
 
     final public static void showRegionInfo(Player sender, Region region) {

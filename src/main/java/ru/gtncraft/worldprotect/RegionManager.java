@@ -96,6 +96,22 @@ final public class RegionManager {
         return regions.get(world.getName());
     }
     /**
+     * Get regions inside first or second location.
+     *
+     * @param p1 location one.
+     * @param p2 location two.
+     */
+    public List<Region> get(final Location p1, final Location p2) {
+        List<Region> result = new ArrayList<>();
+        for (Map.Entry<String, Region> entry : get(p1.getWorld()).entrySet()) {
+            Region region = entry.getValue();
+            if (region.contains(p1) || region.contains(p2)) {
+                result.add(region);
+            }
+        }
+        return result;
+    }
+    /**
      * Get regions inside current location.
      *
      * @param location Current location.

@@ -3,6 +3,6 @@ database:
     port: 27017
     name: worldprotect
 region:
-    maxSize: 256
-    maxPerPlayer: 4
+    maxSize: 128
+    maxPerPlayer: 8
     item: STICK
