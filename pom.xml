@@ -5,7 +5,7 @@
     <groupId>ru.maximvarentsov</groupId>
     <artifactId>WorldProtect</artifactId>
     <name>WorldProtect</name>
-    <version>0.2</version>
+    <version>0.3</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>1.6.4-R2.1-SNAPSHOT</version>
+            <version>1.7.2-R0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
