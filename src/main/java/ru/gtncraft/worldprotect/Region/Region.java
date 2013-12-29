@@ -139,8 +139,7 @@ final public class Region extends BasicDBObject {
         this.put("members", this.members);
     }
 
-    @Override
-    public String toString() {
+    public String getSize() {
         return "( p1: " + p1 + " p2: " + p2 + " )";
     }
 }

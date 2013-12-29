@@ -9,27 +9,43 @@ import ru.gtncraft.worldprotect.Listeners.*;
 import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.database.JsonFile;
+import ru.gtncraft.worldprotect.database.MongoDB;
+import ru.gtncraft.worldprotect.database.Storage;
+
 import java.io.IOException;
 
-final public class WorldProtect extends JavaPlugin {
+public class WorldProtect extends JavaPlugin {
 
     private RegionManager rm;
 
-    final public String PERMISSION_ADMIN = "worldprotect.admin";
-    final public String PERMISSION_USE = "worldprotect.use";
+    public final String PERMISSION_ADMIN = "worldprotect.admin";
+    public final String PERMISSION_USE = "worldprotect.use";
 
     @Override
     public void onEnable() {
 
         saveDefaultConfig();
+        Storage storage;
 
         try {
-            setRegionManager(new RegionManager(getConfig().getConfigurationSection("db")));
+            switch (getConfig().getConfigurationSection("storage").getString("type")) {
+                case "mongodb":
+                    storage = new MongoDB(this);
+                    break;
+                case "file":
+                    storage = new JsonFile(this);
+                    break;
+                default:
+                    throw new IOException("Unknown regions storage.");
+            }
         } catch (IOException ex) {
             getLogger().severe(ex.getMessage());
             setEnabled(false);
             return;
         }
+
+        setRegionManager(new RegionManager(storage));
 
         for (World world : Bukkit.getServer().getWorlds()) {
             getLogger().info("Load regions for world " + world.getName() + ".");

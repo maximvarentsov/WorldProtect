@@ -1,27 +1,24 @@
 package ru.gtncraft.worldprotect;
 
-import com.mongodb.*;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
-import java.io.IOException;
+import ru.gtncraft.worldprotect.database.Storage;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final public class RegionManager {
+public class RegionManager {
 
-    final private DB db;
-    final private Map<String, Map<String, Region>> regions;
+    private final Storage storage;
+    private final Map<String, Map<String, Region>> regions = new HashMap<>();
 
-    public RegionManager(final ConfigurationSection config) throws IOException {
-        MongoClient mongoClient = new MongoClient(config.getString("host", "localhost"), config.getInt("port", 27017));
-        this.db = mongoClient.getDB(config.getString("name", "worldprotect"));
-        this.regions = new HashMap<>();
+    public RegionManager(Storage storage) {
+        this.storage = storage;
     }
     /**
      * Load regions for world.
@@ -29,20 +26,7 @@ final public class RegionManager {
      * @param world World
      */
     public void load(final World world) {
-        Map<String, Region> values = new HashMap<>();
-        // Init collection.
-        DBCollection coll = db.getCollection(world.getName());
-        if (coll.count() < 1) {
-            coll.ensureIndex(new BasicDBObject("name", 1).append("unique", true));
-        }
-        // Get regions.
-        try (DBCursor curr = coll.find()) {
-            while (curr.hasNext()) {
-                Region region = new Region(curr.next().toMap());
-                values.put(region.getName(), region);
-            }
-        }
-        regions.put(world.getName(), values);
+        regions.put(world.getName(), storage.load(world));
     }
     /**
      * Delete region from world.
@@ -52,8 +36,15 @@ final public class RegionManager {
      */
     public void delete(final World world, final String name) {
         get(world).remove(name);
-        DBCollection coll = db.getCollection(world.getName());
-        coll.remove(new BasicDBObject("name", name));
+        storage.delete(world, name);
+    }
+    /**
+     * Save world regions.
+     *
+     * @param world World.
+     */
+    public void save(final World world) {
+        storage.save(world, get(world));
     }
     /**
      * Save and unload world regions.
@@ -63,20 +54,6 @@ final public class RegionManager {
     public void unload(final World world) {
         save(world);
         regions.remove(world.getName());
-    }
-    /**
-     * Save world regions.
-     *
-     * @param world World.
-     */
-    public void save(final World world) {
-        DBCollection coll = db.getCollection(world.getName());
-        for (Map.Entry<String, Region> entry : get(world).entrySet() ) {
-            Region region = entry.getValue();
-            region.update();
-            DBObject query = new BasicDBObject("name", region.getName());
-            coll.findAndModify(query, null, null, false, region, false, true);
-        }
     }
     /**
      * Add new region in world.

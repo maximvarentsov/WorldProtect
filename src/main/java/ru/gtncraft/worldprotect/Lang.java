@@ -42,7 +42,7 @@ final public class Lang {
 
     final public static void showRegionInfo(Player sender, Region region) {
         sender.sendMessage(ChatColor.YELLOW + "Регион: "    + ChatColor.WHITE + region.getName());
-        sender.sendMessage(ChatColor.YELLOW + "Размер: "    + ChatColor.WHITE + region);
+        sender.sendMessage(ChatColor.YELLOW + "Размер: "    + ChatColor.WHITE + region.getSize());
         sender.sendMessage(ChatColor.YELLOW + "Владельцы: " + ChatColor.WHITE + region.get(Players.role.owner));
         sender.sendMessage(ChatColor.YELLOW + "Игроки: "    + ChatColor.WHITE + region.get(Players.role.member));
         List<String> flags = new ArrayList<>();

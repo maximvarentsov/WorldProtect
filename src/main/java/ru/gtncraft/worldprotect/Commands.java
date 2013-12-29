@@ -14,7 +14,6 @@ import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
 
-import java.util.ArrayList;
 import java.util.List;
 
 final public class Commands implements CommandExecutor {
@@ -148,7 +147,7 @@ final public class Commands implements CommandExecutor {
     private boolean commandList(Player sender) {
         sender.sendMessage(ChatColor.GREEN + Lang.REGION_OWN_LIST);
         for (Region region : plugin.getRegionManager().get(sender, Players.role.owner)) {
-            sender.sendMessage(ChatColor.GREEN + Lang.REGION_NAME + " " + region.getName() + " " + region);
+            sender.sendMessage(ChatColor.GREEN + Lang.REGION_NAME + " " + region.getName() + " " + region.getSize());
         }
         return true;
     }
