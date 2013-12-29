@@ -94,6 +94,17 @@ final public class EntityListener implements Listener {
             plugin.prevent(event.getEntity().getLocation(), Flags.prevent.damage)
         );
     }
+
+    /**
+     * Stores data for damage events.
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onDamage(final EntityDamageEvent event) {
+        Entity entity = event.getEntity();
+        if (plugin.prevent(entity.getLocation(), Flags.prevent.damage)) {
+            event.setCancelled(true);
+        }
+    }
     /**
      * Called when an entity is damaged by an entity.
      */
