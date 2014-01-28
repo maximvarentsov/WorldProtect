@@ -16,12 +16,12 @@ import ru.gtncraft.worldprotect.Region.Region;
 
 import java.util.List;
 
-final public class Commands implements CommandExecutor {
+public class Commands implements CommandExecutor {
 
-    final private WorldProtect plugin;
-    final private WorldEditPlugin we;
-    final private int regionPerPlayer;
-    final private int regionMaxSize;
+    private final WorldProtect plugin;
+    private final WorldEditPlugin we;
+    private final int regionPerPlayer;
+    private final int regionMaxSize;
 
     private class CommandException extends Exception {
         public CommandException(String message) {
@@ -29,12 +29,12 @@ final public class Commands implements CommandExecutor {
         }
     }
 
-    public Commands(WorldProtect plugin) {
-        plugin.getCommand("region").setExecutor(this);
+    public Commands(final WorldProtect plugin) {
         this.plugin = plugin;
         this.we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         this.regionPerPlayer = plugin.getConfig().getConfigurationSection("region").getInt("maxPerPlayer", 8);
         this.regionMaxSize = (int) Math.pow(plugin.getConfig().getConfigurationSection("region").getInt("maxSize", 128), 3);
+        this.plugin.getCommand("region").setExecutor(this);
     }
 
     @Override

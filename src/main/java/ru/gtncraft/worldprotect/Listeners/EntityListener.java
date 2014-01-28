@@ -11,11 +11,11 @@ import ru.gtncraft.worldprotect.Lang;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.Region.Flags;
 
-final public class EntityListener implements Listener {
+public class EntityListener implements Listener {
 
-    final private WorldProtect plugin;
+    private final WorldProtect plugin;
 
-    public EntityListener(WorldProtect plugin) {
+    public EntityListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.plugin = plugin;
     }
@@ -23,7 +23,7 @@ final public class EntityListener implements Listener {
      * Called when a LivingEntity shoots a bow firing an arrow.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onShootBow(EntityShootBowEvent event) {
+    public void onShootBow(final EntityShootBowEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
             Player player = (Player) event.getEntity();
             if (plugin.prevent(player.getLocation(), player, Flags.prevent.damage)) {
@@ -40,7 +40,7 @@ final public class EntityListener implements Listener {
      * Thrown when a non-player entity (such as an Enderman) tries to teleport from one location to another.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onTeleport(EntityTeleportEvent event) {
+    public void onTeleport(final EntityTeleportEvent event) {
         event.setCancelled(
             plugin.prevent(event.getTo(), Flags.prevent.teleport) || plugin.prevent(event.getFrom(), Flags.prevent.teleport)
         );

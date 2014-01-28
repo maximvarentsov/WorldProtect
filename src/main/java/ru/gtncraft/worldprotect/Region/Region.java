@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-final public class Region extends BasicDBObject {
+public class Region extends BasicDBObject {
 
     final private Point p1;
     final private Point p2;

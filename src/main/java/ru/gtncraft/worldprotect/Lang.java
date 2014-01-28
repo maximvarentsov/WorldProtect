@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-final public class Lang {
+public class Lang {
 
     final public static String WORLDEDIT_NOT_INSTALLED = "Плагин WorldEdit не найден.";
     final public static String WORLDEDIT_NO_SELECTION = "Сначала выделите регион.";

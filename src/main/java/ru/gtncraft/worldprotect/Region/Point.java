@@ -4,7 +4,7 @@ import com.mongodb.BasicDBObject;
 import org.bukkit.Location;
 import java.util.Map;
 
-final public class Point extends BasicDBObject {
+public class Point extends BasicDBObject {
 
     public Point(final Location location) {
         this.put("x", location.getBlockX());

@@ -2,22 +2,21 @@ package ru.gtncraft.worldprotect.Listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import ru.gtncraft.worldprotect.Lang;
 import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.WorldProtect;
 
-final public class VehicleListener implements Listener {
+public class VehicleListener implements Listener {
 
-    final private WorldProtect plugin;
+    private final WorldProtect plugin;
 
-    public VehicleListener(WorldProtect plugin) {
+    public VehicleListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.plugin = plugin;
     }

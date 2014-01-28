@@ -3,7 +3,7 @@ package ru.gtncraft.worldprotect.Region;
 import com.mongodb.BasicDBObject;
 import java.util.Map;
 
-final public class Flags extends BasicDBObject {
+public class Flags extends BasicDBObject {
     public static enum prevent {
         build,
         use,

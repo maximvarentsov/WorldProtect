@@ -18,43 +18,45 @@ import ru.gtncraft.worldprotect.WorldProtect;
 
 import java.util.List;
 
-final public class PlayerListener implements Listener {
+public class PlayerListener implements Listener {
 
-    final private WorldProtect plugin;
-    final private Material item;
-    final private ImmutableList<Material> materialsProtected = ImmutableList.of(
-            Material.CHEST,
-            Material.LOCKED_CHEST,
-            Material.DISPENSER,
-            Material.DROPPER,
-            Material.WORKBENCH,
-            Material.JUKEBOX,
-            Material.BREWING_STAND,
-            Material.ANVIL,
-            Material.CAULDRON,
-            Material.FURNACE,
-            Material.FENCE_GATE,
-            Material.DROPPER,
-            Material.ENCHANTMENT_TABLE,
-            Material.STONE_BUTTON,
-            Material.WOOD_BUTTON,
-            Material.WOOD_DOOR,
-            Material.IRON_DOOR,
-            Material.TRAP_DOOR,
-            Material.ENDER_CHEST,
-            Material.BEACON,
-            Material.WOODEN_DOOR
-    );
+    private final  WorldProtect plugin;
+    private final Material item;
+    private final  List<Material> materialsProtected;
 
-    public PlayerListener(WorldProtect plugin) {
+    public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.plugin = plugin;
 
-        String item = plugin.getConfig().getConfigurationSection("region").getString("item", "STICK");
+        String item = plugin.getConfig().getString("region.item", "STICK");
         this.item = Material.matchMaterial(item);
         if (this.item == null) {
             plugin.getLogger().severe("Region item not found " + item);
         }
+
+        this.materialsProtected = ImmutableList.of(
+                Material.CHEST,
+                Material.LOCKED_CHEST,
+                Material.DISPENSER,
+                Material.DROPPER,
+                Material.WORKBENCH,
+                Material.JUKEBOX,
+                Material.BREWING_STAND,
+                Material.ANVIL,
+                Material.CAULDRON,
+                Material.FURNACE,
+                Material.FENCE_GATE,
+                Material.DROPPER,
+                Material.ENCHANTMENT_TABLE,
+                Material.STONE_BUTTON,
+                Material.WOOD_BUTTON,
+                Material.WOOD_DOOR,
+                Material.IRON_DOOR,
+                Material.TRAP_DOOR,
+                Material.ENDER_CHEST,
+                Material.BEACON,
+                Material.WOODEN_DOOR
+        );
     }
 
     private void checkForRegion(Location location, Player player) {

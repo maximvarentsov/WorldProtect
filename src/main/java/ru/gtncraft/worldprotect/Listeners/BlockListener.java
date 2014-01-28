@@ -10,11 +10,11 @@ import ru.gtncraft.worldprotect.Lang;
 import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.WorldProtect;
 
-final public class BlockListener implements Listener {
+public class BlockListener implements Listener {
 
-    final private WorldProtect plugin;
+    private final WorldProtect plugin;
 
-    public BlockListener(WorldProtect plugin) {
+    public BlockListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.plugin = plugin;
     }

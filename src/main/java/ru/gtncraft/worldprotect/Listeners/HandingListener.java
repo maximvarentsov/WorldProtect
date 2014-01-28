@@ -13,11 +13,11 @@ import ru.gtncraft.worldprotect.Lang;
 import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.WorldProtect;
 
-final public class HandingListener implements Listener {
+public class HandingListener implements Listener {
 
-    final private WorldProtect plugin;
+    private final WorldProtect plugin;
 
-    public HandingListener(WorldProtect plugin) {
+    public HandingListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.plugin = plugin;
     }
