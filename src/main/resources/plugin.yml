@@ -1,4 +1,4 @@
-name: WorldProtect
+name: ${artifactId}
 main: ru.gtncraft.worldprotect.WorldProtect
 author: Mete0 <admin@gtn-craft.ru>
 version: ${version}

@@ -4,7 +4,6 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.maximvarentsov</groupId>
     <artifactId>WorldProtect</artifactId>
-    <name>WorldProtect</name>
     <version>0.4</version>
 
     <properties>
@@ -12,7 +11,7 @@
     </properties>
 
     <build>
-        <finalName>WorldProtect</finalName>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -48,20 +47,23 @@
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
+            <artifactId>bukkit</artifactId>
             <version>1.7.2-R0.3-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldedit</artifactId>
             <version>5.5.8-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
             <version>2.11.3</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
