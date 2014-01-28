@@ -35,6 +35,7 @@ public class Commands implements CommandExecutor {
         this.regionPerPlayer = plugin.getConfig().getConfigurationSection("region").getInt("maxPerPlayer", 8);
         this.regionMaxSize = (int) Math.pow(plugin.getConfig().getConfigurationSection("region").getInt("maxSize", 128), 3);
         this.plugin.getCommand("region").setExecutor(this);
+        this.plugin.getCommand("region").setTabCompleter(new CommandsCompleter(plugin));
     }
 
     @Override

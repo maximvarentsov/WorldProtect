@@ -18,7 +18,7 @@ commands:
         permission: worldprotect.use
         usage: |
              /<command> define <регион> - Создать регион.
-             /<command> del <регион> - Удалить регион.
+             /<command> delete <регион> - Удалить регион.
              /<command> addowner <регион> <игрок> - Добавить владельца региона.
              /<command> delowner <регион> <игрок> - Удалить владельца региона.
              /<command> addmember <регион> <игрок> - Добавить игрока в регион.
