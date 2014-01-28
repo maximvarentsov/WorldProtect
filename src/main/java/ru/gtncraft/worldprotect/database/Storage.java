@@ -5,7 +5,7 @@ import ru.gtncraft.worldprotect.Region.Region;
 import java.util.Map;
 
 public interface Storage {
-    void save(World world, Map<String, Region> regions);
-    void delete(World world, String name);
-    Map<String, Region> load(World world);
+    void save(final World world, final Map<String, Region> regions);
+    void delete(final World world, final String name);
+    Map<String, Region> load(final World world);
 }

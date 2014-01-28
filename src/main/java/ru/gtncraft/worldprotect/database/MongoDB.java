@@ -2,7 +2,6 @@ package ru.gtncraft.worldprotect.database;
 
 import com.mongodb.*;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.WorldProtect;
 
@@ -15,9 +14,11 @@ public class MongoDB implements Storage {
     private final DB db;
 
     public MongoDB(final WorldProtect plugin) throws IOException {
-        ConfigurationSection config = plugin.getConfig().getConfigurationSection("storage");
-        MongoClient mongoClient = new MongoClient(config.getString("host", "localhost"), config.getInt("port", 27017));
-        db = mongoClient.getDB(config.getString("name", "worldprotect"));
+        MongoClient mongoClient = new MongoClient(
+                plugin.getConfig().getString("storage.host", "localhost"),
+                plugin.getConfig().getInt("storage.port", 27017)
+        );
+        db = mongoClient.getDB(plugin.getConfig().getString("storage.name", "worldprotect"));
     }
 
 

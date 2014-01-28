@@ -62,8 +62,7 @@ public class JsonFile implements Storage {
         } catch (FileNotFoundException ex) {
         } catch (IOException ex) {
             plugin.getLogger().severe(ex.getMessage());
-        } finally {
-            return result;
         }
+        return result;
     }
 }
