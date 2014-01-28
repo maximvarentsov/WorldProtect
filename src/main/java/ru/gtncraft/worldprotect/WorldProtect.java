@@ -29,7 +29,7 @@ public class WorldProtect extends JavaPlugin {
         Storage storage;
 
         try {
-            switch (getConfig().getConfigurationSection("storage").getString("type")) {
+            switch (getConfig().getString("storage.type", "file")) {
                 case "mongodb":
                     storage = new MongoDB(this);
                     break;
