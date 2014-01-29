@@ -8,11 +8,14 @@ import java.io.IOException;
 public final class WorldProtect extends JavaPlugin {
 
     private RegionManager manager;
+    private Config config;
 
     @Override
     public void onEnable() {
 
         saveDefaultConfig();
+
+        config = new Config(super.getConfig());
 
         try {
             manager = new RegionManager(this);
@@ -34,7 +37,7 @@ public final class WorldProtect extends JavaPlugin {
 
     @Override
     public Config getConfig() {
-        return new Config(super.getConfig());
+        return config;
     }
 
     @Override
