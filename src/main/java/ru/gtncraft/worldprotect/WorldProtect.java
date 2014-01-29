@@ -15,7 +15,7 @@ import ru.gtncraft.worldprotect.database.Storage;
 
 import java.io.IOException;
 
-public class WorldProtect extends JavaPlugin {
+public final class WorldProtect extends JavaPlugin {
 
     private RegionManager manager;
 
