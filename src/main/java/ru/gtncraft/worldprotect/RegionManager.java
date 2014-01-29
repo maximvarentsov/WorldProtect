@@ -7,8 +7,11 @@ import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.database.JsonFile;
+import ru.gtncraft.worldprotect.database.MongoDB;
 import ru.gtncraft.worldprotect.database.Storage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +22,19 @@ public class RegionManager {
     private final Storage storage;
     private final Map<String, Map<String, Region>> regions = new HashMap<>();
 
-    public RegionManager(Storage storage) {
-        this.storage = storage;
+    public RegionManager(final WorldProtect plugin) throws IOException {
+
+        switch (plugin.getConfig().getString("storage.type", "file")) {
+            case "mongodb":
+                this.storage = new MongoDB(plugin);
+                break;
+            case "file":
+                this.storage = new JsonFile(plugin);
+                break;
+            default:
+                throw new IOException("Unknown regions storage.");
+        }
+
         // load all worlds
         for (World world : Bukkit.getServer().getWorlds()) {
             load(world);

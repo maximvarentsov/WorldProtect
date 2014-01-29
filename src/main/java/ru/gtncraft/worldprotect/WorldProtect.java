@@ -2,9 +2,6 @@ package ru.gtncraft.worldprotect;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.gtncraft.worldprotect.Listeners.*;
-import ru.gtncraft.worldprotect.database.JsonFile;
-import ru.gtncraft.worldprotect.database.MongoDB;
-import ru.gtncraft.worldprotect.database.Storage;
 
 import java.io.IOException;
 
@@ -16,26 +13,14 @@ public final class WorldProtect extends JavaPlugin {
     public void onEnable() {
 
         saveDefaultConfig();
-        Storage storage;
 
         try {
-            switch (getConfig().getString("storage.type", "file")) {
-                case "mongodb":
-                    storage = new MongoDB(this);
-                    break;
-                case "file":
-                    storage = new JsonFile(this);
-                    break;
-                default:
-                    throw new IOException("Unknown regions storage.");
-            }
+            manager = new RegionManager(this);
         } catch (IOException ex) {
             getLogger().severe(ex.getMessage());
             setEnabled(false);
             return;
         }
-
-        manager = new RegionManager(storage);
 
         new BlockListener(this);
         new EntityListener(this);
