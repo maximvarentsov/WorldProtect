@@ -9,21 +9,19 @@ import java.util.List;
 
 public class Config extends YamlConfiguration {
 
-    private final FileConfiguration config;
     private final List<String> preventCommands;
     private final List<Material> preventUse;
     private final Material tool;
 
-    public Config(FileConfiguration config) {
-        this.config = config;
+    public Config(final FileConfiguration config) {
 
         this.preventCommands = new ArrayList<>();
-        for (String command : this.config.getStringList("region.prevent.commands")) {
+        for (String command : config.getStringList("region.prevent.commands")) {
             this.preventCommands.add(command.toLowerCase());
         }
 
         this.preventUse = new ArrayList<>();
-        for (String value : this.config.getStringList("region.prevent.use")) {
+        for (String value : config.getStringList("region.prevent.use")) {
             Material material = Material.matchMaterial(value.toUpperCase());
             if (material != null) {
                 this.preventUse.add(material);
@@ -37,7 +35,6 @@ public class Config extends YamlConfiguration {
         } else {
             this.tool = tool;
         }
-
     }
 
     public Material getInfoTool() {
@@ -51,5 +48,4 @@ public class Config extends YamlConfiguration {
     public List<Material> getPreventUse() {
         return preventUse;
     }
-
 }
