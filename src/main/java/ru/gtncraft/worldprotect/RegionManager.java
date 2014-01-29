@@ -1,5 +1,6 @@
 package ru.gtncraft.worldprotect;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -20,6 +21,10 @@ public class RegionManager {
 
     public RegionManager(Storage storage) {
         this.storage = storage;
+        // load all worlds
+        for (World world : Bukkit.getServer().getWorlds()) {
+            load(world);
+        }
     }
     /**
      * Load regions for world.
@@ -46,6 +51,15 @@ public class RegionManager {
      */
     public void save(final World world) {
         storage.save(world, get(world));
+    }
+    /**
+     * Save all worlds regions.
+     *
+     */
+    public void saveAll() {
+        for (World world : Bukkit.getWorlds()) {
+            save(world);
+        }
     }
     /**
      * Save and unload world regions.

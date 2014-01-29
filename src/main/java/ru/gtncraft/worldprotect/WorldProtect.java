@@ -1,7 +1,5 @@
 package ru.gtncraft.worldprotect;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.gtncraft.worldprotect.Listeners.*;
 import ru.gtncraft.worldprotect.database.JsonFile;
@@ -39,11 +37,6 @@ public final class WorldProtect extends JavaPlugin {
 
         manager = new RegionManager(storage);
 
-        for (World world : Bukkit.getServer().getWorlds()) {
-            getLogger().info("Load regions for world " + world.getName() + ".");
-            getRegionManager().load(world);
-        }
-
         new BlockListener(this);
         new EntityListener(this);
         new PlayerListener(this);
@@ -62,10 +55,7 @@ public final class WorldProtect extends JavaPlugin {
     @Override
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
-        for (World world : Bukkit.getWorlds()) {
-            getLogger().info("Save regions for world " + world.getName() + ".");
-            getRegionManager().save(world);
-        }
+        getRegionManager().saveAll();
     }
     /**
      * API
