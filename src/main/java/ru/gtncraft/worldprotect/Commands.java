@@ -21,7 +21,6 @@ public class Commands implements CommandExecutor {
     private final WorldProtect plugin;
     private final WorldEditPlugin we;
     private final int regionPerPlayer;
-    private final int regionMaxSize;
 
     private class CommandException extends Exception {
         public CommandException(String message) {
@@ -33,7 +32,6 @@ public class Commands implements CommandExecutor {
         this.plugin = plugin;
         this.we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         this.regionPerPlayer = plugin.getConfig().getConfigurationSection("region").getInt("maxPerPlayer", 8);
-        this.regionMaxSize = (int) Math.pow(plugin.getConfig().getConfigurationSection("region").getInt("maxSize", 128), 3);
         this.plugin.getCommand("region").setExecutor(this);
         this.plugin.getCommand("region").setTabCompleter(new CommandsCompleter(plugin));
     }
@@ -131,12 +129,6 @@ public class Commands implements CommandExecutor {
             int total = plugin.getRegionManager().get(sender, Players.role.owner).size();
             if (regionPerPlayer > 0 && total >= regionPerPlayer) {
                 throw new CommandException(String.format(Lang.REGION_MAX_LIMIT, regionPerPlayer));
-            }
-            /**
-             * Check region selection size limit.
-             */
-            if (selection.getArea() > regionMaxSize) {
-                throw new CommandException(String.format(Lang.REGION_MAX_SIZE, regionMaxSize));
             }
         }
 

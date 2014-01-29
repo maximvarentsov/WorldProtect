@@ -4,7 +4,6 @@ storage:
     port: 27017
     name: worldprotect
 region:
-    maxSize: 128
     maxPerPlayer: 8
     item: STICK
     prevent:
