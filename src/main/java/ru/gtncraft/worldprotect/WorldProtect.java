@@ -63,6 +63,11 @@ public class WorldProtect extends JavaPlugin {
     }
 
     @Override
+    public Config getConfig() {
+        return new Config(super.getConfig());
+    }
+
+    @Override
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
         for (World world : Bukkit.getWorlds()) {

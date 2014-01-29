@@ -8,5 +8,27 @@ region:
     maxPerPlayer: 8
     item: STICK
     prevent:
+        use:
+            - CHEST
+            - DISPENSER
+            - DROPPER
+            - WORKBENCH
+            - JUKEBOX
+            - BREWING_STAND
+            - ANVIL
+            - CAULDRON
+            - FURNACE
+            - FENCE_GATE
+            - DROPPER
+            - ENCHANTMENT_TABLE
+            - STONE_BUTTON
+            - WOOD_BUTTON
+            - WOOD_DOOR
+            - IRON_DOOR
+            - TRAP_DOOR
+            - ENDER_CHEST
+            - BEACON
+            - WOODEN_DOOR
         commands:
             - sethome
+

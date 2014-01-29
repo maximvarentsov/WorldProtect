@@ -1,6 +1,5 @@
 package ru.gtncraft.worldprotect.Listeners;
 
-import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,63 +15,23 @@ import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.WorldProtect;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class PlayerListener implements Listener {
 
-    private final  WorldProtect plugin;
-    private final Material item;
-    private final  List<Material> materialsProtected;
-    // Commands don't allowed guest players in protected region.
-    private final Set<String> preventCommands;
+    private final WorldProtect plugin;
 
     public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.plugin = plugin;
-
-        String item = plugin.getConfig().getString("region.item", "STICK");
-        this.item = Material.matchMaterial(item);
-        if (this.item == null) {
-            plugin.getLogger().severe("Region item not found " + item);
-        }
-
-        this.materialsProtected = ImmutableList.of(
-                Material.CHEST,
-                Material.DISPENSER,
-                Material.DROPPER,
-                Material.WORKBENCH,
-                Material.JUKEBOX,
-                Material.BREWING_STAND,
-                Material.ANVIL,
-                Material.CAULDRON,
-                Material.FURNACE,
-                Material.FENCE_GATE,
-                Material.DROPPER,
-                Material.ENCHANTMENT_TABLE,
-                Material.STONE_BUTTON,
-                Material.WOOD_BUTTON,
-                Material.WOOD_DOOR,
-                Material.IRON_DOOR,
-                Material.TRAP_DOOR,
-                Material.ENDER_CHEST,
-                Material.BEACON,
-                Material.WOODEN_DOOR
-        );
-        // Prevent commands to lowercase.
-        this.preventCommands = new HashSet<>();
-        for (String command : plugin.getConfig().getStringList("region.prevent.commands")) {
-            this.preventCommand(command.toLowerCase());
-        }
     }
 
     private boolean preventCommand(final String message) {
         String command = message.substring(1).split(" ")[0];
-        return preventCommands.contains(command.toLowerCase());
+        return plugin.getConfig().getPreventCommands().contains(command.toLowerCase());
     }
 
-    private void checkForRegion(Location location, Player player) {
+    private void showRegionInfo(final Location location, final Player player) {
         List<Region> regions = plugin.getRegionManager().get(location);
         if (regions.size() == 0) {
             player.sendMessage(Lang.REGION_NOT_FOUND_IN_AREA);
@@ -91,10 +50,10 @@ public class PlayerListener implements Listener {
         boolean prevent = false;
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
-                if (materialsProtected.contains(event.getClickedBlock().getType())) {
+                if (plugin.getConfig().getPreventUse().contains(event.getClickedBlock().getType())) {
                     prevent = true;
-                } else if (event.getItem() != null && event.getItem().getType() == item) {
-                    checkForRegion(location, player);
+                } else if (event.getItem() != null && event.getItem().getType() == plugin.getConfig().getInfoTool()) {
+                    showRegionInfo(location, player);
                 }
                 break;
             case LEFT_CLICK_BLOCK:
