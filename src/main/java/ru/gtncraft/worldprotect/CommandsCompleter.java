@@ -86,7 +86,7 @@ public class CommandsCompleter implements TabCompleter {
 
     private List<String> allRegions(Player player) {
         List<String> result = new ArrayList<>();
-        if (player.hasPermission(plugin.PERMISSION_ADMIN)) {
+        if (player.hasPermission(Permissions.ADMIN)) {
             for (Map.Entry<String, Region> entry : plugin.getRegionManager().get(player.getWorld()).entrySet()) {
                 result.add(entry.getKey());
             }

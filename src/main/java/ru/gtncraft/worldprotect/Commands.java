@@ -42,7 +42,7 @@ public class Commands implements CommandExecutor {
             return false;
         }
         Player player = (Player) commandSender;
-        if ( ! player.hasPermission(plugin.PERMISSION_USE) ) {
+        if ( ! player.hasPermission(Permissions.USE) ) {
             return false;
         }
         try {
@@ -113,7 +113,7 @@ public class Commands implements CommandExecutor {
         region.setName(name);
         region.add(sender.getName(), Players.role.owner);
 
-        if (!sender.hasPermission(plugin.PERMISSION_ADMIN)) {
+        if (!sender.hasPermission(Permissions.ADMIN)) {
             /**
              *  Check region have overlay with another.
              */
@@ -168,7 +168,7 @@ public class Commands implements CommandExecutor {
     }
 
     private boolean commandSave(Player sender) throws CommandException {
-        if (!sender.hasPermission(plugin.PERMISSION_ADMIN)) {
+        if (!sender.hasPermission(Permissions.ADMIN)) {
             return false;
         }
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -289,7 +289,7 @@ public class Commands implements CommandExecutor {
     }
 
     private void checkPermission(Player sender, Region region) throws CommandException {
-        if (!(region.has(sender, Players.role.owner) || sender.hasPermission(plugin.PERMISSION_ADMIN))) {
+        if (!(region.has(sender, Players.role.owner) || sender.hasPermission(Permissions.ADMIN))) {
             throw new CommandException(Lang.REGION_NO_PERMISSION);
         }
     }

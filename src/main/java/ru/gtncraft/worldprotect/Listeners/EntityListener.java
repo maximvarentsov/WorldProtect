@@ -26,13 +26,13 @@ public class EntityListener implements Listener {
     public void onShootBow(final EntityShootBowEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
             Player player = (Player) event.getEntity();
-            if (plugin.prevent(player.getLocation(), player, Flags.prevent.damage)) {
+            if (plugin.getRegionManager().prevent(player.getLocation(), player, Flags.prevent.damage)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
             event.setCancelled(
-                plugin.prevent(event.getEntity().getLocation(), Flags.prevent.damage)
+                plugin.getRegionManager().prevent(event.getEntity().getLocation(), Flags.prevent.damage)
             );
         }
     }
@@ -42,7 +42,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(final EntityTeleportEvent event) {
         event.setCancelled(
-            plugin.prevent(event.getTo(), Flags.prevent.teleport) || plugin.prevent(event.getFrom(), Flags.prevent.teleport)
+            plugin.getRegionManager().prevent(event.getTo(), Flags.prevent.teleport) || plugin.getRegionManager().prevent(event.getFrom(), Flags.prevent.teleport)
         );
     }
     /**
@@ -51,7 +51,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onExplode(final EntityExplodeEvent event) {
         for (Block block : event.blockList()) {
-            if (plugin.prevent(block.getLocation(), Flags.prevent.explode)) {
+            if (plugin.getRegionManager().prevent(block.getLocation(), Flags.prevent.explode)) {
                 event.setCancelled(true);
                 break;
             }
@@ -63,7 +63,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onExplosionPrime(final ExplosionPrimeEvent event) {
         event.setCancelled(
-            plugin.prevent(event.getEntity().getLocation(), Flags.prevent.explode)
+            plugin.getRegionManager().prevent(event.getEntity().getLocation(), Flags.prevent.explode)
         );
     }
     /**
@@ -72,7 +72,7 @@ public class EntityListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
-        if (plugin.prevent(event.getLocation(), Flags.prevent.creatureSpawn)) {
+        if (plugin.getRegionManager().prevent(event.getLocation(), Flags.prevent.creatureSpawn)) {
             event.setCancelled(true);
         }
     }
@@ -82,7 +82,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChangeBlock(final EntityChangeBlockEvent event) {
         event.setCancelled(
-            plugin.prevent(event.getBlock().getLocation(), Flags.prevent.build)
+            plugin.getRegionManager().prevent(event.getBlock().getLocation(), Flags.prevent.build)
         );
     }
     /**
@@ -91,7 +91,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamageByBlock(final EntityDamageByBlockEvent event) {
         event.setCancelled(
-            plugin.prevent(event.getEntity().getLocation(), Flags.prevent.damage)
+            plugin.getRegionManager().prevent(event.getEntity().getLocation(), Flags.prevent.damage)
         );
     }
 
@@ -101,7 +101,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamage(final EntityDamageEvent event) {
         Entity entity = event.getEntity();
-        if (plugin.prevent(entity.getLocation(), Flags.prevent.damage)) {
+        if (plugin.getRegionManager().prevent(entity.getLocation(), Flags.prevent.damage)) {
             event.setCancelled(true);
         }
     }
@@ -114,13 +114,13 @@ public class EntityListener implements Listener {
         Entity damager = event.getDamager();
         if (damager.getType() == EntityType.PLAYER) {
             Player player = (Player) damager;
-            if (plugin.prevent(target.getLocation(), player, Flags.prevent.damage)) {
+            if (plugin.getRegionManager().prevent(target.getLocation(), player, Flags.prevent.damage)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
             event.setCancelled(
-                plugin.prevent(target.getLocation(), Flags.prevent.damage)
+                plugin.getRegionManager().prevent(target.getLocation(), Flags.prevent.damage)
             );
         }
     }

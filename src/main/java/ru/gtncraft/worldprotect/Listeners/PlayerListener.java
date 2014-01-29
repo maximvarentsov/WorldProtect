@@ -68,7 +68,7 @@ public class PlayerListener implements Listener {
                 prevent = true;
                 break;
         }
-        if (prevent && plugin.prevent(location, player, Flags.prevent.use)) {
+        if (prevent && plugin.getRegionManager().prevent(location, player, Flags.prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -79,7 +79,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBedEnter(final PlayerBedEnterEvent event) {
         Player player = event.getPlayer();
-        if (plugin.prevent(event.getBed().getLocation(), player, Flags.prevent.use)) {
+        if (plugin.getRegionManager().prevent(event.getBed().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -90,7 +90,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketFill(final PlayerBucketFillEvent event) {
         Player player = event.getPlayer();
-        if (plugin.prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
+        if (plugin.getRegionManager().prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -101,7 +101,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(final PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
-        if (plugin.prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
+        if (plugin.getRegionManager().prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -112,7 +112,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteractEntity(final PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        if (plugin.prevent(event.getRightClicked().getLocation(), player, Flags.prevent.build)) {
+        if (plugin.getRegionManager().prevent(event.getRightClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -124,7 +124,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        if (plugin.prevent(player.getLocation(), player, Flags.prevent.command) || preventCommand(event.getMessage())) {
+        if (plugin.getRegionManager().prevent(player.getLocation(), player, Flags.prevent.command) || preventCommand(event.getMessage())) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -136,7 +136,7 @@ public class PlayerListener implements Listener {
     public void onTeleport(final PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)) {
-            if (plugin.prevent(player.getLocation(), player, Flags.prevent.teleport)) {
+            if (plugin.getRegionManager().prevent(player.getLocation(), player, Flags.prevent.teleport)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }

@@ -29,13 +29,13 @@ public class VehicleListener implements Listener {
         Entity attacker = event.getAttacker();
         if (attacker instanceof Player) {
             Player player = (Player) attacker;
-            if (plugin.prevent(event.getVehicle().getLocation(), player, Flags.prevent.build)) {
+            if (plugin.getRegionManager().prevent(event.getVehicle().getLocation(), player, Flags.prevent.build)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
             event.setCancelled(
-                plugin.prevent(event.getVehicle().getLocation(), Flags.prevent.build)
+                plugin.getRegionManager().prevent(event.getVehicle().getLocation(), Flags.prevent.build)
             );
         }
     }
@@ -47,7 +47,7 @@ public class VehicleListener implements Listener {
         Entity passenger = event.getEntered().getPassenger();
         if (passenger instanceof Player) {
             Player player = (Player) passenger;
-            if (plugin.prevent(event.getVehicle().getLocation(), player, Flags.prevent.use)) {
+            if (plugin.getRegionManager().prevent(event.getVehicle().getLocation(), player, Flags.prevent.use)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }

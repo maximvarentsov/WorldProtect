@@ -29,13 +29,13 @@ public class HandingListener implements Listener {
         Location location = event.getEntity().getLocation();
         if (event.getRemover().getType() == EntityType.PLAYER) {
             Player player = (Player) event.getRemover();
-            if (plugin.prevent(location, player, Flags.prevent.build)) {
+            if (plugin.getRegionManager().prevent(location, player, Flags.prevent.build)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
             event.setCancelled(
-                plugin.prevent(location, Flags.prevent.build)
+                plugin.getRegionManager().prevent(location, Flags.prevent.build)
             );
         }
     }
@@ -45,7 +45,7 @@ public class HandingListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlace(final HangingPlaceEvent event) {
         Player player = event.getPlayer();
-        if (plugin.prevent(event.getEntity().getLocation(), player, Flags.prevent.use)) {
+        if (plugin.getRegionManager().prevent(event.getEntity().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }

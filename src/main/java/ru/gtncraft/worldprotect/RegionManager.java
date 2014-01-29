@@ -3,6 +3,7 @@ package ru.gtncraft.worldprotect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.database.Storage;
@@ -126,5 +127,26 @@ public class RegionManager {
             }
         }
         return result;
+    }
+
+    public boolean prevent(final Location location, final Player player, final Flags.prevent flag) {
+        if (player.hasPermission(Permissions.ADMIN)) {
+            return false;
+        }
+        for (Region region : get(location)) {
+            if (region.has(flag) && region.has(player, Players.role.guest)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean prevent(final Location location, final Flags.prevent flag) {
+        for (Region region : get(location)) {
+            if (region.has(flag)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

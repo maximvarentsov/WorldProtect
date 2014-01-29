@@ -1,14 +1,9 @@
 package ru.gtncraft.worldprotect;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.gtncraft.worldprotect.Listeners.*;
-import ru.gtncraft.worldprotect.Region.Flags;
-import ru.gtncraft.worldprotect.Region.Players;
-import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.MongoDB;
 import ru.gtncraft.worldprotect.database.Storage;
@@ -18,9 +13,6 @@ import java.io.IOException;
 public final class WorldProtect extends JavaPlugin {
 
     private RegionManager manager;
-
-    public final String PERMISSION_ADMIN = "worldprotect.admin";
-    public final String PERMISSION_USE = "worldprotect.use";
 
     @Override
     public void onEnable() {
@@ -76,30 +68,8 @@ public final class WorldProtect extends JavaPlugin {
         }
     }
     /**
-     * API stuff.
-     *
+     * API
      */
-    public boolean prevent(final Location location, final Player player, final Flags.prevent flag) {
-        if (player.hasPermission(PERMISSION_ADMIN)) {
-            return false;
-        }
-        for (Region region : getRegionManager().get(location)) {
-            if (region.has(flag) && region.has(player, Players.role.guest)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean prevent(final Location location, final Flags.prevent flag) {
-        for (Region region : getRegionManager().get(location)) {
-            if (region.has(flag)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public RegionManager getRegionManager() {
         return manager;
     }
