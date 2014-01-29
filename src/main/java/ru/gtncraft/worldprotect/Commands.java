@@ -31,7 +31,7 @@ public class Commands implements CommandExecutor {
     public Commands(final WorldProtect plugin) {
         this.plugin = plugin;
         this.we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-        this.regionPerPlayer = plugin.getConfig().getConfigurationSection("region").getInt("maxPerPlayer", 8);
+        this.regionPerPlayer = plugin.getConfig().getInt("region.maxPerPlayer", 8);
         this.plugin.getCommand("region").setExecutor(this);
         this.plugin.getCommand("region").setTabCompleter(new CommandsCompleter(plugin));
     }
