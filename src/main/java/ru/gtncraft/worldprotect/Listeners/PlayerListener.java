@@ -36,7 +36,6 @@ public class PlayerListener implements Listener {
 
         this.materialsProtected = ImmutableList.of(
                 Material.CHEST,
-                Material.LOCKED_CHEST,
                 Material.DISPENSER,
                 Material.DROPPER,
                 Material.WORKBENCH,
