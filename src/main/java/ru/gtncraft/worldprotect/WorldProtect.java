@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public class WorldProtect extends JavaPlugin {
 
-    private RegionManager rm;
+    private RegionManager manager;
 
     public final String PERMISSION_ADMIN = "worldprotect.admin";
     public final String PERMISSION_USE = "worldprotect.use";
@@ -45,7 +45,7 @@ public class WorldProtect extends JavaPlugin {
             return;
         }
 
-        rm = new RegionManager(storage);
+        manager = new RegionManager(storage);
 
         for (World world : Bukkit.getServer().getWorlds()) {
             getLogger().info("Load regions for world " + world.getName() + ".");
@@ -101,6 +101,6 @@ public class WorldProtect extends JavaPlugin {
     }
 
     public RegionManager getRegionManager() {
-        return rm;
+        return manager;
     }
 }
