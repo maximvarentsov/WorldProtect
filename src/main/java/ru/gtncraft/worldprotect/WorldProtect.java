@@ -45,7 +45,7 @@ public class WorldProtect extends JavaPlugin {
             return;
         }
 
-        setRegionManager(new RegionManager(storage));
+        rm = new RegionManager(storage);
 
         for (World world : Bukkit.getServer().getWorlds()) {
             getLogger().info("Load regions for world " + world.getName() + ".");
@@ -102,9 +102,5 @@ public class WorldProtect extends JavaPlugin {
 
     public RegionManager getRegionManager() {
         return rm;
-    }
-
-    public void setRegionManager(RegionManager value) {
-        rm = value;
     }
 }
