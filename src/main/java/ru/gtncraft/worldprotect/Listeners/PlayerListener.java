@@ -16,13 +16,17 @@ import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.WorldProtect;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PlayerListener implements Listener {
 
     private final  WorldProtect plugin;
     private final Material item;
     private final  List<Material> materialsProtected;
+    // Commands don't allowed guest players in protected region.
+    private final Set<String> preventCommands;
 
     public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -56,6 +60,16 @@ public class PlayerListener implements Listener {
                 Material.BEACON,
                 Material.WOODEN_DOOR
         );
+        // Prevent commands to lowercase.
+        this.preventCommands = new HashSet<>();
+        for (String command : plugin.getConfig().getStringList("region.prevent.commands")) {
+            this.preventCommand(command.toLowerCase());
+        }
+    }
+
+    private boolean preventCommand(final String message) {
+        String command = message.substring(1).split(" ")[0];
+        return preventCommands.contains(command.toLowerCase());
     }
 
     private void checkForRegion(Location location, Player player) {
@@ -151,7 +165,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        if (plugin.prevent(player.getLocation(), player, Flags.prevent.command)) {
+        if (plugin.prevent(player.getLocation(), player, Flags.prevent.command) || preventCommand(event.getMessage())) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
