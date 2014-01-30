@@ -5,7 +5,7 @@ storage:
     name: worldprotect
 region:
     maxPerPlayer: 8
-    item: STICK
+    tool: STICK
     prevent:
         use:
             - CHEST

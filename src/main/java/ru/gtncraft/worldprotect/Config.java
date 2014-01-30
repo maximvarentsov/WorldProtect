@@ -36,7 +36,7 @@ public class Config extends YamlConfiguration {
             }
         }
 
-        String material = config.getString("region.item");
+        String material = config.getString("region.tool");
         Material tool = Material.matchMaterial(material.toUpperCase());
         if (tool == null) {
             this.tool = Material.STICK;
