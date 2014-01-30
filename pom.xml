@@ -39,7 +39,7 @@
             <url>http://maven.sk89q.com/repo</url>
         </repository>
         <repository>
-            <id>bukkit</id>
+            <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
     </repositories>
