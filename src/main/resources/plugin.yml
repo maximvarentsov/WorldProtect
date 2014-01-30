@@ -2,6 +2,7 @@ name: ${artifactId}
 main: ru.gtncraft.worldprotect.WorldProtect
 author: Mete0 <admin@gtn-craft.ru>
 version: ${version}
+softdepend: [WorldEdit]
 
 permissions:
     worldprotect.admin:
@@ -27,4 +28,3 @@ commands:
              /<command> list - Показать список доступных вам регионов.
              /<command> flag <регион> set <flag> <true|false> - Установить флаг для региона.
              /<command> save - Сохранить регионы.
-
