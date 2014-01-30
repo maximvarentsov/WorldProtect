@@ -10,9 +10,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
-import ru.gtncraft.worldprotect.Lang;
+import ru.gtncraft.worldprotect.Config;
+import ru.gtncraft.worldprotect.Messages;
 import ru.gtncraft.worldprotect.Region.Flags;
-import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 
@@ -24,6 +24,7 @@ public class PlayerListener implements Listener {
     private final List<String> preventCommands;
     private final List<Material> preventUse;
     private final Material tool;
+    private final Config config;
 
     public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -31,21 +32,12 @@ public class PlayerListener implements Listener {
         this.preventCommands = plugin.getConfig().getPreventCommands();
         this.preventUse = plugin.getConfig().getPreventUse();
         this.tool = plugin.getConfig().getInfoTool();
+        this.config = plugin.getConfig();
     }
 
     private boolean preventCommand(final String message) {
         String command = message.substring(1).split(" ")[0];
         return preventCommands.contains(command.toLowerCase());
-    }
-
-    private void showRegionInfo(final Location location, final Player player) {
-        List<Region> regions = manager.get(location);
-        if (regions.size() == 0) {
-            player.sendMessage(Lang.REGION_NOT_FOUND_IN_AREA);
-        }
-        for (Region region : regions) {
-            Lang.showRegionInfo(player, region);
-        }
     }
     /**
      * Called when a player interacts with an object or air.
@@ -60,7 +52,7 @@ public class PlayerListener implements Listener {
                 if (preventUse.contains(event.getClickedBlock().getType())) {
                     prevent = true;
                 } else if (event.getItem() != null && event.getItem().getType() == tool) {
-                    showRegionInfo(location, player);
+                    player.sendMessage(config.getMessage(manager.get(location)));
                 }
                 break;
             case LEFT_CLICK_BLOCK:
@@ -77,7 +69,7 @@ public class PlayerListener implements Listener {
         }
         if (prevent && manager.prevent(location, player, Flags.prevent.use)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
     /**
@@ -88,7 +80,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBed().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
     /**
@@ -99,7 +91,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
     /**
@@ -110,7 +102,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
     /**
@@ -121,7 +113,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getRightClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
     /**
@@ -133,7 +125,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(player.getLocation(), player, Flags.prevent.command) || preventCommand(event.getMessage())) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
     /**
@@ -145,7 +137,7 @@ public class PlayerListener implements Listener {
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)) {
             if (manager.prevent(player.getLocation(), player, Flags.prevent.teleport)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_NO_PERMISSION);
+                player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         }
     }

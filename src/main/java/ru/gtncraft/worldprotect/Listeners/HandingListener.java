@@ -9,7 +9,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
-import ru.gtncraft.worldprotect.Lang;
+import ru.gtncraft.worldprotect.Config;
+import ru.gtncraft.worldprotect.Messages;
 import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
@@ -17,10 +18,12 @@ import ru.gtncraft.worldprotect.WorldProtect;
 public class HandingListener implements Listener {
 
     private final RegionManager manager;
+    private final Config config;
 
     public HandingListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.manager = plugin.getRegionManager();
+        this.config = plugin.getConfig();
     }
     /**
      * Triggered when a hanging entity is removed by an entity.
@@ -32,7 +35,7 @@ public class HandingListener implements Listener {
             Player player = (Player) event.getRemover();
             if (manager.prevent(location, player, Flags.prevent.build)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_NO_PERMISSION);
+                player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         } else {
             event.setCancelled(
@@ -48,7 +51,7 @@ public class HandingListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getEntity().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
 }

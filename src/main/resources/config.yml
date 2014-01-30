@@ -30,4 +30,40 @@ region:
             - WOODEN_DOOR
         commands:
             - sethome
+messages:
+    error_worldedit_not_found: &12Плагин WorldEdit не найден.
 
+    error_region_selection: &12Сначала выделите регион.
+    error_region_overlay: &12Регион пересекается с другим.
+    error_region_not_found: &12Регион в этой области не существует.
+    error_region_name_exists: &12Регион с именем %s уже создан.
+    error_region_created_max: &12Вы создали максимальное количество регионов %d.
+
+    error_input_region_name: &12Введите имя региона.
+    error_input_player: &12Введите имя игрока.
+    error_input_region_not_found: &12Регион %s не найден.
+    error_input_flag_unknown: &12Неизвестный флаг %s.
+    error_input_flag_invalid_value: &12Некорректное значение флага %s.
+    error_input_flag: &12Введите название флага.
+    error_input_flag_value: &12Введите значение флага.
+
+    error_region_contains_player: &12Игрок %s уже добавлен в этот регион.
+    error_region_player_exists: &12Игрока %s нет в регионе %s.
+    error_region_protected: &12У вас нет прав на редактирование этого региона.
+
+    region_name: Регион
+    region_own_list: Список регионов принадлежащих вам
+    region_size: Размер
+    region_owners: Владельцы
+    region_members: Игроки
+    region_flags: Флаги
+    flag_true: запрещено
+    flag_false: разрешено
+
+
+    success_region_flag_set: &10Флаг %s для региона %s установлен.
+    success_region_created: &10Регион %s создан.
+    success_region_deleted: &10Регион %s удален.
+    success_region_player_add: &10Игрок %s добавлен в регион %s.
+    success_region_player_delete: &10Игрок %s удален из региона %s.
+    success_region_saved: &10Регионы сохранены.

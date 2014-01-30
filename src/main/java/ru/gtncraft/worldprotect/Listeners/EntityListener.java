@@ -2,23 +2,28 @@ package ru.gtncraft.worldprotect.Listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-import ru.gtncraft.worldprotect.Lang;
+import ru.gtncraft.worldprotect.Config;
+import ru.gtncraft.worldprotect.Messages;
+import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
-import ru.gtncraft.worldprotect.Region.Flags;
 
 public class EntityListener implements Listener {
 
     private final RegionManager manager;
+    private final Config config;
 
     public EntityListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.manager = plugin.getRegionManager();
+        this.config = plugin.getConfig();
     }
     /**
      * Called when a LivingEntity shoots a bow firing an arrow.
@@ -29,7 +34,7 @@ public class EntityListener implements Listener {
             Player player = (Player) event.getEntity();
             if (manager.prevent(player.getLocation(), player, Flags.prevent.damage)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_NO_PERMISSION);
+                player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         } else {
             event.setCancelled(
@@ -64,7 +69,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onExplosionPrime(final ExplosionPrimeEvent event) {
         event.setCancelled(
-            manager.prevent(event.getEntity().getLocation(), Flags.prevent.explode)
+                manager.prevent(event.getEntity().getLocation(), Flags.prevent.explode)
         );
     }
     /**
@@ -83,7 +88,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChangeBlock(final EntityChangeBlockEvent event) {
         event.setCancelled(
-            manager.prevent(event.getBlock().getLocation(), Flags.prevent.build)
+                manager.prevent(event.getBlock().getLocation(), Flags.prevent.build)
         );
     }
     /**
@@ -92,7 +97,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamageByBlock(final EntityDamageByBlockEvent event) {
         event.setCancelled(
-            manager.prevent(event.getEntity().getLocation(), Flags.prevent.damage)
+                manager.prevent(event.getEntity().getLocation(), Flags.prevent.damage)
         );
     }
 
@@ -117,11 +122,11 @@ public class EntityListener implements Listener {
             Player player = (Player) damager;
             if (manager.prevent(target.getLocation(), player, Flags.prevent.damage)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_NO_PERMISSION);
+                player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         } else {
             event.setCancelled(
-                manager.prevent(target.getLocation(), Flags.prevent.damage)
+                    manager.prevent(target.getLocation(), Flags.prevent.damage)
             );
         }
     }

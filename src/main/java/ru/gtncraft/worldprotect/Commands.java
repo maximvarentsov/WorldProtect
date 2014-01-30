@@ -3,7 +3,6 @@ package ru.gtncraft.worldprotect;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -21,6 +20,7 @@ public class Commands implements CommandExecutor {
     private final WorldProtect plugin;
     private final WorldEditPlugin we;
     private final int regionPerPlayer;
+
 
     private class CommandException extends Exception {
         public CommandException(String message) {
@@ -83,7 +83,7 @@ public class Commands implements CommandExecutor {
                     return false;
             }
         } catch (CommandException ex) {
-            player.sendMessage(ChatColor.RED + ex.getMessage());
+            player.sendMessage(ex.getMessage());
             return true;
         } catch (ArrayIndexOutOfBoundsException ex) {
             return false;
@@ -92,21 +92,21 @@ public class Commands implements CommandExecutor {
 
     private boolean commandDefine(Player sender, String[] args) throws CommandException {
         if (we == null) {
-            throw new CommandException(Lang.WORLDEDIT_NOT_INSTALLED);
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_worldedit_not_found));
         }
 
         Selection selection = we.getSelection(sender);
         if (selection == null) {
-            throw new CommandException(Lang.WORLDEDIT_NO_SELECTION);
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_selection));
         }
 
         Location p1 = selection.getMinimumPoint();
         Location p2 = selection.getMaximumPoint();
 
-        String name = getParam(args, 1, Lang.REGION_MISSING_NAME);
+        String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
 
         if (plugin.getRegionManager().get(sender.getWorld(), name) != null) {
-            throw new CommandException(String.format(Lang.REGION_EXISTS, name));
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_name_exists, name));
         }
 
         Region region = new Region(p1, p2);
@@ -120,7 +120,7 @@ public class Commands implements CommandExecutor {
             for (Region overlay : plugin.getRegionManager().get(p1, p2)) {
                 plugin.getLogger().info(overlay + " " + overlay.getName());
                 if (!overlay.has(sender, Players.role.owner)) {
-                    throw new CommandException(Lang.REGION_OVERLAY_WITH_ANOTHER);
+                    throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_overlay));
                 }
             }
             /**
@@ -128,19 +128,23 @@ public class Commands implements CommandExecutor {
              */
             int total = plugin.getRegionManager().get(sender, Players.role.owner).size();
             if (regionPerPlayer > 0 && total >= regionPerPlayer) {
-                throw new CommandException(String.format(Lang.REGION_MAX_LIMIT, regionPerPlayer));
+                throw new CommandException(
+                    plugin.getConfig().getMessage(Messages.error_region_created_max, String.valueOf(regionPerPlayer))
+                );
             }
         }
 
         plugin.getRegionManager().add(sender.getWorld(), region);
-        sender.sendMessage(ChatColor.GREEN + String.format(Lang.REGION_CREATED, name));
+        sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_created, name));
         return true;
     }
 
     private boolean commandList(Player sender) {
-        sender.sendMessage(ChatColor.GREEN + Lang.REGION_OWN_LIST);
+        sender.sendMessage(plugin.getConfig().getMessage(Messages.region_own_list) + ":");
         for (Region region : plugin.getRegionManager().get(sender, Players.role.owner)) {
-            sender.sendMessage(ChatColor.GREEN + Lang.REGION_NAME + " " + region.getName() + " " + region.getSize());
+            sender.sendMessage(
+                plugin.getConfig().getMessage(Messages.region_name) + ": " + region.getName() + " " + region.getSize()
+            );
         }
         return true;
     }
@@ -150,18 +154,13 @@ public class Commands implements CommandExecutor {
             String name = args[1];
             Region region = plugin.getRegionManager().get(sender.getWorld(), name);
             if (region == null) {
-                throw new CommandException(String.format(Lang.REGION_NOT_FOUND, name));
+                throw new CommandException(plugin.getConfig().getMessage(Messages.error_input_region_not_found, name));
             }
-            Lang.showRegionInfo(sender, region);
+            sender.sendMessage(plugin.getConfig().getMessage(region));
             return true;
         } else if (args.length == 1) {
             List<Region> regions = plugin.getRegionManager().get(sender.getLocation());
-            if (regions.size() == 0) {
-                throw new CommandException(Lang.REGION_NOT_FOUND_IN_AREA);
-            }
-            for (Region region : regions) {
-                Lang.showRegionInfo(sender, region);
-            }
+            sender.sendMessage(plugin.getConfig().getMessage(regions));
             return true;
         }
         return false;
@@ -180,37 +179,36 @@ public class Commands implements CommandExecutor {
                 }
             }
         });
-        sender.sendMessage(ChatColor.GREEN + Lang.SAVE_SUCCESS);
+        sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_saved));
         return true;
     }
 
     private boolean commandDelete(Player sender, String[] args) throws CommandException {
-        String name = getParam(args, 1, Lang.REGION_MISSING_NAME);
+        String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
         if (region == null) {
-            throw new CommandException(String.format(Lang.REGION_NOT_FOUND, name));
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_input_region_not_found, name));
         }
 
         checkPermission(sender, region);
 
         plugin.getRegionManager().delete(sender.getWorld(), name);
-        sender.sendMessage(ChatColor.GREEN + String.format(Lang.REGION_DELETED, name));
+        sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_deleted, name));
         return true;
     }
 
     private boolean commandFlagSet(Player sender, String[] args) throws CommandException {
 
-        String name = getParam(args, 1, Lang.REGION_MISSING_NAME);
+        String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
         if (region == null) {
-            throw new CommandException(String.format(Lang.REGION_NOT_FOUND, name));
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_input_region_not_found, name));
         }
 
-        String flag = getParam(args, 3, Lang.FLAG_MISSING);
-
-        String value = getParam(args, 4, Lang.FLAG_NO_VALUE);
+        String flag = getParam(args, 3, plugin.getConfig().getMessage(Messages.error_input_flag));
+        String value = getParam(args, 4, plugin.getConfig().getMessage(Messages.error_input_flag_value));
         boolean valueFlag;
         // reverse values, prevent true
         switch (value.toLowerCase()) {
@@ -225,58 +223,57 @@ public class Commands implements CommandExecutor {
                 valueFlag = true;
                 break;
             default:
-                throw new CommandException(String.format(Lang.FLAG_INVALID_VALUE, value));
+                throw new CommandException(plugin.getConfig().getMessage(Messages.error_input_flag_invalid_value));
         }
 
         checkPermission(sender, region);
 
         try {
             region.set(Flags.prevent.valueOf(flag), valueFlag);
-            sender.sendMessage(ChatColor.GREEN + String.format(Lang.FLAG_CHANGED, flag, name));
+            sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_flag_set, flag, name));
         } catch (IllegalArgumentException ex) {
-            throw new CommandException(String.format(Lang.FLAG_UNKNOWN, flag));
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_input_flag_unknown, flag));
         }
 
         return true;
     }
 
     private boolean addPlayer(Player sender, String[] args, Players.role role) throws CommandException {
-        String name = getParam(args, 1, Lang.REGION_MISSING_NAME);
+        String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
         if (region == null) {
-            throw new CommandException(String.format(Lang.REGION_NOT_FOUND, name));
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_input_region_not_found, name));
         }
 
-        String player = getParam(args, 2, Lang.PLAYER_NAME_MISSING);
+        String player = getParam(args, 2, plugin.getConfig().getMessage(Messages.error_input_player));
 
         checkPermission(sender, region);
 
         if (!region.add(player, role)) {
-            throw new CommandException(Lang.PLAYER_ALREADY_IN_REGION);
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_contains_player, player));
         }
-
-        sender.sendMessage(ChatColor.GREEN + String.format(Lang.REGION_PLAYER_ADDED, player, name));
+        sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_player_add, player, name));
         return true;
     }
 
     private boolean removePlayer(Player sender, String[] args, Players.role role) throws CommandException {
-        String name = getParam(args, 1, Lang.REGION_MISSING_NAME);
+        String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
         if (region == null) {
-            throw new CommandException(String.format(Lang.REGION_NOT_FOUND, name));
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_input_region_not_found, name));
         }
 
-        String player = getParam(args, 2, Lang.PLAYER_NAME_MISSING);
+        String player = getParam(args, 2, plugin.getConfig().getMessage(Messages.error_input_player));
 
         checkPermission(sender, region);
 
         if (!region.remove(player, role)) {
-            throw new CommandException(Lang.PLAYER_NOT_FOUND_IN_REGION);
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_player_exists, player, name));
         }
 
-        sender.sendMessage(ChatColor.GREEN + String.format(Lang.REGION_PLAYER_DELETED, player, name));
+        sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_player_delete, player, name));
         return true;
     }
 
@@ -290,7 +287,7 @@ public class Commands implements CommandExecutor {
 
     private void checkPermission(Player sender, Region region) throws CommandException {
         if (!(region.has(sender, Players.role.owner) || sender.hasPermission(Permissions.ADMIN))) {
-            throw new CommandException(Lang.REGION_NO_PERMISSION);
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_protected));
         }
     }
 }

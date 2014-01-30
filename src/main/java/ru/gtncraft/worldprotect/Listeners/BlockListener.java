@@ -6,7 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import ru.gtncraft.worldprotect.Lang;
+import ru.gtncraft.worldprotect.Config;
+import ru.gtncraft.worldprotect.Messages;
 import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
@@ -14,10 +15,12 @@ import ru.gtncraft.worldprotect.WorldProtect;
 public class BlockListener implements Listener {
 
     private final RegionManager manager;
+    private final Config config;
 
     public BlockListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.manager = plugin.getRegionManager();
+        this.config = plugin.getConfig();
     }
     /**
      * Called when a block is broken by a player.
@@ -29,7 +32,7 @@ public class BlockListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
     /**
@@ -42,7 +45,7 @@ public class BlockListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
     /**
@@ -57,7 +60,7 @@ public class BlockListener implements Listener {
         if (player instanceof Player) {
             if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.burn)) {
                 event.setCancelled(true);
-                player.sendMessage(Lang.REGION_NO_PERMISSION);
+                player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         } else {
             if (manager.prevent(event.getBlock().getLocation(), Flags.prevent.burn)) {
@@ -75,7 +78,7 @@ public class BlockListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
-            player.sendMessage(Lang.REGION_NO_PERMISSION);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
     /**
