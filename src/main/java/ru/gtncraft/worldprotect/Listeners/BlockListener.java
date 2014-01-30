@@ -180,16 +180,4 @@ public class BlockListener implements Listener {
             manager.prevent(event.getBlock().getLocation(), Flags.prevent.build)
         );
     }
-    /**
-     * Represents events with a source block and a destination block, currently only applies to liquid (lava and water)
-     * and teleporting dragon eggs.
-     *
-     * If a Block From To event is cancelled, the block will not move (the liquid will not flow).
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onFromToEvent(final BlockFromToEvent event) {
-        event.setCancelled(
-            manager.prevent(event.getToBlock().getLocation(), Flags.prevent.build)
-        );
-    }
-    */
 }
