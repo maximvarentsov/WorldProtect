@@ -10,15 +10,16 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import ru.gtncraft.worldprotect.Lang;
 import ru.gtncraft.worldprotect.Region.Flags;
+import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 
 public class VehicleListener implements Listener {
 
-    private final WorldProtect plugin;
+    private final RegionManager manager;
 
     public VehicleListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        this.plugin = plugin;
+        this.manager = plugin.getRegionManager();
     }
     /**
      * Raised when a vehicle is destroyed, which could be caused by either a player or the environment.
@@ -29,13 +30,13 @@ public class VehicleListener implements Listener {
         Entity attacker = event.getAttacker();
         if (attacker instanceof Player) {
             Player player = (Player) attacker;
-            if (plugin.getRegionManager().prevent(event.getVehicle().getLocation(), player, Flags.prevent.build)) {
+            if (manager.prevent(event.getVehicle().getLocation(), player, Flags.prevent.build)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
             event.setCancelled(
-                plugin.getRegionManager().prevent(event.getVehicle().getLocation(), Flags.prevent.build)
+                manager.prevent(event.getVehicle().getLocation(), Flags.prevent.build)
             );
         }
     }
@@ -47,7 +48,7 @@ public class VehicleListener implements Listener {
         Entity passenger = event.getEntered().getPassenger();
         if (passenger instanceof Player) {
             Player player = (Player) passenger;
-            if (plugin.getRegionManager().prevent(event.getVehicle().getLocation(), player, Flags.prevent.use)) {
+            if (manager.prevent(event.getVehicle().getLocation(), player, Flags.prevent.use)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }

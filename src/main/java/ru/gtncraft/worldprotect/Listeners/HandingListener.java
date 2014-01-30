@@ -11,15 +11,16 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import ru.gtncraft.worldprotect.Lang;
 import ru.gtncraft.worldprotect.Region.Flags;
+import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 
 public class HandingListener implements Listener {
 
-    private final WorldProtect plugin;
+    private final RegionManager manager;
 
     public HandingListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        this.plugin = plugin;
+        this.manager = plugin.getRegionManager();
     }
     /**
      * Triggered when a hanging entity is removed by an entity.
@@ -29,13 +30,13 @@ public class HandingListener implements Listener {
         Location location = event.getEntity().getLocation();
         if (event.getRemover().getType() == EntityType.PLAYER) {
             Player player = (Player) event.getRemover();
-            if (plugin.getRegionManager().prevent(location, player, Flags.prevent.build)) {
+            if (manager.prevent(location, player, Flags.prevent.build)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
             event.setCancelled(
-                plugin.getRegionManager().prevent(location, Flags.prevent.build)
+                manager.prevent(location, Flags.prevent.build)
             );
         }
     }
@@ -45,7 +46,7 @@ public class HandingListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlace(final HangingPlaceEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getRegionManager().prevent(event.getEntity().getLocation(), player, Flags.prevent.use)) {
+        if (manager.prevent(event.getEntity().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }

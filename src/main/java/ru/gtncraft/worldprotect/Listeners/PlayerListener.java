@@ -13,26 +13,33 @@ import org.bukkit.event.player.*;
 import ru.gtncraft.worldprotect.Lang;
 import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 
 import java.util.List;
 
 public class PlayerListener implements Listener {
 
-    private final WorldProtect plugin;
+    private final RegionManager manager;
+    private final List<String> preventCommands;
+    private final List<Material> preventUse;
+    private final Material tool;
 
     public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        this.plugin = plugin;
+        this.manager = plugin.getRegionManager();
+        this.preventCommands = plugin.getConfig().getPreventCommands();
+        this.preventUse = plugin.getConfig().getPreventUse();
+        this.tool = plugin.getConfig().getInfoTool();
     }
 
     private boolean preventCommand(final String message) {
         String command = message.substring(1).split(" ")[0];
-        return plugin.getConfig().getPreventCommands().contains(command.toLowerCase());
+        return preventCommands.contains(command.toLowerCase());
     }
 
     private void showRegionInfo(final Location location, final Player player) {
-        List<Region> regions = plugin.getRegionManager().get(location);
+        List<Region> regions = manager.get(location);
         if (regions.size() == 0) {
             player.sendMessage(Lang.REGION_NOT_FOUND_IN_AREA);
         }
@@ -50,9 +57,9 @@ public class PlayerListener implements Listener {
         boolean prevent = false;
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
-                if (plugin.getConfig().getPreventUse().contains(event.getClickedBlock().getType())) {
+                if (preventUse.contains(event.getClickedBlock().getType())) {
                     prevent = true;
-                } else if (event.getItem() != null && event.getItem().getType() == plugin.getConfig().getInfoTool()) {
+                } else if (event.getItem() != null && event.getItem().getType() == tool) {
                     showRegionInfo(location, player);
                 }
                 break;
@@ -68,7 +75,7 @@ public class PlayerListener implements Listener {
                 prevent = true;
                 break;
         }
-        if (prevent && plugin.getRegionManager().prevent(location, player, Flags.prevent.use)) {
+        if (prevent && manager.prevent(location, player, Flags.prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -79,7 +86,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBedEnter(final PlayerBedEnterEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getRegionManager().prevent(event.getBed().getLocation(), player, Flags.prevent.use)) {
+        if (manager.prevent(event.getBed().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -90,7 +97,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketFill(final PlayerBucketFillEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getRegionManager().prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
+        if (manager.prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -101,7 +108,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(final PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getRegionManager().prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
+        if (manager.prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -112,7 +119,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteractEntity(final PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getRegionManager().prevent(event.getRightClicked().getLocation(), player, Flags.prevent.build)) {
+        if (manager.prevent(event.getRightClicked().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -124,7 +131,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getRegionManager().prevent(player.getLocation(), player, Flags.prevent.command) || preventCommand(event.getMessage())) {
+        if (manager.prevent(player.getLocation(), player, Flags.prevent.command) || preventCommand(event.getMessage())) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -136,7 +143,7 @@ public class PlayerListener implements Listener {
     public void onTeleport(final PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)) {
-            if (plugin.getRegionManager().prevent(player.getLocation(), player, Flags.prevent.teleport)) {
+            if (manager.prevent(player.getLocation(), player, Flags.prevent.teleport)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }

@@ -8,15 +8,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import ru.gtncraft.worldprotect.Lang;
 import ru.gtncraft.worldprotect.Region.Flags;
+import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 
 public class BlockListener implements Listener {
 
-    private final WorldProtect plugin;
+    private final RegionManager manager;
 
     public BlockListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        this.plugin = plugin;
+        this.manager = plugin.getRegionManager();
     }
     /**
      * Called when a block is broken by a player.
@@ -26,7 +27,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBreak(final BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getRegionManager().prevent(event.getBlock().getLocation(), player, Flags.prevent.build)) {
+        if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -39,7 +40,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlace(final BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getRegionManager().prevent(event.getBlock().getLocation(), player, Flags.prevent.build)) {
+        if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -54,12 +55,12 @@ public class BlockListener implements Listener {
     public void onIgnite(final BlockIgniteEvent event) {
         Player player = event.getPlayer();
         if (player instanceof Player) {
-            if (plugin.getRegionManager().prevent(event.getBlock().getLocation(), player, Flags.prevent.burn)) {
+            if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.burn)) {
                 event.setCancelled(true);
                 player.sendMessage(Lang.REGION_NO_PERMISSION);
             }
         } else {
-            if (plugin.getRegionManager().prevent(event.getBlock().getLocation(), Flags.prevent.burn)) {
+            if (manager.prevent(event.getBlock().getLocation(), Flags.prevent.burn)) {
                 event.setCancelled(true);
             }
         }
@@ -72,7 +73,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSignChange(final SignChangeEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getRegionManager().prevent(event.getBlock().getLocation(), player, Flags.prevent.use)) {
+        if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(Lang.REGION_NO_PERMISSION);
         }
@@ -85,7 +86,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBurn(final BlockBurnEvent event) {
         event.setCancelled(
-            plugin.getRegionManager().prevent(event.getBlock().getLocation(), Flags.prevent.burn)
+            manager.prevent(event.getBlock().getLocation(), Flags.prevent.burn)
         );
     }
     /**
@@ -100,7 +101,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFade(final BlockFadeEvent event) {
         event.setCancelled(
-            plugin.getRegionManager().prevent(event.getBlock().getLocation(), Flags.prevent.fade)
+            manager.prevent(event.getBlock().getLocation(), Flags.prevent.fade)
         );
     }
     /**
@@ -116,7 +117,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onForm(final BlockFormEvent event) {
         event.setCancelled(
-            plugin.getRegionManager().prevent(event.getBlock().getLocation(), Flags.prevent.grow)
+            manager.prevent(event.getBlock().getLocation(), Flags.prevent.grow)
         );
     }
     /**
@@ -132,7 +133,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSpread(final BlockSpreadEvent event) {
         event.setCancelled(
-            plugin.getRegionManager().prevent(event.getBlock().getLocation(), Flags.prevent.grow)
+            manager.prevent(event.getBlock().getLocation(), Flags.prevent.grow)
         );
     }
     /**
@@ -150,7 +151,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onGrow(final BlockGrowEvent event) {
         event.setCancelled(
-            plugin.getRegionManager().prevent(event.getBlock().getLocation(), Flags.prevent.grow)
+            manager.prevent(event.getBlock().getLocation(), Flags.prevent.grow)
         );
     }
     /**
@@ -161,7 +162,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onLeavesDecay(final LeavesDecayEvent event) {
         event.setCancelled(
-            plugin.getRegionManager().prevent(event.getBlock().getLocation(), Flags.prevent.leavesDecay)
+            manager.prevent(event.getBlock().getLocation(), Flags.prevent.leavesDecay)
         );
     }
     /**
@@ -173,7 +174,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityBlockForm(final EntityBlockFormEvent event) {
         event.setCancelled(
-            plugin.getRegionManager().prevent(event.getBlock().getLocation(), Flags.prevent.build)
+            manager.prevent(event.getBlock().getLocation(), Flags.prevent.build)
         );
     }
     /**
@@ -184,7 +185,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFromToEvent(final BlockFromToEvent event) {
         event.setCancelled(
-            plugin.prevent(event.getToBlock().getLocation(), Flags.prevent.build)
+            manager.prevent(event.getToBlock().getLocation(), Flags.prevent.build)
         );
     }
     */
