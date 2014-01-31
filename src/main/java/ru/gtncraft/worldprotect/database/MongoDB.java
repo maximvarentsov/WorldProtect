@@ -15,10 +15,10 @@ public class MongoDB implements Storage {
 
     public MongoDB(final WorldProtect plugin) throws IOException {
         MongoClient mongoClient = new MongoClient(
-                plugin.getConfig().getString("storage.host", "localhost"),
-                plugin.getConfig().getInt("storage.port", 27017)
+                plugin.getConfig().getString("storage.host"),
+                plugin.getConfig().getInt("storage.port")
         );
-        db = mongoClient.getDB(plugin.getConfig().getString("storage.name", "worldprotect"));
+        db = mongoClient.getDB(plugin.getConfig().getString("storage.name"));
     }
 
 

@@ -23,7 +23,7 @@ public class Config extends YamlConfiguration {
 
         super();
 
-        this.addDefaults(config.getDefaults());
+        this.addDefaults(config.getRoot());
 
         this.preventCommands = new ArrayList<>();
         for (String command : this.getStringList("region.prevent.commands")) {
