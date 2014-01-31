@@ -37,12 +37,13 @@ public class Commands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-        if ( ! (sender instanceof Player) ) {
+        if (!(sender instanceof Player)) {
             return false;
         }
         Player player = (Player) sender;
-        if ( ! player.hasPermission(Permissions.use) ) {
-            return false;
+        if (!player.hasPermission(Permissions.use)) {
+            player.sendMessage(plugin.getConfig().getMessage(Messages.error_no_permission));
+            return true;
         }
         if (!plugin.getConfig().useRegions(player.getWorld())) {
             player.sendMessage(plugin.getConfig().getMessage(Messages.error_regions_disabled, player.getWorld().getName()));
@@ -75,7 +76,7 @@ public class Commands implements CommandExecutor {
                         case "set":
                             return commandFlagSet(player, args);
                     }
-                // usage for unknow subcommands.
+                // show usage for unknown command args.
                 default:
                     return false;
             }
@@ -171,7 +172,6 @@ public class Commands implements CommandExecutor {
             @Override
             public void run() {
                 for (World world : Bukkit.getWorlds()) {
-                    plugin.getLogger().info("Save regions for world " + world.getName() + ".");
                     plugin.getRegionManager().save(world);
                 }
             }
@@ -196,7 +196,6 @@ public class Commands implements CommandExecutor {
     }
 
     private boolean commandFlagSet(Player sender, String[] args) throws CommandException {
-
         String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
@@ -219,7 +218,9 @@ public class Commands implements CommandExecutor {
                 throw new CommandException(plugin.getConfig().getMessage(Messages.error_input_flag_invalid_value));
         }
 
-        checkPermission(sender, region);
+        if (!sender.hasPermission(Permissions.admin)) {
+            throw new CommandException(plugin.getConfig().getMessage(Messages.error_no_permission));
+        }
 
         try {
             region.set(Prevent.valueOf(flag), valueFlag);
