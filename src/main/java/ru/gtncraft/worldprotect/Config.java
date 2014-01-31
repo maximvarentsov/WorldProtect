@@ -3,6 +3,7 @@ package ru.gtncraft.worldprotect;
 import com.google.common.base.Joiner;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import ru.gtncraft.worldprotect.Region.Players;
@@ -18,6 +19,7 @@ public class Config extends YamlConfiguration {
     private final List<String> preventCommands;
     private final List<Material> preventUse;
     private final Material tool;
+    private final List<String> worlds;
 
     public Config(final FileConfiguration config) {
 
@@ -44,6 +46,11 @@ public class Config extends YamlConfiguration {
             this.tool = Material.STICK;
         } else {
             this.tool = tool;
+        }
+
+        this.worlds = new ArrayList<>();
+        for (String world : this.getStringList("region.worlds")) {
+            worlds.add(world.toLowerCase());
         }
     }
 
@@ -94,5 +101,9 @@ public class Config extends YamlConfiguration {
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_flags) + ": " + Joiner.on(", ").join(flags));
 
         return messages.toArray(new String[0]);
+    }
+
+    public boolean useRegions(final World world) {
+        return worlds.contains(world.getName().toLowerCase());
     }
 }

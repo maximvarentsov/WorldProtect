@@ -4,6 +4,10 @@ storage:
     port: 27017
     name: worldprotect
 region:
+    worlds:
+        - world
+        - world_nether
+        - world_the_end
     maxPerPlayer: 8
     tool: STICK
     prevent:
@@ -49,6 +53,7 @@ messages:
     error_region_contains_player: "&4Игрок %s уже добавлен в этот регион."
     error_region_player_exists: "&4Игрока %s нет в регионе %s."
     error_region_protected: "&4У вас нет прав на редактирование этого региона."
+    error_regions_disabled: "&4В мире %s создание регионов отключено."
     region_name: "Регион"
     region_own_list: "Список регионов принадлежащих вам"
     region_size: "Размер"

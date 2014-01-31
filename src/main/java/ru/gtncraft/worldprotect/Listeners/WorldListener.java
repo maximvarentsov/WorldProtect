@@ -32,7 +32,9 @@ public class WorldListener implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                plugin.getRegionManager().load(event.getWorld());
+                if (plugin.getConfig().useRegions(event.getWorld())) {
+                    plugin.getRegionManager().load(event.getWorld());
+                }
             }
         });
     }

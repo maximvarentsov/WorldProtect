@@ -37,13 +37,17 @@ public class Commands implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
-        if ( ! (commandSender instanceof Player) ) {
+    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+        if ( ! (sender instanceof Player) ) {
             return false;
         }
-        Player player = (Player) commandSender;
+        Player player = (Player) sender;
         if ( ! player.hasPermission(Permissions.USE) ) {
             return false;
+        }
+        if (!plugin.getConfig().useRegions(player.getWorld())) {
+            player.sendMessage(plugin.getConfig().getMessage(Messages.error_regions_disabled, player.getWorld().getName()));
+            return true;
         }
         try {
             switch (args[0].toLowerCase()) {
