@@ -17,7 +17,7 @@ public class CommandsCompleter implements TabCompleter {
 
     private final WorldProtect plugin;
     private final List<String> subs = ImmutableList.of(
-            "define", "delete", "addowner", "delowner", "addmemeber", "delmember",
+            "define", "delete", "addowner", "deleteowner", "addmemeber", "deletemember",
             "info", "list", "flag", "save"
     );
     private final List<String> bool = ImmutableList.of("true", "false");
@@ -37,9 +37,9 @@ public class CommandsCompleter implements TabCompleter {
           define <region>
           delete <region>
           addowner <region> <player>
-          delowner <region> <player>
+          deleteowner <region> <player>
           addmember <region> <player>
-          delmember <region> <player>
+          deletemember <region> <player>
           info [region]
           list
           flag <region> set <flag> <true|false>
@@ -51,18 +51,16 @@ public class CommandsCompleter implements TabCompleter {
             return partial(args[0], subs);
         } else if (args.length == 2) {
             String sub = args[0];
-            if ("del".equals(sub) || "delete".equals(sub) || "remove".equals(sub) ||
-                "delowner".equals(sub) || "deleteowner".equals(sub) || "removeowner".equals(sub) ||
-                "delmember".equals(sub) || "deletemember".equals(sub) || "removemember".equals(sub) ||
+            if ("delete".equals(sub) || "deleteowner".equals(sub) || "deletemember".equals(sub) ||
                 "addowner".equals(sub) || "addmember".equals(sub) || "info".equals(sub) || "flag".equals(sub)) {
                 return partial(lastArg, allRegions((Player) sender));
             }
         } else if (args.length == 3) {
             String sub = args[0];
             String region = args[1];
-            if ("delowner".equals(sub) || "deleteowner".equals(sub) || "removeowner".equals(sub)) {
+            if ("deleteowner".equals(sub)) {
                 return partial(lastArg, allRegionPlayers(((Player) sender).getWorld(), region, Players.role.owner));
-            } else if ("delmember".equals(sub) || "deletemember".equals(sub) || "removemember".equals(sub)) {
+            } else if ("deletemember".equals(sub)) {
                 return partial(lastArg, allRegionPlayers(((Player) sender).getWorld(), region, Players.role.member));
             } else if ("addowner".equals(sub) || "addmember".equals(sub)) {
                 return  null;

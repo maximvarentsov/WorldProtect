@@ -55,21 +55,15 @@ public class Commands implements CommandExecutor {
                 case "claim":
                 case "redefine":
                     return commandDefine(player, args);
-                case "del":
                 case "delete":
-                case "remove":
                     return commandDelete(player, args);
                 case "addowner":
                     return addPlayer(player, args, Players.role.owner);
-                case "delowner":
                 case "deleteowner":
-                case "removeowner":
                     return removePlayer(player, args, Players.role.owner);
                 case "addmember":
                     return addPlayer(player, args, Players.role.member);
-                case "delmember":
                 case "deletemember":
-                case "removemember":
                     return removePlayer(player, args, Players.role.member);
                 case "info":
                     return commandInfo(player, args);
@@ -216,13 +210,9 @@ public class Commands implements CommandExecutor {
         boolean valueFlag;
         // reverse values, prevent true
         switch (value.toLowerCase()) {
-            case "1":
-            case "on":
             case "true":
                 valueFlag = false;
                 break;
-            case "0":
-            case "off":
             case "false":
                 valueFlag = true;
                 break;
