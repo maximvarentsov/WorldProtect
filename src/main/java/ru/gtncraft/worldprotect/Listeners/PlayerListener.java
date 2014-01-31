@@ -54,7 +54,7 @@ public class PlayerListener implements Listener {
             case RIGHT_CLICK_BLOCK:
                 if (preventUse.contains(event.getClickedBlock().getType())) {
                     prevent = true;
-                } else if (tool.equals(event.getItem().getType())) {
+                } else if (event.getItem().getType() != null && tool.equals(event.getItem().getType())) {
                     player.sendMessage(config.getMessage(manager.get(location)));
                 }
                 break;
