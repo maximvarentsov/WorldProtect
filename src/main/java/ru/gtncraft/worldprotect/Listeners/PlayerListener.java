@@ -10,11 +10,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
-import ru.gtncraft.worldprotect.Config;
-import ru.gtncraft.worldprotect.Messages;
+import ru.gtncraft.worldprotect.*;
 import ru.gtncraft.worldprotect.Region.Flags;
-import ru.gtncraft.worldprotect.RegionManager;
-import ru.gtncraft.worldprotect.WorldProtect;
 
 import java.util.List;
 
@@ -35,7 +32,10 @@ public class PlayerListener implements Listener {
         this.config = plugin.getConfig();
     }
 
-    private boolean preventCommand(final String message) {
+    private boolean preventCommand(final Player player, final String message) {
+        if (manager.hasAccess(player)) {
+            return false;
+        }
         String command = message.substring(1).split(" ")[0];
         return preventCommands.contains(command.toLowerCase());
     }
@@ -123,7 +123,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(player.getLocation(), player, Flags.prevent.command) || preventCommand(event.getMessage())) {
+        if (manager.prevent(player.getLocation(), player, Flags.prevent.command) || preventCommand(player, event.getMessage())) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
