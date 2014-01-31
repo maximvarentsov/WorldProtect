@@ -3,7 +3,6 @@ package ru.gtncraft.worldprotect;
 import com.google.common.base.Joiner;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import ru.gtncraft.worldprotect.Region.Players;
@@ -19,7 +18,6 @@ public class Config extends YamlConfiguration {
     private final List<String> preventCommands;
     private final List<Material> preventUse;
     private final Material tool;
-    private final ConfigurationSection messages;
 
     public Config(final FileConfiguration config) {
 
@@ -47,8 +45,6 @@ public class Config extends YamlConfiguration {
         } else {
             this.tool = tool;
         }
-
-        this.messages = config.getConfigurationSection("messages");
     }
 
     public Material getInfoTool() {
@@ -64,7 +60,7 @@ public class Config extends YamlConfiguration {
     }
 
     public String getMessage(final Messages message) {
-        return ChatColor.translateAlternateColorCodes('&', messages.getString(message.name()));
+        return ChatColor.translateAlternateColorCodes('&', this.getString("messages." + message.name()));
     }
 
     public String getMessage(final Messages message, String...args) {
