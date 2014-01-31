@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.MongoDB;
@@ -92,7 +91,7 @@ public class RegionManager {
      * @param region Region.
      */
     public void add(final World world, final Region region) {
-        get(world).put(region.getName(), region);
+        get(world).put(region.getId(), region);
     }
     /**
      * Get world regions.
@@ -145,13 +144,13 @@ public class RegionManager {
      * Return regions owned by player in current world.
      *
      * @param player Player.
-     * @param role Player role in region.
+     * @param role Player Roles in region.
      */
-    public List<Region> get(final Player player, final Players.role role) {
+    public List<Region> get(final Player player, final Roles role) {
         ArrayList<Region> result = new ArrayList<>();
         for (Map.Entry<String, Region> entry : get(player.getWorld()).entrySet()) {
             Region region = entry.getValue();
-            if (region.has(player, role)) {
+            if (region.contains(player, role)) {
                 result.add(region);
             }
         }
@@ -163,7 +162,7 @@ public class RegionManager {
             return true;
         }
         for (Region region : get(player.getLocation())) {
-            if (region.has(player, Players.role.owner) || region.has(player, Players.role.member)) {
+            if (region.contains(player, Roles.owner) || region.contains(player, Roles.member)) {
                 return true;
             }
         }
@@ -175,7 +174,7 @@ public class RegionManager {
             return false;
         }
         for (Region region : get(location)) {
-            if (region.has(flag) && region.has(player, Players.role.guest)) {
+            if (region.get(flag) && region.contains(player, Roles.guest)) {
                 return true;
             }
         }
@@ -184,7 +183,7 @@ public class RegionManager {
 
     public boolean prevent(final Location location, final Prevent flag) {
         for (Region region : get(location)) {
-            if (region.has(flag)) {
+            if (region.get(flag)) {
                 return true;
             }
         }

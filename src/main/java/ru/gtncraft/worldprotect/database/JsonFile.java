@@ -57,7 +57,7 @@ public class JsonFile implements Storage {
             }
             for (Object obj : list) {
                 Region region = new Region(((DBObject) obj).toMap());
-                result.put(region.getName(), region);
+                result.put(region.getId(), region);
             }
         } catch (FileNotFoundException ex) {
         } catch (IOException ex) {

@@ -9,7 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import java.util.List;
@@ -58,13 +57,13 @@ public class Commands implements CommandExecutor {
                 case "delete":
                     return commandDelete(player, args);
                 case "addowner":
-                    return addPlayer(player, args, Players.role.owner);
+                    return addPlayer(player, args, Roles.owner);
                 case "deleteowner":
-                    return removePlayer(player, args, Players.role.owner);
+                    return removePlayer(player, args, Roles.owner);
                 case "addmember":
-                    return addPlayer(player, args, Players.role.member);
+                    return addPlayer(player, args, Roles.member);
                 case "deletemember":
-                    return removePlayer(player, args, Players.role.member);
+                    return removePlayer(player, args, Roles.member);
                 case "info":
                     return commandInfo(player, args);
                 case "list":
@@ -108,23 +107,23 @@ public class Commands implements CommandExecutor {
         }
 
         Region region = new Region(p1, p2);
-        region.setName(name);
-        region.add(sender.getName(), Players.role.owner);
+        region.setId(name);
+        region.add(sender.getName(), Roles.owner);
 
         if (!sender.hasPermission(Permissions.admin)) {
             /**
              *  Check region have overlay with another.
              */
             for (Region overlay : plugin.getRegionManager().get(p1, p2)) {
-                plugin.getLogger().info(overlay + " " + overlay.getName());
-                if (!overlay.has(sender, Players.role.owner)) {
+                plugin.getLogger().info(overlay + " " + overlay.getId());
+                if (!overlay.contains(sender, Roles.owner)) {
                     throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_overlay));
                 }
             }
             /**
              * Check region per player limit.
              */
-            int total = plugin.getRegionManager().get(sender, Players.role.owner).size();
+            int total = plugin.getRegionManager().get(sender, Roles.owner).size();
             if (regionPerPlayer > 0 && total >= regionPerPlayer) {
                 throw new CommandException(
                     plugin.getConfig().getMessage(Messages.error_region_created_max, String.valueOf(regionPerPlayer))
@@ -139,9 +138,9 @@ public class Commands implements CommandExecutor {
 
     private boolean commandList(Player sender) {
         sender.sendMessage(plugin.getConfig().getMessage(Messages.region_own_list) + ":");
-        for (Region region : plugin.getRegionManager().get(sender, Players.role.owner)) {
+        for (Region region : plugin.getRegionManager().get(sender, Roles.owner)) {
             sender.sendMessage(
-                plugin.getConfig().getMessage(Messages.region_name) + ": " + region.getName() + " " + region.getSize()
+                plugin.getConfig().getMessage(Messages.region_name) + ": " + region.getId() + " " + region.getSize()
             );
         }
         return true;
@@ -232,7 +231,7 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    private boolean addPlayer(Player sender, String[] args, Players.role role) throws CommandException {
+    private boolean addPlayer(Player sender, String[] args, Roles role) throws CommandException {
         String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
@@ -251,7 +250,7 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    private boolean removePlayer(Player sender, String[] args, Players.role role) throws CommandException {
+    private boolean removePlayer(Player sender, String[] args, Roles role) throws CommandException {
         String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
@@ -280,7 +279,7 @@ public class Commands implements CommandExecutor {
     }
 
     private void checkPermission(Player sender, Region region) throws CommandException {
-        if (!(region.has(sender, Players.role.owner) || sender.hasPermission(Permissions.admin))) {
+        if (!(sender.hasPermission(Permissions.admin) || region.contains(sender, Roles.owner))) {
             throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_protected));
         }
     }

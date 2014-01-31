@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
-import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.flags.Prevent;
 
@@ -59,9 +58,9 @@ public class CommandsCompleter implements TabCompleter {
             String sub = args[0];
             String region = args[1];
             if ("deleteowner".equals(sub)) {
-                return partial(lastArg, allRegionPlayers(((Player) sender).getWorld(), region, Players.role.owner));
+                return partial(lastArg, allRegionPlayers(((Player) sender).getWorld(), region, Roles.owner));
             } else if ("deletemember".equals(sub)) {
-                return partial(lastArg, allRegionPlayers(((Player) sender).getWorld(), region, Players.role.member));
+                return partial(lastArg, allRegionPlayers(((Player) sender).getWorld(), region, Roles.member));
             } else if ("addowner".equals(sub) || "addmember".equals(sub)) {
                 return  null;
             } else if ("flag".equals(sub)) {
@@ -93,14 +92,14 @@ public class CommandsCompleter implements TabCompleter {
                 result.add(entry.getKey());
             }
         } else {
-            for (Region region : plugin.getRegionManager().get(player, Players.role.owner)) {
-                result.add(region.getName());
+            for (Region region : plugin.getRegionManager().get(player, Roles.owner)) {
+                result.add(region.getId());
             }
         }
         return result;
     }
 
-    private List<String> allRegionPlayers(final World world, final String name, Players.role role) {
+    private List<String> allRegionPlayers(final World world, final String name, Roles role) {
         List<String> result = new ArrayList<>();
         Region region = plugin.getRegionManager().get(world, name);
         if (region != null) {
