@@ -159,7 +159,7 @@ public class RegionManager {
     }
 
     public boolean hasAccess(final Player player) {
-        if (player.hasPermission(Permissions.ADMIN)) {
+        if (player.hasPermission(Permissions.admin)) {
             return true;
         }
         for (Region region : get(player.getLocation())) {
@@ -171,7 +171,7 @@ public class RegionManager {
     }
 
     public boolean prevent(final Location location, final Player player, final Prevent flag) {
-        if (player.hasPermission(Permissions.ADMIN)) {
+        if (player.hasPermission(Permissions.admin)) {
             return false;
         }
         for (Region region : get(location)) {

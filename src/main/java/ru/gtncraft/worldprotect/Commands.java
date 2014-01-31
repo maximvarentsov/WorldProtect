@@ -41,7 +41,7 @@ public class Commands implements CommandExecutor {
             return false;
         }
         Player player = (Player) sender;
-        if ( ! player.hasPermission(Permissions.USE) ) {
+        if ( ! player.hasPermission(Permissions.use) ) {
             return false;
         }
         if (!plugin.getConfig().useRegions(player.getWorld())) {
@@ -110,7 +110,7 @@ public class Commands implements CommandExecutor {
         region.setName(name);
         region.add(sender.getName(), Players.role.owner);
 
-        if (!sender.hasPermission(Permissions.ADMIN)) {
+        if (!sender.hasPermission(Permissions.admin)) {
             /**
              *  Check region have overlay with another.
              */
@@ -164,7 +164,7 @@ public class Commands implements CommandExecutor {
     }
 
     private boolean commandSave(Player sender) throws CommandException {
-        if (!sender.hasPermission(Permissions.ADMIN)) {
+        if (!sender.hasPermission(Permissions.admin)) {
             return false;
         }
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -279,7 +279,7 @@ public class Commands implements CommandExecutor {
     }
 
     private void checkPermission(Player sender, Region region) throws CommandException {
-        if (!(region.has(sender, Players.role.owner) || sender.hasPermission(Permissions.ADMIN))) {
+        if (!(region.has(sender, Players.role.owner) || sender.hasPermission(Permissions.admin))) {
             throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_protected));
         }
     }
