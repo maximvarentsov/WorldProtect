@@ -10,8 +10,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
-import ru.gtncraft.worldprotect.*;
+import ru.gtncraft.worldprotect.Config;
+import ru.gtncraft.worldprotect.Messages;
 import ru.gtncraft.worldprotect.Region.Flags;
+import ru.gtncraft.worldprotect.RegionManager;
+import ru.gtncraft.worldprotect.WorldProtect;
 
 import java.util.List;
 
@@ -51,13 +54,14 @@ public class PlayerListener implements Listener {
             case RIGHT_CLICK_BLOCK:
                 if (preventUse.contains(event.getClickedBlock().getType())) {
                     prevent = true;
-                } else if (event.getItem() != null && event.getItem().getType() == tool) {
+                } else if (tool.equals(event.getItem().getType())) {
                     player.sendMessage(config.getMessage(manager.get(location)));
                 }
                 break;
             case LEFT_CLICK_BLOCK:
                 if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
                     Block type = event.getClickedBlock().getRelative(event.getBlockFace());
+                    // dont't allow extinguish fire.
                     if (type.getType().equals(Material.FIRE)) {
                         prevent = true;
                     }
