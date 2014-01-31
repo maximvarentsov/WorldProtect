@@ -1,22 +1,11 @@
 package ru.gtncraft.worldprotect.Region;
 
 import com.mongodb.BasicDBObject;
+import ru.gtncraft.worldprotect.flags.Prevent;
 import java.util.Map;
 
 public class Flags extends BasicDBObject {
-    public static enum prevent {
-        build,
-        use,
-        damage,
-        teleport,
-        creatureSpawn,
-        command,
-        explode,
-        leavesDecay,
-        grow,
-        fade,
-        burn
-    }
+
     public Flags(final Map map) {
         putAll(map);
     }
@@ -24,19 +13,19 @@ public class Flags extends BasicDBObject {
      * Set default flags state.
      */
     public Flags() {
-        set(prevent.build, true);
-        set(prevent.use, true);
+        set(Prevent.build, true);
+        set(Prevent.use, true);
     }
     /**
      * Change flag state.
      */
-    public void set(final prevent flag, boolean value) {
+    public void set(final Prevent flag, boolean value) {
         put(flag.name(), value);
     }
     /**
      * Get flag state.
      */
-    public boolean get(final prevent flag) {
+    public boolean get(final Prevent flag) {
         return getBoolean(flag.name(), false);
     }
 }

@@ -11,9 +11,9 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.Messages;
-import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
+import ru.gtncraft.worldprotect.flags.Prevent;
 
 public class HandingListener implements Listener {
 
@@ -33,13 +33,13 @@ public class HandingListener implements Listener {
         Location location = event.getEntity().getLocation();
         if (event.getRemover().getType() == EntityType.PLAYER) {
             Player player = (Player) event.getRemover();
-            if (manager.prevent(location, player, Flags.prevent.build)) {
+            if (manager.prevent(location, player, Prevent.build)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         } else {
             event.setCancelled(
-                manager.prevent(location, Flags.prevent.build)
+                manager.prevent(location, Prevent.build)
             );
         }
     }
@@ -49,7 +49,7 @@ public class HandingListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlace(final HangingPlaceEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getEntity().getLocation(), player, Flags.prevent.use)) {
+        if (manager.prevent(event.getEntity().getLocation(), player, Prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }

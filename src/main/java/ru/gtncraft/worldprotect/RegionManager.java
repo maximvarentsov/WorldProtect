@@ -4,12 +4,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.MongoDB;
 import ru.gtncraft.worldprotect.database.Storage;
+import ru.gtncraft.worldprotect.flags.Prevent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -170,7 +170,7 @@ public class RegionManager {
         return false;
     }
 
-    public boolean prevent(final Location location, final Player player, final Flags.prevent flag) {
+    public boolean prevent(final Location location, final Player player, final Prevent flag) {
         if (player.hasPermission(Permissions.ADMIN)) {
             return false;
         }
@@ -182,7 +182,7 @@ public class RegionManager {
         return false;
     }
 
-    public boolean prevent(final Location location, final Flags.prevent flag) {
+    public boolean prevent(final Location location, final Prevent flag) {
         for (Region region : get(location)) {
             if (region.has(flag)) {
                 return true;

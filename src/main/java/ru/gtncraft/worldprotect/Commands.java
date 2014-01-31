@@ -9,10 +9,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
-
+import ru.gtncraft.worldprotect.flags.Prevent;
 import java.util.List;
 
 public class Commands implements CommandExecutor {
@@ -223,7 +222,7 @@ public class Commands implements CommandExecutor {
         checkPermission(sender, region);
 
         try {
-            region.set(Flags.prevent.valueOf(flag), valueFlag);
+            region.set(Prevent.valueOf(flag), valueFlag);
             sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_flag_set, flag, name));
         } catch (IllegalArgumentException ex) {
             throw new CommandException(plugin.getConfig().getMessage(Messages.error_input_flag_unknown, flag));

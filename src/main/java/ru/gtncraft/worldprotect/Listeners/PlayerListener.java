@@ -12,9 +12,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.Messages;
-import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
+import ru.gtncraft.worldprotect.flags.Prevent;
 
 import java.util.List;
 
@@ -71,7 +71,7 @@ public class PlayerListener implements Listener {
                 prevent = true;
                 break;
         }
-        if (prevent && manager.prevent(location, player, Flags.prevent.use)) {
+        if (prevent && manager.prevent(location, player, Prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
@@ -82,7 +82,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBedEnter(final PlayerBedEnterEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getBed().getLocation(), player, Flags.prevent.use)) {
+        if (manager.prevent(event.getBed().getLocation(), player, Prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
@@ -93,7 +93,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketFill(final PlayerBucketFillEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
+        if (manager.prevent(event.getBlockClicked().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
@@ -104,7 +104,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(final PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getBlockClicked().getLocation(), player, Flags.prevent.build)) {
+        if (manager.prevent(event.getBlockClicked().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
@@ -115,7 +115,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteractEntity(final PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getRightClicked().getLocation(), player, Flags.prevent.build)) {
+        if (manager.prevent(event.getRightClicked().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
@@ -127,7 +127,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(player.getLocation(), player, Flags.prevent.command) || preventCommand(player, event.getMessage())) {
+        if (manager.prevent(player.getLocation(), player, Prevent.command) || preventCommand(player, event.getMessage())) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
@@ -139,7 +139,7 @@ public class PlayerListener implements Listener {
     public void onTeleport(final PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)) {
-            if (manager.prevent(player.getLocation(), player, Flags.prevent.teleport)) {
+            if (manager.prevent(player.getLocation(), player, Prevent.teleport)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));
             }

@@ -7,9 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
-import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.Region.Players;
 import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.flags.Prevent;
 
 import java.util.*;
 
@@ -25,7 +25,7 @@ public class CommandsCompleter implements TabCompleter {
 
     public CommandsCompleter(final WorldProtect plugin) {
         this.plugin = plugin;
-        for (Flags.prevent flag : Flags.prevent.values()) {
+        for (Prevent flag : Prevent.values()) {
             flags.add(flag.name());
         }
     }

@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import ru.gtncraft.worldprotect.flags.Prevent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class Region extends BasicDBObject {
 
     public Map<String, Boolean> getFlags() {
         Map<String, Boolean> values = new HashMap<>();
-        for (Flags.prevent flag : Flags.prevent.values()) {
+        for (Prevent flag : Prevent.values()) {
             values.put(flag.name(), flags.get(flag));
         }
         return values;
@@ -63,11 +64,11 @@ public class Region extends BasicDBObject {
         return false;
     }
 
-    public boolean has(final Flags.prevent flag) {
+    public boolean has(final Prevent flag) {
         return flags.get(flag);
     }
 
-    public void set(Flags.prevent flag, boolean value) {
+    public void set(Prevent flag, boolean value) {
         flags.set(flag, value);
     }
 

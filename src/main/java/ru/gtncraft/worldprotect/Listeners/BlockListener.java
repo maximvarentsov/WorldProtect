@@ -8,9 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.Messages;
-import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
+import ru.gtncraft.worldprotect.flags.Prevent;
 
 public class BlockListener implements Listener {
 
@@ -30,7 +30,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBreak(final BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.build)) {
+        if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
@@ -43,7 +43,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlace(final BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.build)) {
+        if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
@@ -58,12 +58,12 @@ public class BlockListener implements Listener {
     public void onIgnite(final BlockIgniteEvent event) {
         Player player = event.getPlayer();
         if (player instanceof Player) {
-            if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.burn)) {
+            if (manager.prevent(event.getBlock().getLocation(), player, Prevent.burn)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         } else {
-            if (manager.prevent(event.getBlock().getLocation(), Flags.prevent.burn)) {
+            if (manager.prevent(event.getBlock().getLocation(), Prevent.burn)) {
                 event.setCancelled(true);
             }
         }
@@ -76,7 +76,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSignChange(final SignChangeEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getBlock().getLocation(), player, Flags.prevent.use)) {
+        if (manager.prevent(event.getBlock().getLocation(), player, Prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
@@ -89,7 +89,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBurn(final BlockBurnEvent event) {
         event.setCancelled(
-            manager.prevent(event.getBlock().getLocation(), Flags.prevent.burn)
+            manager.prevent(event.getBlock().getLocation(), Prevent.burn)
         );
     }
     /**
@@ -104,7 +104,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFade(final BlockFadeEvent event) {
         event.setCancelled(
-            manager.prevent(event.getBlock().getLocation(), Flags.prevent.fade)
+            manager.prevent(event.getBlock().getLocation(), Prevent.fade)
         );
     }
     /**
@@ -120,7 +120,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onForm(final BlockFormEvent event) {
         event.setCancelled(
-            manager.prevent(event.getBlock().getLocation(), Flags.prevent.grow)
+            manager.prevent(event.getBlock().getLocation(), Prevent.grow)
         );
     }
     /**
@@ -136,7 +136,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSpread(final BlockSpreadEvent event) {
         event.setCancelled(
-            manager.prevent(event.getBlock().getLocation(), Flags.prevent.grow)
+            manager.prevent(event.getBlock().getLocation(), Prevent.grow)
         );
     }
     /**
@@ -154,7 +154,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onGrow(final BlockGrowEvent event) {
         event.setCancelled(
-            manager.prevent(event.getBlock().getLocation(), Flags.prevent.grow)
+            manager.prevent(event.getBlock().getLocation(), Prevent.grow)
         );
     }
     /**
@@ -165,7 +165,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onLeavesDecay(final LeavesDecayEvent event) {
         event.setCancelled(
-            manager.prevent(event.getBlock().getLocation(), Flags.prevent.leavesDecay)
+            manager.prevent(event.getBlock().getLocation(), Prevent.leavesDecay)
         );
     }
     /**
@@ -177,7 +177,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityBlockForm(final EntityBlockFormEvent event) {
         event.setCancelled(
-            manager.prevent(event.getBlock().getLocation(), Flags.prevent.build)
+            manager.prevent(event.getBlock().getLocation(), Prevent.build)
         );
     }
 }

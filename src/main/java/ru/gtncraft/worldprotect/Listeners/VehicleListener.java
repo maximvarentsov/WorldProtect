@@ -10,9 +10,9 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.Messages;
-import ru.gtncraft.worldprotect.Region.Flags;
 import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
+import ru.gtncraft.worldprotect.flags.Prevent;
 
 public class VehicleListener implements Listener {
 
@@ -33,13 +33,13 @@ public class VehicleListener implements Listener {
         Entity attacker = event.getAttacker();
         if (attacker instanceof Player) {
             Player player = (Player) attacker;
-            if (manager.prevent(event.getVehicle().getLocation(), player, Flags.prevent.build)) {
+            if (manager.prevent(event.getVehicle().getLocation(), player, Prevent.build)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         } else {
             event.setCancelled(
-                manager.prevent(event.getVehicle().getLocation(), Flags.prevent.build)
+                manager.prevent(event.getVehicle().getLocation(), Prevent.build)
             );
         }
     }
@@ -51,7 +51,7 @@ public class VehicleListener implements Listener {
         Entity passenger = event.getEntered().getPassenger();
         if (passenger instanceof Player) {
             Player player = (Player) passenger;
-            if (manager.prevent(event.getVehicle().getLocation(), player, Flags.prevent.use)) {
+            if (manager.prevent(event.getVehicle().getLocation(), player, Prevent.use)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
