@@ -24,7 +24,7 @@ public class RegionManager {
 
     public RegionManager(final WorldProtect plugin) throws IOException {
 
-        switch (plugin.getConfig().getString("storage.type", "file")) {
+        switch (plugin.getConfig().getString("storage.type")) {
             case "mongodb":
                 this.storage = new MongoDB(plugin);
                 break;
@@ -155,6 +155,18 @@ public class RegionManager {
             }
         }
         return result;
+    }
+
+    public boolean hasAccess(final Player player) {
+        if (player.hasPermission(Permissions.ADMIN)) {
+            return true;
+        }
+        for (Region region : get(player.getLocation())) {
+            if (region.has(player, Players.role.owner) || region.has(player, Players.role.member)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean prevent(final Location location, final Player player, final Flags.prevent flag) {
