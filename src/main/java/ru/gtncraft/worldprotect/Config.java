@@ -23,20 +23,24 @@ public class Config extends YamlConfiguration {
 
     public Config(final FileConfiguration config) {
 
+        super();
+
+        this.addDefaults(config.getDefaults());
+
         this.preventCommands = new ArrayList<>();
-        for (String command : config.getStringList("region.prevent.commands")) {
+        for (String command : this.getStringList("region.prevent.commands")) {
             this.preventCommands.add(command.toLowerCase());
         }
 
         this.preventUse = new ArrayList<>();
-        for (String value : config.getStringList("region.prevent.use")) {
+        for (String value : this.getStringList("region.prevent.use")) {
             Material material = Material.matchMaterial(value.toUpperCase());
             if (material != null) {
                 this.preventUse.add(material);
             }
         }
 
-        String material = config.getString("region.tool");
+        String material = this.getString("region.tool");
         Material tool = Material.matchMaterial(material.toUpperCase());
         if (tool == null) {
             this.tool = Material.STICK;
