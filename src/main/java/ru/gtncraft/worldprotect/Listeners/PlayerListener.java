@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.Messages;
 import ru.gtncraft.worldprotect.RegionManager;
@@ -52,19 +52,23 @@ public class PlayerListener implements Listener {
         boolean prevent = false;
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
+                final ItemStack itemStack = event.getItem();
                 if (preventUse.contains(event.getClickedBlock().getType())) {
                     prevent = true;
-                } else if (event.getItem().getType() != null && tool.equals(event.getItem().getType())) {
-                    player.sendMessage(config.getMessage(manager.get(location)));
+                } else if (itemStack != null) {
+                    if (tool.equals(itemStack.getType())) {
+                        player.sendMessage(config.getMessage(manager.get(location)));
+                        return;
+                    } else if (Material.INK_SACK.equals(itemStack.getType()) && itemStack.getDurability() == 15) {
+                        prevent = true;
+                    }
                 }
                 break;
             case LEFT_CLICK_BLOCK:
-                if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-                    Block type = event.getClickedBlock().getRelative(event.getBlockFace());
-                    // dont't allow extinguish fire.
-                    if (type.getType().equals(Material.FIRE)) {
-                        prevent = true;
-                    }
+                Block type = event.getClickedBlock().getRelative(event.getBlockFace());
+                // dont't allow extinguish fire.
+                if (Material.FIRE.equals(type.getType())) {
+                    prevent = true;
                 }
                 break;
             case PHYSICAL:
