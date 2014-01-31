@@ -28,6 +28,8 @@ region:
             - ENDER_CHEST
             - BEACON
             - WOODEN_DOOR
+            - GOLD_PLATE
+            - IRON_PLATE
         commands:
             - sethome
 messages:
