@@ -1,6 +1,7 @@
 package ru.gtncraft.worldprotect;
 
 import com.google.common.collect.ImmutableList;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -58,9 +59,12 @@ public class CommandsCompleter implements TabCompleter {
             }
         } else if (args.length == 3) {
             String sub = args[0];
-            if ("delowner".equals(sub) || "deleteowner".equals(sub) || "removeowner".equals(sub) ||
-                "delmember".equals(sub) || "deletemember".equals(sub) || "removemember".equals(sub) ||
-                "addowner".equals(sub) || "addmember".equals(sub)) {
+            String region = args[1];
+            if ("delowner".equals(sub) || "deleteowner".equals(sub) || "removeowner".equals(sub)) {
+                return partial(lastArg, allRegionPlayers(((Player) sender).getWorld(), region, Players.role.owner));
+            } else if ("delmember".equals(sub) || "deletemember".equals(sub) || "removemember".equals(sub)) {
+                return partial(lastArg, allRegionPlayers(((Player) sender).getWorld(), region, Players.role.member));
+            } else if ("addowner".equals(sub) || "addmember".equals(sub)) {
                 return  null;
             } else if ("flag".equals(sub)) {
                 return partial(lastArg, Arrays.asList("set"));
@@ -80,11 +84,11 @@ public class CommandsCompleter implements TabCompleter {
         return ImmutableList.of();
     }
 
-    private List<String> partial(String token, Collection<String> from) {
+    private List<String> partial(final String token, final Collection<String> from) {
         return StringUtil.copyPartialMatches(token, from, new ArrayList<String>(from.size()));
     }
 
-    private List<String> allRegions(Player player) {
+    private List<String> allRegions(final Player player) {
         List<String> result = new ArrayList<>();
         if (player.hasPermission(Permissions.ADMIN)) {
             for (Map.Entry<String, Region> entry : plugin.getRegionManager().get(player.getWorld()).entrySet()) {
@@ -93,6 +97,17 @@ public class CommandsCompleter implements TabCompleter {
         } else {
             for (Region region : plugin.getRegionManager().get(player, Players.role.owner)) {
                 result.add(region.getName());
+            }
+        }
+        return result;
+    }
+
+    private List<String> allRegionPlayers(final World world, final String name, Players.role role) {
+        List<String> result = new ArrayList<>();
+        Region region = plugin.getRegionManager().get(world, name);
+        if (region != null) {
+            for (Object player : region.get(role)) {
+                result.add((String) player);
             }
         }
         return result;
