@@ -68,7 +68,6 @@ public class Region extends BasicDBObject {
     public List<String> get(final Roles role) {
         switch (role) {
             case member:
-                members.toArray();
                 return ImmutableList.copyOf(members.toArray(new String[0]));
             case owner:
                 return ImmutableList.copyOf(owners.toArray(new String[0]));
