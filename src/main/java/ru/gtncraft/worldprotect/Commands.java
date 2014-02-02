@@ -19,7 +19,6 @@ public class Commands implements CommandExecutor {
     private final WorldEditPlugin we;
     private final int regionPerPlayer;
 
-
     private class CommandException extends Exception {
         public CommandException(String message) {
             super(message);
@@ -35,7 +34,7 @@ public class Commands implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+    public boolean onCommand(final CommandSender sender, final Command command, final String commandLabel, final String[] args) {
         if (!(sender instanceof Player)) {
             return false;
         }
@@ -87,7 +86,7 @@ public class Commands implements CommandExecutor {
         }
     }
 
-    private boolean commandDefine(Player sender, String[] args) throws CommandException {
+    private boolean commandDefine(final Player sender, final String[] args) throws CommandException {
         if (we == null) {
             throw new CommandException(plugin.getConfig().getMessage(Messages.error_worldedit_not_found));
         }
@@ -135,7 +134,7 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    private boolean commandList(Player sender) {
+    private boolean commandList(final Player sender) {
         sender.sendMessage(plugin.getConfig().getMessage(Messages.region_own_list) + ":");
         for (Region region : plugin.getRegionManager().get(sender, Roles.owner)) {
             sender.sendMessage(
@@ -145,7 +144,7 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    private boolean commandInfo(Player sender, String[] args) throws CommandException {
+    private boolean commandInfo(final Player sender, final String[] args) throws CommandException {
         if (args.length == 2) {
             String name = args[1];
             Region region = plugin.getRegionManager().get(sender.getWorld(), name);
@@ -162,7 +161,7 @@ public class Commands implements CommandExecutor {
         return false;
     }
 
-    private boolean commandSave(Player sender) throws CommandException {
+    private boolean commandSave(final Player sender) throws CommandException {
         if (!sender.hasPermission(Permissions.admin)) {
             return false;
         }
@@ -178,7 +177,7 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    private boolean commandDelete(Player sender, String[] args) throws CommandException {
+    private boolean commandDelete(final Player sender, final String[] args) throws CommandException {
         String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
@@ -193,7 +192,7 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    private boolean commandFlagSet(Player sender, String[] args) throws CommandException {
+    private boolean commandFlagSet(final Player sender, final String[] args) throws CommandException {
         String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
@@ -230,7 +229,7 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    private boolean addPlayer(Player sender, String[] args, Roles role) throws CommandException {
+    private boolean addPlayer(final Player sender, final String[] args, final Roles role) throws CommandException {
         String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
@@ -249,7 +248,7 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    private boolean removePlayer(Player sender, String[] args, Roles role) throws CommandException {
+    private boolean removePlayer(final Player sender, final String[] args, final Roles role) throws CommandException {
         String name = getParam(args, 1, plugin.getConfig().getMessage(Messages.error_input_region_name));
         Region region = plugin.getRegionManager().get(sender.getWorld(), name);
 
@@ -269,7 +268,7 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    private String getParam(String args[], int index, String message) throws CommandException {
+    private String getParam(final String args[], final int index, final String message) throws CommandException {
         try {
             return args[index];
         } catch (ArrayIndexOutOfBoundsException ex) {
@@ -277,7 +276,7 @@ public class Commands implements CommandExecutor {
         }
     }
 
-    private void checkPermission(Player sender, Region region) throws CommandException {
+    private void checkPermission(final Player sender, final Region region) throws CommandException {
         if (!(sender.hasPermission(Permissions.admin) || region.contains(sender, Roles.owner))) {
             throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_protected));
         }

@@ -7,7 +7,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import ru.gtncraft.worldprotect.Region.Region;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,7 +92,7 @@ public class Config extends YamlConfiguration {
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + region.get(Roles.owner));
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + region.get(Roles.member));
         List<String> flags = new ArrayList<>();
-        for (Map.Entry<String, Boolean> entry : region.getFlags().entrySet()) {
+        for (Map.Entry<String, Boolean> entry : region.get().entrySet()) {
             String value = entry.getValue() ? ChatColor.RED + getMessage(Messages.flag_true) : ChatColor.GRAY + getMessage(Messages.flag_false);
             flags.add(ChatColor.WHITE + entry.getKey() + ": " + value + ChatColor.WHITE);
         }

@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.flags.Prevent;
-
 import java.util.*;
 
 public class CommandsCompleter implements TabCompleter {
@@ -103,8 +102,8 @@ public class CommandsCompleter implements TabCompleter {
         List<String> result = new ArrayList<>();
         Region region = plugin.getRegionManager().get(world, name);
         if (region != null) {
-            for (Object player : region.get(role)) {
-                result.add((String) player);
+            for (String player : region.get(role)) {
+                result.add(player);
             }
         }
         return result;

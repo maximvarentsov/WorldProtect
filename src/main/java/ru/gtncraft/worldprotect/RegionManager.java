@@ -9,7 +9,6 @@ import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.MongoDB;
 import ru.gtncraft.worldprotect.database.Storage;
 import ru.gtncraft.worldprotect.flags.Prevent;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,8 +108,7 @@ public class RegionManager {
      */
     public List<Region> get(final Location p1, final Location p2) {
         List<Region> result = new ArrayList<>();
-        for (Map.Entry<String, Region> entry : get(p1.getWorld()).entrySet()) {
-            Region region = entry.getValue();
+        for (Region region : get(p1.getWorld()).values()) {
             if (region.contains(p1) || region.contains(p2)) {
                 result.add(region);
             }
@@ -124,9 +122,9 @@ public class RegionManager {
      */
     public List<Region> get(final Location location) {
         List<Region> result = new ArrayList<>();
-        for (Map.Entry<String, Region> entry : get(location.getWorld()).entrySet()) {
-            if (entry.getValue().contains(location)) {
-                result.add(entry.getValue());
+        for (Region region: get(location.getWorld()).values()) {
+            if (region.contains(location)) {
+                result.add(region);
             }
         }
         return result;
@@ -148,39 +146,46 @@ public class RegionManager {
      */
     public List<Region> get(final Player player, final Roles role) {
         ArrayList<Region> result = new ArrayList<>();
-        for (Map.Entry<String, Region> entry : get(player.getWorld()).entrySet()) {
-            Region region = entry.getValue();
+        for (Region region : get(player.getWorld()).values()) {
             if (region.contains(player, role)) {
                 result.add(region);
             }
         }
         return result;
     }
-
+    /**
+     * Check player member or owner of region.
+     *
+     * @param player Player
+     */
     public boolean hasAccess(final Player player) {
         if (player.hasPermission(Permissions.admin)) {
             return true;
         }
         for (Region region : get(player.getLocation())) {
-            if (region.contains(player, Roles.owner) || region.contains(player, Roles.member)) {
+            if (region.contains(player.getName())) {
                 return true;
             }
         }
         return false;
     }
-
+    /**
+     * Check player is owner/member of any region inside location with true prevent flag.
+     */
     public boolean prevent(final Location location, final Player player, final Prevent flag) {
         if (player.hasPermission(Permissions.admin)) {
             return false;
         }
         for (Region region : get(location)) {
-            if (region.get(flag) && region.contains(player, Roles.guest)) {
+            if (region.get(flag) && (!region.contains(player.getName()))) {
                 return true;
             }
         }
         return false;
     }
-
+    /**
+     * Search any region inside location with true prevent flag.
+     */
     public boolean prevent(final Location location, final Prevent flag) {
         for (Region region : get(location)) {
             if (region.get(flag)) {
