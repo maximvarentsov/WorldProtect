@@ -162,7 +162,12 @@ public class RegionManager {
         if (player.hasPermission(Permissions.admin)) {
             return true;
         }
-        for (Region region : get(player.getLocation())) {
+        List<Region> regions = get(player.getLocation());
+        // Player not in region.
+        if (regions.isEmpty()) {
+            return true;
+        }
+        for (Region region : regions) {
             if (region.contains(player.getName())) {
                 return true;
             }
