@@ -26,8 +26,7 @@ public class MongoDB implements Storage {
     @Override
     public void save(World world, Map<String, Region> regions) {
         DBCollection coll = db.getCollection(world.getName());
-        for (Map.Entry<String, Region> entry : regions.entrySet()) {
-            Region region = entry.getValue();
+        for (Region region : regions.values()) {
             region.update();
             DBObject query = new BasicDBObject("_id", new ObjectId(region.getId()));
             coll.update(query, region, true, false);

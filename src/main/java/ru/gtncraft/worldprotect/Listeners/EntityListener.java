@@ -69,7 +69,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onExplosionPrime(final ExplosionPrimeEvent event) {
         event.setCancelled(
-                manager.prevent(event.getEntity().getLocation(), Prevent.explode)
+            manager.prevent(event.getEntity().getLocation(), Prevent.explode)
         );
     }
     /**
@@ -88,7 +88,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChangeBlock(final EntityChangeBlockEvent event) {
         event.setCancelled(
-                manager.prevent(event.getBlock().getLocation(), Prevent.build)
+            manager.prevent(event.getBlock().getLocation(), Prevent.build)
         );
     }
     /**
@@ -97,7 +97,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamageByBlock(final EntityDamageByBlockEvent event) {
         event.setCancelled(
-                manager.prevent(event.getEntity().getLocation(), Prevent.damage)
+            manager.prevent(event.getEntity().getLocation(), Prevent.damage)
         );
     }
 
@@ -126,7 +126,7 @@ public class EntityListener implements Listener {
             }
         } else {
             event.setCancelled(
-                    manager.prevent(target.getLocation(), Prevent.damage)
+                manager.prevent(target.getLocation(), Prevent.damage)
             );
         }
     }

@@ -25,8 +25,8 @@ public class JsonFile implements Storage {
         File file = getFile(world);
         try (OutputStream os = new FileOutputStream(file)) {
             BasicDBList list = new BasicDBList();
-            for (Map.Entry<String, Region> entry : regions.entrySet()) {
-                list.add(entry.getValue());
+            for (Region region : regions.values()) {
+                list.add(region);
             }
             if (list.size() > 0) {
                 if (!file.exists()) {

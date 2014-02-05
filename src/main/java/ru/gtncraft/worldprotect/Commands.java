@@ -128,7 +128,6 @@ public class Commands implements CommandExecutor {
                 );
             }
         }
-
         plugin.getRegionManager().add(sender.getWorld(), region);
         sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_created, name));
         return true;
