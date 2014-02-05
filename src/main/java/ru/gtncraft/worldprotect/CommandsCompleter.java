@@ -92,7 +92,7 @@ public class CommandsCompleter implements TabCompleter {
             }
         } else {
             for (Region region : plugin.getRegionManager().get(player, Roles.owner)) {
-                result.add(region.getId());
+                result.add(region.getName());
             }
         }
         return result;

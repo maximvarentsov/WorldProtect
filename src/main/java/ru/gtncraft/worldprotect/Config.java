@@ -87,7 +87,7 @@ public class Config extends YamlConfiguration {
     public String[] getMessage(Region region) {
         List<String> messages = new ArrayList<>();
 
-        messages.add(ChatColor.YELLOW + getMessage(Messages.region_name) + ": "    + ChatColor.WHITE + region.getId());
+        messages.add(ChatColor.YELLOW + getMessage(Messages.region_name) + ": "    + ChatColor.WHITE + region.getName());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_size) + ": " + ChatColor.WHITE + region.getSize());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + region.get(Roles.owner));
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + region.get(Roles.member));

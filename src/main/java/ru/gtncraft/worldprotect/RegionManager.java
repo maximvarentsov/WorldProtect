@@ -90,7 +90,7 @@ public class RegionManager {
      * @param region Region.
      */
     public void add(final World world, final Region region) {
-        get(world).put(region.getId(), region);
+        get(world).put(region.getName(), region);
     }
     /**
      * Get world regions.

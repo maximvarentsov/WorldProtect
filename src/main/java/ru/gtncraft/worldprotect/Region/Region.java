@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import org.bson.types.ObjectId;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.Roles;
@@ -41,8 +40,8 @@ public class Region extends BasicDBObject {
     /**
      * Get region name.
      */
-    public String getId() {
-        return getString("_id");
+    public String getName() {
+        return getString("name");
     }
     /**
      * Return region flags with state.
@@ -118,8 +117,8 @@ public class Region extends BasicDBObject {
      * Set region name.
      * @param value Region name.
      */
-    public void setId(final String value) {
-        put("_id", new ObjectId(value.toLowerCase()));
+    public void setName(final String value) {
+        put("name", value.toLowerCase());
     }
     /**
      * Set region flag.

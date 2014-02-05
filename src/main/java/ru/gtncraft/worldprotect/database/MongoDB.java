@@ -1,7 +1,6 @@
 package ru.gtncraft.worldprotect.database;
 
 import com.mongodb.*;
-import org.bson.types.ObjectId;
 import org.bukkit.World;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.WorldProtect;
@@ -26,16 +25,19 @@ public class MongoDB implements Storage {
     @Override
     public void save(World world, Map<String, Region> regions) {
         DBCollection coll = db.getCollection(world.getName());
+        if (coll.count() == 0) {
+            coll.ensureIndex(new BasicDBObject("name", 1).append("unique", true));
+        }
         for (Region region : regions.values()) {
             region.update();
-            DBObject query = new BasicDBObject("_id", new ObjectId(region.getId()));
+            DBObject query = new BasicDBObject("name", region.getName());
             coll.update(query, region, true, false);
         }
     }
 
     @Override
     public void delete(World world, String name) {
-        db.getCollection(world.getName()).remove(new BasicDBObject("_id", new ObjectId(name)));
+        db.getCollection(world.getName()).remove(new BasicDBObject("name", name));
     }
 
     @Override
@@ -45,7 +47,7 @@ public class MongoDB implements Storage {
         try (DBCursor curr = coll.find()) {
             while (curr.hasNext()) {
                 Region region = new Region(curr.next().toMap());
-                values.put(region.getId(), region);
+                values.put(region.getName(), region);
             }
         }
         return values;

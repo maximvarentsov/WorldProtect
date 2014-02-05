@@ -106,7 +106,7 @@ public class Commands implements CommandExecutor {
         }
 
         Region region = new Region(p1, p2);
-        region.setId(name);
+        region.setName(name);
         region.add(sender.getName(), Roles.owner);
 
         if (!sender.hasPermission(Permissions.admin)) {
@@ -137,7 +137,7 @@ public class Commands implements CommandExecutor {
         sender.sendMessage(plugin.getConfig().getMessage(Messages.region_own_list) + ":");
         for (Region region : plugin.getRegionManager().get(sender, Roles.owner)) {
             sender.sendMessage(
-                plugin.getConfig().getMessage(Messages.region_name) + ": " + region.getId() + " " + region.getSize()
+                plugin.getConfig().getMessage(Messages.region_name) + ": " + region.getName() + " " + region.getSize()
             );
         }
         return true;
