@@ -15,6 +15,7 @@ public class Flags extends BasicDBObject {
     public Flags() {
         set(Prevent.build, true);
         set(Prevent.use, true);
+        set(Prevent.pvp, true);
     }
     /**
      * Change flag state.
