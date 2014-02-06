@@ -11,7 +11,9 @@ permissions:
     worldprotect.use:
         description: Allow use region commands.
         default: true
-
+    worldprotect.flag.pvp:
+        description: Allow set pvp flag at region.
+        default: true
 commands:
     region:
         aliases: [ rg ]
