@@ -11,5 +11,6 @@ public enum Prevent {
     leavesDecay,
     grow,
     fade,
-    burn
+    burn,
+    pvp
 }

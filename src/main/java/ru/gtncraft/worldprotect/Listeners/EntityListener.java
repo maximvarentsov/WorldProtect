@@ -116,13 +116,23 @@ public class EntityListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamageByEntity(final EntityDamageByEntityEvent event) {
-        Entity target = event.getEntity();
-        Entity damager = event.getDamager();
-        if (damager.getType() == EntityType.PLAYER) {
-            Player player = (Player) damager;
+        final Entity target = event.getEntity();
+        final Entity damager = event.getDamager();
+        if (damager instanceof Player) {
+            final Player player = (Player) damager;
+
             if (manager.prevent(target.getLocation(), player, Prevent.damage)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));
+                return;
+            }
+
+            if (target instanceof Player) {
+                if (manager.prevent(target.getLocation(), player, Prevent.pvp)) {
+                    event.setCancelled(true);
+                    player.sendMessage(config.getMessage(Messages.error_region_protected));
+                    return;
+                }
             }
         } else {
             event.setCancelled(
