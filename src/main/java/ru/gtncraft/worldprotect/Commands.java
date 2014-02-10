@@ -19,6 +19,7 @@ public class Commands implements CommandExecutor {
     private final WorldProtect plugin;
     private final WorldEditPlugin we;
     private final int regionPerPlayer;
+    private final int regionMaxVolume;
 
     private class CommandException extends Exception {
         public CommandException(String message) {
@@ -30,8 +31,8 @@ public class Commands implements CommandExecutor {
         this.plugin = plugin;
         this.we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         this.regionPerPlayer = plugin.getConfig().getInt("region.maxPerPlayer", 8);
-
-        PluginCommand command = this.plugin.getCommand("plugin");
+        this.regionMaxVolume = plugin.getConfig().getInt("region.maxVolume", 30000);
+        PluginCommand command = plugin.getCommand("plugin");
 
         command.setExecutor(this);
         command.setTabCompleter(new CommandsCompleter(plugin));
@@ -115,6 +116,14 @@ public class Commands implements CommandExecutor {
         region.add(sender.getName(), Roles.owner);
 
         if (!sender.hasPermission(Permissions.admin)) {
+            /**
+             * Check region volume
+             */
+            if (region.volume() > regionMaxVolume) {
+                throw new CommandException(
+                    plugin.getConfig().getMessage(Messages.error_region_max_volume, regionMaxVolume, region.volume())
+                );
+            }
             /**
              *  Check region have overlay with another.
              */
