@@ -19,6 +19,8 @@ public enum Messages {
     error_region_protected,
     error_regions_disabled,
     error_no_permission,
+    error_command_disabled,
+    error_pvp_disabled,
     region_name,
     region_own_list,
     success_region_flag_set,

@@ -133,7 +133,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(player.getLocation(), player, Prevent.command) || preventCommand(player, event.getMessage())) {
             event.setCancelled(true);
-            player.sendMessage(config.getMessage(Messages.error_region_protected));
+            player.sendMessage(config.getMessage(Messages.error_command_disabled, event.getMessage()));
         }
     }
     /**

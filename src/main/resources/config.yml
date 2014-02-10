@@ -55,6 +55,8 @@ messages:
     error_region_protected: "&4У вас нет прав на редактирование этого региона."
     error_regions_disabled: "&4В мире %s создание регионов отключено."
     error_no_permission: "&4У вас нет прав на использования этой комманды."
+    error_command_disabled: "&4У вас нет прав на использования комманды %s в этом регионе."
+    error_pvp_disabled: "&4PVP отключен в этом регионе."
     region_name: "Регион"
     region_own_list: "Список регионов принадлежащих вам"
     region_size: "Размер"

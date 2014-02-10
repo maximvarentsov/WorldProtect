@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.flags.Prevent;
@@ -29,24 +30,28 @@ public class Commands implements CommandExecutor {
         this.plugin = plugin;
         this.we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         this.regionPerPlayer = plugin.getConfig().getInt("region.maxPerPlayer", 8);
-        this.plugin.getCommand("region").setExecutor(this);
-        this.plugin.getCommand("region").setTabCompleter(new CommandsCompleter(plugin));
+
+        PluginCommand command = this.plugin.getCommand("plugin");
+
+        command.setExecutor(this);
+        command.setTabCompleter(new CommandsCompleter(plugin));
+        command.setPermissionMessage(plugin.getConfig().getMessage(Messages.error_no_permission));
     }
 
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String commandLabel, final String[] args) {
+
         if (!(sender instanceof Player)) {
             return false;
         }
+
         Player player = (Player) sender;
-        if (!player.hasPermission(Permissions.use)) {
-            player.sendMessage(plugin.getConfig().getMessage(Messages.error_no_permission));
-            return true;
-        }
+
         if (!plugin.getConfig().useRegions(player.getWorld())) {
             player.sendMessage(plugin.getConfig().getMessage(Messages.error_regions_disabled, player.getWorld().getName()));
             return true;
         }
+
         try {
             switch (args[0].toLowerCase()) {
                 case "define":

@@ -89,8 +89,7 @@ public class EntityListener implements Listener {
                     final Player player = (Player) damager;
                     if (manager.prevent(target.getLocation(), player, Prevent.pvp)) {
                         event.setCancelled(true);
-                        player.sendMessage(config.getMessage(Messages.error_region_protected));
-
+                        player.sendMessage(config.getMessage(Messages.error_pvp_disabled));
                     }
                     return;
                 } else if (damager instanceof Arrow) {
@@ -99,8 +98,7 @@ public class EntityListener implements Listener {
                         final Player player = (Player) arrow.getShooter();
                         if (manager.prevent(target.getLocation(), player, Prevent.pvp)) {
                             event.setCancelled(true);
-                            player.sendMessage(config.getMessage(Messages.error_region_protected));
-
+                            player.sendMessage(config.getMessage(Messages.error_pvp_disabled));
                         }
                         return;
                     }
