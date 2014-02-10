@@ -58,7 +58,7 @@ messages:
     error_no_permission: "&4У вас нет прав на использования этой комманды."
     error_command_disabled: "&4У вас нет прав на использования комманды %s в этом регионе."
     error_pvp_disabled: "&4PVP отключен в этом регионе."
-    error_region_max_volume: "&4Максимальный разрешенный объём региона %s, ваш регион %s"
+    error_region_max_volume: "&4Максимальный объём региона %s, ваш регион %s."
     region_name: "Регион"
     region_own_list: "Список регионов принадлежащих вам"
     region_size: "Размер"
