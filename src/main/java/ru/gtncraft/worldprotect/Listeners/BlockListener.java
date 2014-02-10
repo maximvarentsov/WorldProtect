@@ -27,7 +27,7 @@ public class BlockListener implements Listener {
      *
      * If a Block Break event is cancelled, the block will not break and experience will not drop.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBreak(final BlockBreakEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
@@ -40,7 +40,7 @@ public class BlockListener implements Listener {
      *
      * If a Block Place event is cancelled, the block will not be placed.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlace(final BlockPlaceEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
@@ -54,7 +54,7 @@ public class BlockListener implements Listener {
      *
      * If a Block Ignite event is cancelled, the block will not be ignited.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onIgnite(final BlockIgniteEvent event) {
         Player player = event.getPlayer();
         if (player instanceof Player) {
@@ -73,7 +73,7 @@ public class BlockListener implements Listener {
      *
      * If a Sign Change event is cancelled, the sign will not be changed.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSignChange(final SignChangeEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.use)) {
@@ -86,7 +86,7 @@ public class BlockListener implements Listener {
      *
      * If a Block Burn event is cancelled, the block will not be destroyed as a result of being burnt by fire.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBurn(final BlockBurnEvent event) {
         event.setCancelled(
             manager.prevent(event.getBlock().getLocation(), Prevent.burn)
@@ -101,7 +101,7 @@ public class BlockListener implements Listener {
      *
      * If a Block Fade event is cancelled, the block will not fade, melt or disappear.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onFade(final BlockFadeEvent event) {
         event.setCancelled(
             manager.prevent(event.getBlock().getLocation(), Prevent.fade)
@@ -117,7 +117,7 @@ public class BlockListener implements Listener {
      *
      * If a Block Form event is cancelled, the block will not be formed.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onForm(final BlockFormEvent event) {
         event.setCancelled(
             manager.prevent(event.getBlock().getLocation(), Prevent.grow)
@@ -133,7 +133,7 @@ public class BlockListener implements Listener {
      *
      * If a Block Spread event is cancelled, the block will not spread.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSpread(final BlockSpreadEvent event) {
         event.setCancelled(
             manager.prevent(event.getBlock().getLocation(), Prevent.grow)
@@ -151,7 +151,7 @@ public class BlockListener implements Listener {
      *
      * If a Block Grow event is cancelled, the block will not grow.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onGrow(final BlockGrowEvent event) {
         event.setCancelled(
             manager.prevent(event.getBlock().getLocation(), Prevent.grow)
@@ -162,7 +162,7 @@ public class BlockListener implements Listener {
      *
      * If a Leaves Decay event is cancelled, the leaves will not decay.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onLeavesDecay(final LeavesDecayEvent event) {
         event.setCancelled(
             manager.prevent(event.getBlock().getLocation(), Prevent.leavesDecay)
@@ -174,7 +174,7 @@ public class BlockListener implements Listener {
      * Examples:
      *  - Snow formed by a Snowman.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityBlockForm(final EntityBlockFormEvent event) {
         event.setCancelled(
             manager.prevent(event.getBlock().getLocation(), Prevent.build)

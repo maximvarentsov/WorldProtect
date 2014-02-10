@@ -2,8 +2,8 @@ package ru.gtncraft.worldprotect.Listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,26 +26,9 @@ public class EntityListener implements Listener {
         this.config = plugin.getConfig();
     }
     /**
-     * Called when a LivingEntity shoots a bow firing an arrow.
-     */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onShootBow(final EntityShootBowEvent event) {
-        if (event.getEntityType() == EntityType.PLAYER) {
-            Player player = (Player) event.getEntity();
-            if (manager.prevent(player.getLocation(), player, Prevent.damage)) {
-                event.setCancelled(true);
-                player.sendMessage(config.getMessage(Messages.error_region_protected));
-            }
-        } else {
-            event.setCancelled(
-                manager.prevent(event.getEntity().getLocation(), Prevent.damage)
-            );
-        }
-    }
-    /**
      * Thrown when a non-player entity (such as an Enderman) tries to teleport from one location to another.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onTeleport(final EntityTeleportEvent event) {
         event.setCancelled(
             manager.prevent(event.getTo(), Prevent.teleport) || manager.prevent(event.getFrom(), Prevent.teleport)
@@ -54,7 +37,7 @@ public class EntityListener implements Listener {
     /**
      * Called when an entity explodes.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onExplode(final EntityExplodeEvent event) {
         for (Block block : event.blockList()) {
             if (manager.prevent(block.getLocation(), Prevent.explode)) {
@@ -66,7 +49,7 @@ public class EntityListener implements Listener {
     /**
      * Called when an entity has made a decision to explode.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onExplosionPrime(final ExplosionPrimeEvent event) {
         event.setCancelled(
             manager.prevent(event.getEntity().getLocation(), Prevent.explode)
@@ -76,7 +59,7 @@ public class EntityListener implements Listener {
      * Called when a creature is spawned into a world.
      * If a Creature Spawn event is cancelled, the creature will not spawn.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
         if (manager.prevent(event.getLocation(), Prevent.creatureSpawn)) {
             event.setCancelled(true);
@@ -85,59 +68,48 @@ public class EntityListener implements Listener {
     /**
      * Called when any Entity, excluding players, changes a block.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onChangeBlock(final EntityChangeBlockEvent event) {
         event.setCancelled(
             manager.prevent(event.getBlock().getLocation(), Prevent.build)
         );
     }
     /**
-     * Called when an entity is damaged by a block.
-     */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onDamageByBlock(final EntityDamageByBlockEvent event) {
-        event.setCancelled(
-            manager.prevent(event.getEntity().getLocation(), Prevent.damage)
-        );
-    }
-
-    /**
      * Stores data for damage events.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDamage(final EntityDamageEvent event) {
-        Entity entity = event.getEntity();
-        if (manager.prevent(entity.getLocation(), Prevent.damage)) {
-            event.setCancelled(true);
-        }
-    }
-    /**
-     * Called when an entity is damaged by an entity.
-     */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onDamageByEntity(final EntityDamageByEntityEvent event) {
         final Entity target = event.getEntity();
-        final Entity damager = event.getDamager();
-        if (damager instanceof Player) {
-            final Player player = (Player) damager;
-
-            if (manager.prevent(target.getLocation(), player, Prevent.damage)) {
-                event.setCancelled(true);
-                player.sendMessage(config.getMessage(Messages.error_region_protected));
-                return;
-            }
+        if (event instanceof EntityDamageByEntityEvent) {
+            final EntityDamageByEntityEvent ev = (EntityDamageByEntityEvent) event;
+            final Entity damager = ev.getDamager();
 
             if (target instanceof Player) {
-                if (manager.prevent(target.getLocation(), player, Prevent.pvp)) {
-                    event.setCancelled(true);
-                    player.sendMessage(config.getMessage(Messages.error_region_protected));
+                if (damager instanceof Player) {
+                    final Player player = (Player) damager;
+                    if (manager.prevent(target.getLocation(), player, Prevent.pvp)) {
+                        event.setCancelled(true);
+                        player.sendMessage(config.getMessage(Messages.error_region_protected));
+
+                    }
                     return;
+                } else if (damager instanceof Arrow) {
+                    final Arrow arrow = (Arrow) damager;
+                    if (arrow.getShooter() instanceof Player) {
+                        final Player player = (Player) arrow.getShooter();
+                        if (manager.prevent(target.getLocation(), player, Prevent.pvp)) {
+                            event.setCancelled(true);
+                            player.sendMessage(config.getMessage(Messages.error_region_protected));
+
+                        }
+                        return;
+                    }
                 }
             }
-        } else {
-            event.setCancelled(
-                manager.prevent(target.getLocation(), Prevent.damage)
-            );
+        }
+
+        if (manager.prevent(target.getLocation(), Prevent.damage)) {
+            event.setCancelled(true);
         }
     }
 }

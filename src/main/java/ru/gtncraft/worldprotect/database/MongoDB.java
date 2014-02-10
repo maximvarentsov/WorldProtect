@@ -23,7 +23,7 @@ public class MongoDB implements Storage {
 
 
     @Override
-    public void save(World world, Map<String, Region> regions) {
+    public void save(final World world, final Map<String, Region> regions) {
         DBCollection coll = db.getCollection(world.getName());
         if (coll.count() == 0) {
             coll.ensureIndex(new BasicDBObject("name", 1).append("unique", true));
@@ -36,15 +36,15 @@ public class MongoDB implements Storage {
     }
 
     @Override
-    public void delete(World world, String name) {
+    public void delete(final World world, final String name) {
         db.getCollection(world.getName()).remove(new BasicDBObject("name", name));
     }
 
     @Override
-    public Map<String, Region> load(World world) {
+    public Map<String, Region> load(final World world) {
         Map<String, Region> values = new HashMap<>();
         DBCollection coll = db.getCollection(world.getName());
-        try (DBCursor curr = coll.find()) {
+        try (DBCursor curr = coll.find(new BasicDBObject("name", new BasicDBObject("$exists", true)))) {
             while (curr.hasNext()) {
                 Region region = new Region(curr.next().toMap());
                 values.put(region.getName(), region);

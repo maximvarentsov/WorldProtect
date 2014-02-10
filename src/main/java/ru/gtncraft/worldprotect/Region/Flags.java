@@ -8,6 +8,8 @@ public class Flags extends BasicDBObject {
 
     public Flags(final Map map) {
         putAll(map);
+        // New flag with state prevent true
+        set(Prevent.pvp, true);
     }
     /**
      * Set default flags state.

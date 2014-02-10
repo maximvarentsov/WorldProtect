@@ -28,7 +28,7 @@ public class VehicleListener implements Listener {
      * Raised when a vehicle is destroyed, which could be caused by either a player or the environment.
      * This is not raised if the boat is simply 'removed' due to other means.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDestory(final VehicleDestroyEvent event) {
         Entity attacker = event.getAttacker();
         if (attacker instanceof Player) {
@@ -46,7 +46,7 @@ public class VehicleListener implements Listener {
     /**
      * Raised when an entity enters a vehicle.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEnter(final VehicleEnterEvent event) {
         Entity passenger = event.getEntered().getPassenger();
         if (passenger instanceof Player) {

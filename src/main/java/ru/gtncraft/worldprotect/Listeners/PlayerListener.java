@@ -45,7 +45,7 @@ public class PlayerListener implements Listener {
     /**
      * Called when a player interacts with an object or air.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInteract(final PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Location location = event.getClickedBlock().getLocation();
@@ -83,7 +83,7 @@ public class PlayerListener implements Listener {
     /**
      * This event is fired when the player is almost about to enter the bed.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBedEnter(final PlayerBedEnterEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBed().getLocation(), player, Prevent.use)) {
@@ -94,7 +94,7 @@ public class PlayerListener implements Listener {
     /**
      * Called when a player fill a Bucket.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBucketFill(final PlayerBucketFillEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlockClicked().getLocation(), player, Prevent.build)) {
@@ -105,7 +105,7 @@ public class PlayerListener implements Listener {
     /**
      * Called when a player empty a Bucket.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBucketEmpty(final PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlockClicked().getLocation(), player, Prevent.build)) {
@@ -116,7 +116,7 @@ public class PlayerListener implements Listener {
     /**
      * Represents an event that is called when a player right clicks an entity.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInteractEntity(final PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getRightClicked().getLocation(), player, Prevent.build)) {
@@ -128,7 +128,7 @@ public class PlayerListener implements Listener {
      * Called early in the command handling process. This event is only for very exceptional
      * cases and you should not normally use it.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(player.getLocation(), player, Prevent.command) || preventCommand(player, event.getMessage())) {
@@ -139,7 +139,7 @@ public class PlayerListener implements Listener {
     /**
      * Holds information for player teleport events.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onTeleport(final PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)) {
