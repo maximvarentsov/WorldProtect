@@ -32,7 +32,7 @@ public class Commands implements CommandExecutor {
         this.we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         this.regionPerPlayer = plugin.getConfig().getInt("region.maxPerPlayer", 8);
         this.regionMaxVolume = plugin.getConfig().getInt("region.maxVolume", 30000);
-        PluginCommand command = plugin.getCommand("plugin");
+        PluginCommand command = plugin.getCommand("region");
 
         command.setExecutor(this);
         command.setTabCompleter(new CommandsCompleter(plugin));
@@ -54,6 +54,7 @@ public class Commands implements CommandExecutor {
         }
 
         try {
+
             switch (args[0].toLowerCase()) {
                 case "define":
                 case "claim":
