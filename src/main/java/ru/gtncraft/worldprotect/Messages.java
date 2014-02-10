@@ -21,6 +21,7 @@ public enum Messages {
     error_no_permission,
     error_command_disabled,
     error_pvp_disabled,
+    error_region_max_volume,
     region_name,
     region_own_list,
     success_region_flag_set,

@@ -68,7 +68,7 @@ public class Config extends YamlConfiguration {
         return ChatColor.translateAlternateColorCodes('&', this.getString("messages." + message.name()));
     }
 
-    public String getMessage(final Messages message, String...args) {
+    public String getMessage(final Messages message, Object...args) {
         return String.format(getMessage(message), args);
     }
 

@@ -167,6 +167,13 @@ public class Region extends BasicDBObject {
         this.put("owners", this.owners);
     }
 
+    public int volume() {
+        int xLength = p1.getX() - p2.getX() + 1;
+        int yLength = p1.getY() - p2.getY() + 1;
+        int zLength = p1.getZ() - p2.getZ() + 1;
+        return xLength * yLength * zLength;
+    }
+
     public String getSize() {
         return "( p1: " + p1 + " p2: " + p2 + " )";
     }
