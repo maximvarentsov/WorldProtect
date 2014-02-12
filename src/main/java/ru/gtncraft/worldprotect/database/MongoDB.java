@@ -46,7 +46,7 @@ public class MongoDB implements Storage {
         DBCollection coll = db.getCollection(world.getName());
         try (DBCursor curr = coll.find(new BasicDBObject("name", new BasicDBObject("$exists", true)))) {
             while (curr.hasNext()) {
-                Region region = new Region(curr.next().toMap());
+                Region region = new Region(curr.next().toMap(), world);
                 values.put(region.getName(), region);
             }
         }

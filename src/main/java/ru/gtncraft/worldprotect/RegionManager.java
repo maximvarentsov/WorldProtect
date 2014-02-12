@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import ru.gtncraft.worldprotect.Region.Cuboid;
 import ru.gtncraft.worldprotect.Region.Region;
 import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.MongoDB;
@@ -108,8 +109,10 @@ public class RegionManager {
      */
     public List<Region> get(final Location p1, final Location p2) {
         List<Region> result = new ArrayList<>();
+        Cuboid cuboid = new Cuboid(p1, p2);
         for (Region region : get(p1.getWorld()).values()) {
-            if (region.contains(p1) || region.contains(p2)) {
+            if (region.contains(cuboid.getLowerNE()) || region.contains(cuboid.getUpperSW()) || // inside
+                cuboid.contains(region.getCuboid().getLowerNE()) || cuboid.contains(region.getCuboid().getUpperSW())) { // outside
                 result.add(region);
             }
         }

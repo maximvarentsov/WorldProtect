@@ -5,6 +5,7 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.Roles;
 import ru.gtncraft.worldprotect.flags.Prevent;
@@ -19,14 +20,17 @@ public class Region extends BasicDBObject {
     private final Flags flags;
     private final BasicDBList owners;
     private final BasicDBList members;
+    private final Cuboid cuboid;
+    private World world;
 
-    public Region(final Map map) {
+    public Region(final Map map, final World world) {
         this.putAll(map);
         this.p1 = new Point(((DBObject) this.get("p1")).toMap());
         this.p2 = new Point(((DBObject) this.get("p2")).toMap());
         this.flags = new Flags(((DBObject) this.get("flags")).toMap());
         this.owners  = (BasicDBList) this.get("owners");
         this.members = (BasicDBList) this.get("members");
+        this.cuboid = new Cuboid(world, p1.getX(), p1.getY(), p1.getZ(), p2.getX(), p2.getY(), p2.getZ());
     }
 
     public Region(final Location p1, final Location p2) {
@@ -35,8 +39,10 @@ public class Region extends BasicDBObject {
         this.flags = new Flags();
         this.owners = new BasicDBList();
         this.members = new BasicDBList();
+        this.cuboid = new Cuboid(p1, p2);
         this.update();
     }
+
     /**
      * Get region name.
      */
@@ -108,10 +114,7 @@ public class Region extends BasicDBObject {
      * @param location Location.
      */
     public boolean contains(final Location location) {
-        int lx = location.getBlockX();
-        int ly = location.getBlockY();
-        int lz = location.getBlockZ();
-        return ! ( (lx < p1.getX() || lx > p2.getX()) || (ly < p1.getY() || ly > p2.getY()) || (lz < p1.getZ() || lz > p2.getZ()) );
+        return cuboid.contains(location);
     }
     /**
      * Set region name.
@@ -176,5 +179,9 @@ public class Region extends BasicDBObject {
 
     public String getSize() {
         return "( p1: " + p1 + " p2: " + p2 + " )";
+    }
+
+    public Cuboid getCuboid() {
+        return cuboid;
     }
 }
