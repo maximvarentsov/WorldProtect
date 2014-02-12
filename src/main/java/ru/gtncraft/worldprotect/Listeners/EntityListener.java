@@ -1,7 +1,6 @@
 package ru.gtncraft.worldprotect.Listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -39,11 +38,8 @@ public class EntityListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onExplode(final EntityExplodeEvent event) {
-        for (Block block : event.blockList()) {
-            if (manager.prevent(block.getLocation(), Prevent.explode)) {
-                event.setCancelled(true);
-                break;
-            }
+        if (manager.prevent(event.getLocation(), Prevent.explode)) {
+            event.setCancelled(true);
         }
     }
     /**
