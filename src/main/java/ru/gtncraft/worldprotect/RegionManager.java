@@ -4,8 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import ru.gtncraft.worldprotect.Region.Cuboid;
-import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.region.Cuboid;
+import ru.gtncraft.worldprotect.region.Region;
 import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.MongoDB;
 import ru.gtncraft.worldprotect.database.Storage;
@@ -52,7 +52,7 @@ public class RegionManager {
      * Delete region from world.
      *
      * @param world World
-     * @param name Region name
+     * @param name region name
      */
     public void delete(final World world, final String name) {
         get(world).remove(name);
@@ -88,7 +88,7 @@ public class RegionManager {
      * Add new region in world.
      *
      * @param world World.
-     * @param region Region.
+     * @param region region.
      */
     public void add(final World world, final Region region) {
         get(world).put(region.getName(), region);
@@ -135,7 +135,7 @@ public class RegionManager {
      * Get region in current world by name.
      *
      * @param world World.
-     * @param name Region name.
+     * @param name region name.
      */
     public Region get(final World world, final String name) {
         return get(world).get(name.toLowerCase());

@@ -6,7 +6,7 @@ import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.bukkit.World;
-import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.region.Region;
 import ru.gtncraft.worldprotect.WorldProtect;
 import java.io.*;
 import java.util.HashMap;

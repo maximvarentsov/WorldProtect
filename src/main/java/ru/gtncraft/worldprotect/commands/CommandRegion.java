@@ -1,41 +1,36 @@
-package ru.gtncraft.worldprotect;
+package ru.gtncraft.worldprotect.commands;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.Messages;
+import ru.gtncraft.worldprotect.Permissions;
+import ru.gtncraft.worldprotect.Roles;
+import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.flags.Prevent;
+import ru.gtncraft.worldprotect.region.Region;
+
 import java.util.List;
 
-public class Commands implements CommandExecutor {
+public class CommandRegion implements CommandExecutor {
 
     private final WorldProtect plugin;
     private final WorldEditPlugin we;
     private final int regionPerPlayer;
     private final int regionMaxVolume;
 
-    private class CommandException extends Exception {
-        public CommandException(String message) {
-            super(message);
-        }
-    }
-
-    public Commands(final WorldProtect plugin) {
+    public CommandRegion(final WorldProtect plugin) {
         this.plugin = plugin;
         this.we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         this.regionPerPlayer = plugin.getConfig().getInt("region.maxPerPlayer", 8);
         this.regionMaxVolume = plugin.getConfig().getInt("region.maxVolume", 30000);
-        PluginCommand command = plugin.getCommand("region");
 
+        final PluginCommand command = plugin.getCommand("region");
         command.setExecutor(this);
-        command.setTabCompleter(new CommandsCompleter(plugin));
+        command.setTabCompleter(new CompleterRegion(plugin));
         command.setPermissionMessage(plugin.getConfig().getMessage(Messages.error_no_permission));
     }
 
@@ -54,7 +49,6 @@ public class Commands implements CommandExecutor {
         }
 
         try {
-
             switch (args[0].toLowerCase()) {
                 case "define":
                 case "claim":
@@ -74,16 +68,12 @@ public class Commands implements CommandExecutor {
                     return commandInfo(player, args);
                 case "list":
                     return commandList(player);
-                case "save":
-                    return commandSave(player);
                 case "flag":
                     switch (args[2].toLowerCase()) {
                         case "set":
                             return commandFlagSet(player, args);
                     }
-                // show usage for unknown command args.
-                default:
-                    return false;
+
             }
         } catch (CommandException ex) {
             player.sendMessage(ex.getMessage());
@@ -91,6 +81,8 @@ public class Commands implements CommandExecutor {
         } catch (ArrayIndexOutOfBoundsException ex) {
             return false;
         }
+        // show usage
+        return false;
     }
 
     private boolean commandDefine(final Player sender, final String[] args) throws CommandException {
@@ -173,22 +165,6 @@ public class Commands implements CommandExecutor {
             return true;
         }
         return false;
-    }
-
-    private boolean commandSave(final Player sender) throws CommandException {
-        if (!sender.hasPermission(Permissions.admin)) {
-            return false;
-        }
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                for (World world : Bukkit.getWorlds()) {
-                    plugin.getRegionManager().save(world);
-                }
-            }
-        });
-        sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_saved));
-        return true;
     }
 
     private boolean commandDelete(final Player sender, final String[] args) throws CommandException {

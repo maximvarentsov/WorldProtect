@@ -1,4 +1,4 @@
-package ru.gtncraft.worldprotect.Region;
+package ru.gtncraft.worldprotect.region;
 
 import com.google.common.collect.ImmutableList;
 import com.mongodb.BasicDBList;
@@ -60,7 +60,7 @@ public class Region extends BasicDBObject {
     }
     /**
      * Get region flag state.
-     * @param flag Region flag.
+     * @param flag region flag.
      */
     public boolean get(final Prevent flag) {
         return flags.get(flag);
@@ -80,7 +80,7 @@ public class Region extends BasicDBObject {
     }
     /**
      * Check player with role exists in region.
-     * @param player Region player.
+     * @param player region player.
      * @param role Player role owner/member.
      */
     public boolean contains(final Player player, final Roles role) {
@@ -88,7 +88,7 @@ public class Region extends BasicDBObject {
     }
     /**
      * Check player with role exists in region.
-     * @param player Region player.
+     * @param player region player.
      * @param role Player role owner/member.
      */
     private boolean contains(final String player, final Roles role) {
@@ -117,7 +117,7 @@ public class Region extends BasicDBObject {
     }
     /**
      * Set region name.
-     * @param value Region name.
+     * @param value region name.
      */
     public void setName(final String value) {
         put("name", value.toLowerCase());

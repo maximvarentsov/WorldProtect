@@ -1,7 +1,9 @@
 package ru.gtncraft.worldprotect;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.gtncraft.worldprotect.Listeners.*;
+import ru.gtncraft.worldprotect.commands.CommandWorldProtect;
+import ru.gtncraft.worldprotect.listeners.*;
+import ru.gtncraft.worldprotect.commands.CommandRegion;
 
 import java.io.IOException;
 
@@ -32,7 +34,8 @@ public final class WorldProtect extends JavaPlugin {
         new HandingListener(this);
         new WorldListener(this);
 
-        new Commands(this);
+        new CommandWorldProtect(this);
+        new CommandRegion(this);
     }
 
     @Override

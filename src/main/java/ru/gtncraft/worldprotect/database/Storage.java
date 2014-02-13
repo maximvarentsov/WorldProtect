@@ -1,7 +1,7 @@
 package ru.gtncraft.worldprotect.database;
 
 import org.bukkit.World;
-import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.region.Region;
 import java.util.Map;
 
 public interface Storage {

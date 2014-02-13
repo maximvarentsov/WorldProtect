@@ -1,4 +1,4 @@
-package ru.gtncraft.worldprotect;
+package ru.gtncraft.worldprotect.commands;
 
 import com.google.common.collect.ImmutableList;
 import org.bukkit.World;
@@ -7,21 +7,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
-import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.Permissions;
+import ru.gtncraft.worldprotect.region.Region;
+import ru.gtncraft.worldprotect.Roles;
+import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import java.util.*;
 
-public class CommandsCompleter implements TabCompleter {
+public class CompleterRegion implements TabCompleter {
 
     private final WorldProtect plugin;
     private final List<String> subs = ImmutableList.of(
-            "define", "delete", "addowner", "deleteowner", "addmemeber", "deletemember",
-            "info", "list", "flag", "save"
+        "define", "delete", "addowner", "deleteowner", "addmemeber", "deletemember", "info", "list", "flag"
     );
     private final List<String> bool = ImmutableList.of("true", "false");
     private final List<String> flags = new ArrayList<>();
 
-    public CommandsCompleter(final WorldProtect plugin) {
+    public CompleterRegion(final WorldProtect plugin) {
         this.plugin = plugin;
         for (Prevent flag : Prevent.values()) {
             flags.add(flag.name());

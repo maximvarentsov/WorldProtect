@@ -2,7 +2,7 @@ package ru.gtncraft.worldprotect.database;
 
 import com.mongodb.*;
 import org.bukkit.World;
-import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.region.Region;
 import ru.gtncraft.worldprotect.WorldProtect;
 
 import java.io.IOException;

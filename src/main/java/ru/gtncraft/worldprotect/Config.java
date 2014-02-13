@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import ru.gtncraft.worldprotect.Region.Region;
+import ru.gtncraft.worldprotect.region.Region;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

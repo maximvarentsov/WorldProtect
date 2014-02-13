@@ -1,4 +1,4 @@
-package ru.gtncraft.worldprotect.Region;
+package ru.gtncraft.worldprotect.region;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -148,7 +148,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
      */
     public List<Block> getBlocks() {
         Iterator<Block> blockI = this.iterator();
-        List<Block> copy = new ArrayList<Block>();
+        List<Block> copy = new ArrayList<>();
         while (blockI.hasNext())
             copy.add(blockI.next());
         return copy;
@@ -555,7 +555,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
      * @return A list of Chunk objects
      */
     public List<Chunk> getChunks() {
-        List<Chunk> res = new ArrayList<Chunk>();
+        List<Chunk> res = new ArrayList<>();
 
         World w = this.getWorld();
         int x1 = this.getLowerX() & ~0xf;

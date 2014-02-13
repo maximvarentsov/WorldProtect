@@ -1,4 +1,4 @@
-package ru.gtncraft.worldprotect.Listeners;
+package ru.gtncraft.worldprotect.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

@@ -1,4 +1,4 @@
-package ru.gtncraft.worldprotect.Region;
+package ru.gtncraft.worldprotect.region;
 
 import com.mongodb.BasicDBObject;
 import org.bukkit.Location;

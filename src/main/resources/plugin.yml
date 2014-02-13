@@ -6,15 +6,15 @@ softdepend: [WorldEdit]
 
 permissions:
     worldprotect.admin:
-        description: Allow administrate user regions.
+        description: Полное управление регионами.
         default: op
     worldprotect.use:
-        description: Allow use region commands.
+        description: Доступ к использованию комманд управления регионами.
         default: true
 commands:
     region:
         aliases: [ rg ]
-        description: Commands for manipulating regions.
+        description: Комманды для управления регионами.
         permission: worldprotect.use
         usage: |
              /<command> define <регион> - Создать регион.
@@ -26,4 +26,8 @@ commands:
              /<command> info [регион] - Показать информацию о регионе.
              /<command> list - Показать список доступных вам регионов.
              /<command> flag <регион> set <flag> <true|false> - Установить флаг для региона.
+    worldprotect:
+        description: Админские комманды для управления регионами.
+        permission: worldprotect.admin
+        usage: |
              /<command> save - Сохранить регионы.
