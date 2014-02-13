@@ -21,7 +21,6 @@ public class Region extends BasicDBObject {
     private final BasicDBList owners;
     private final BasicDBList members;
     private final Cuboid cuboid;
-    private World world;
 
     public Region(final Map map, final World world) {
         this.putAll(map);

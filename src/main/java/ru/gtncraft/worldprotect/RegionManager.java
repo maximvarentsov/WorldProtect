@@ -102,15 +102,14 @@ public class RegionManager {
         return regions.get(world.getName());
     }
     /**
-     * Get regions inside first or second location.
+     * Get regions overlays.
      *
-     * @param p1 location one.
-     * @param p2 location two.
+     * @param value region.
      */
-    public List<Region> get(final Location p1, final Location p2) {
+    public List<Region> getOverlays(final Region value) {
         List<Region> result = new ArrayList<>();
-        Cuboid cuboid = new Cuboid(p1, p2);
-        for (Region region : get(p1.getWorld()).values()) {
+        final Cuboid cuboid = value.getCuboid();
+        for (Region region : get(cuboid.getWorld()).values()) {
             if (region.contains(cuboid.getLowerNE()) || region.contains(cuboid.getUpperSW()) || // inside
                 cuboid.contains(region.getCuboid().getLowerNE()) || cuboid.contains(region.getCuboid().getUpperSW())) { // outside
                 result.add(region);

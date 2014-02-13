@@ -128,7 +128,7 @@ public class Commands implements CommandExecutor {
             /**
              *  Check region have overlay with another.
              */
-            for (Region overlay : plugin.getRegionManager().get(p1, p2)) {
+            for (Region overlay : plugin.getRegionManager().getOverlays(region)) {
                 if (!overlay.contains(sender, Roles.owner)) {
                     throw new CommandException(plugin.getConfig().getMessage(Messages.error_region_overlay));
                 }
