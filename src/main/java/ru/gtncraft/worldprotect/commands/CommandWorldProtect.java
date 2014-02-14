@@ -7,6 +7,9 @@ import org.bukkit.command.*;
 import org.bukkit.util.StringUtil;
 import ru.gtncraft.worldprotect.Messages;
 import ru.gtncraft.worldprotect.WorldProtect;
+import ru.gtncraft.worldprotect.database.JsonFile;
+import ru.gtncraft.worldprotect.database.Storage;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +25,7 @@ public class CommandWorldProtect implements CommandExecutor {
         command.setExecutor(this);
         command.setTabCompleter(new TabCompleter() {
             private final List<String> subs = ImmutableList.of(
-                "save"
+                "save", "convert"
             );
             @Override
             public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
@@ -44,6 +47,8 @@ public class CommandWorldProtect implements CommandExecutor {
             switch (args[0].toLowerCase()) {
                 case "save":
                     return commandSave(sender);
+                case "dump":
+                    return commandDump(sender);
             }
         } catch (CommandException ex) {
             sender.sendMessage(ex.getMessage());
@@ -64,6 +69,17 @@ public class CommandWorldProtect implements CommandExecutor {
             }
         });
         sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_saved));
+        return true;
+    }
+
+    private boolean commandDump(final CommandSender sender) throws CommandException {
+        final Storage storage = new JsonFile(plugin);
+        for (World world : Bukkit.getServer().getWorlds()) {
+            if (plugin.getConfig().useRegions(world)) {
+                storage.save(world, plugin.getRegionManager().get(world));
+            }
+        }
+        sender.sendMessage(plugin.getConfig().getMessage(Messages.success_region_dumped));
         return true;
     }
 }

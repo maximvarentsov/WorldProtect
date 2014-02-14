@@ -73,3 +73,4 @@ messages:
     success_region_player_add: "&2Игрок %s добавлен в регион %s."
     success_region_player_delete: "&2Игрок %s удален из региона %s."
     success_region_saved: "&2Регионы сохранены."
+    success_region_dumped: "&2Регионы сохранены на диск."

@@ -31,3 +31,4 @@ commands:
         permission: worldprotect.admin
         usage: |
              /<command> save - Сохранить регионы.
+             /<command> dump - Сохранить регионы на диск.
