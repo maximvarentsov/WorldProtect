@@ -30,6 +30,7 @@ public class JsonFile implements Storage {
         try (OutputStream os = new FileOutputStream(file)) {
             BasicDBList list = new BasicDBList();
             for (Region region : regions.values()) {
+                region.update();
                 list.add(region);
             }
             if (list.size() > 0) {
