@@ -33,11 +33,8 @@ public class RegionManager {
             default:
                 throw new IOException("Unknown regions storage.");
         }
-        // Load all worlds which use regions.
         for (World world : Bukkit.getServer().getWorlds()) {
-            if (plugin.getConfig().useRegions(world)) {
-                load(world);
-            }
+            load(world);
         }
     }
     /**

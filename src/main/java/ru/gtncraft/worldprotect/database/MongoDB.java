@@ -2,9 +2,9 @@ package ru.gtncraft.worldprotect.database;
 
 import com.mongodb.*;
 import org.bukkit.World;
-import ru.gtncraft.worldprotect.region.Region;
+import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.WorldProtect;
-
+import ru.gtncraft.worldprotect.region.Region;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +12,10 @@ import java.util.Map;
 public class MongoDB implements Storage {
 
     private final DB db;
+    private final Config config;
 
     public MongoDB(final WorldProtect plugin) throws IOException {
+        this.config = plugin.getConfig();
         MongoClient mongoClient = new MongoClient(
             plugin.getConfig().getString("storage.host"),
             plugin.getConfig().getInt("storage.port")
@@ -42,12 +44,14 @@ public class MongoDB implements Storage {
 
     @Override
     public Map<String, Region> load(final World world) {
-        Map<String, Region> values = new HashMap<>();
-        DBCollection coll = db.getCollection(world.getName());
-        try (DBCursor curr = coll.find(new BasicDBObject("name", new BasicDBObject("$exists", true)))) {
-            while (curr.hasNext()) {
-                Region region = new Region(curr.next().toMap(), world);
-                values.put(region.getName(), region);
+        final Map<String, Region> values = new HashMap<>();
+        if (config.useRegions(world)) {
+            DBCollection coll = db.getCollection(world.getName());
+            try (DBCursor curr = coll.find(new BasicDBObject("name", new BasicDBObject("$exists", true)))) {
+                while (curr.hasNext()) {
+                    Region region = new Region(curr.next().toMap(), world);
+                    values.put(region.getName(), region);
+                }
             }
         }
         return values;
