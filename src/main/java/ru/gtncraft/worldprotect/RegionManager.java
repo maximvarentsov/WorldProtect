@@ -4,12 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import ru.gtncraft.worldprotect.region.Cuboid;
-import ru.gtncraft.worldprotect.region.Region;
 import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.MongoDB;
 import ru.gtncraft.worldprotect.database.Storage;
 import ru.gtncraft.worldprotect.flags.Prevent;
+import ru.gtncraft.worldprotect.region.Cuboid;
+import ru.gtncraft.worldprotect.region.Region;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -177,7 +178,7 @@ public class RegionManager {
      * Check player is owner/member of any region inside location with true prevent flag.
      */
     public boolean prevent(final Location location, final Player player, final Prevent flag) {
-        if (player.hasPermission(Permissions.admin)) {
+        if (player.hasPermission(Permissions.admin) || player.hasPermission(Permissions.moder)) {
             return false;
         }
         for (Region region : get(location)) {

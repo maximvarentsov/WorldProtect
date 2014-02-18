@@ -8,6 +8,9 @@ permissions:
     worldprotect.admin:
         description: Полное управление регионами.
         default: op
+    worldprotect.moder:
+            description: Модерирование регионов.
+            default: false
     worldprotect.use:
         description: Доступ к использованию комманд управления регионами.
         default: true
