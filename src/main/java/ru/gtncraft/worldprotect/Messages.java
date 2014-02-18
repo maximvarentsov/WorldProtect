@@ -30,7 +30,7 @@ public enum Messages {
     success_region_player_add,
     success_region_player_delete,
     success_region_saved,
-    success_region_dumped,
+    success_region_converted,
     region_size,
     region_owners,
     region_members,

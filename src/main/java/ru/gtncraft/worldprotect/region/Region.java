@@ -9,8 +9,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.Roles;
 import ru.gtncraft.worldprotect.flags.Prevent;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Region extends BasicDBObject {
@@ -69,7 +69,7 @@ public class Region extends BasicDBObject {
      * Get region players owners/members.
      * @param role player role.
      */
-    public List<String> get(final Roles role) {
+    public Collection<String> get(final Roles role) {
         switch (role) {
             case member:
                 return ImmutableList.copyOf(members.toArray(new String[0]));

@@ -1,5 +1,8 @@
 package ru.gtncraft.worldprotect.flags;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public enum Prevent {
     build,
     use,
@@ -13,5 +16,13 @@ public enum Prevent {
     fade,
     burn,
     pvp,
-    piston
+    piston;
+
+    public static Collection<String> toArray() {
+        Collection<String> result = new ArrayList<>();
+        for (Prevent flag : values()) {
+            result.add(flag.name());
+        }
+        return result;
+    }
 }

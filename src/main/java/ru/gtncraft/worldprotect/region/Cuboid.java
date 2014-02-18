@@ -146,9 +146,9 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
      *
      * @return The blocks in the Cuboid
      */
-    public List<Block> getBlocks() {
+    public Collection<Block> getBlocks() {
         Iterator<Block> blockI = this.iterator();
-        List<Block> copy = new ArrayList<>();
+        Collection<Block> copy = new ArrayList<>();
         while (blockI.hasNext())
             copy.add(blockI.next());
         return copy;
@@ -550,13 +550,12 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
     }
 
     /**
-     * Get a list of the chunks which are fully or partially contained in this cuboid.
+     * Get a collection of the chunks which are fully or partially contained in this cuboid.
      *
-     * @return A list of Chunk objects
+     * @return A collection of Chunk objects
      */
-    public List<Chunk> getChunks() {
-        List<Chunk> res = new ArrayList<>();
-
+    public Collection<Chunk> getChunks() {
+        Collection<Chunk> res = new ArrayList<>();
         World w = this.getWorld();
         int x1 = this.getLowerX() & ~0xf;
         int x2 = this.getUpperX() & ~0xf;

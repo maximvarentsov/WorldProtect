@@ -10,12 +10,8 @@ import ru.gtncraft.worldprotect.database.Storage;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Cuboid;
 import ru.gtncraft.worldprotect.region.Region;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RegionManager {
 
@@ -104,8 +100,8 @@ public class RegionManager {
      *
      * @param value region.
      */
-    public List<Region> getOverlays(final Region value) {
-        List<Region> result = new ArrayList<>();
+    public Collection<Region> getOverlays(final Region value) {
+        Collection<Region> result = new ArrayList<>();
         final Cuboid cuboid = value.getCuboid();
         for (Region region : get(cuboid.getWorld()).values()) {
             if (region.contains(cuboid.getLowerNE()) || region.contains(cuboid.getUpperSW()) || // inside
@@ -120,8 +116,8 @@ public class RegionManager {
      *
      * @param location Current location.
      */
-    public List<Region> get(final Location location) {
-        List<Region> result = new ArrayList<>();
+    public Collection<Region> get(final Location location) {
+        Collection<Region> result = new ArrayList<>();
         for (Region region: get(location.getWorld()).values()) {
             if (region.contains(location)) {
                 result.add(region);
@@ -144,8 +140,8 @@ public class RegionManager {
      * @param player Player.
      * @param role Player Roles in region.
      */
-    public List<Region> get(final Player player, final Roles role) {
-        ArrayList<Region> result = new ArrayList<>();
+    public Collection<Region> get(final Player player, final Roles role) {
+        Collection<Region> result = new ArrayList<>();
         for (Region region : get(player.getWorld()).values()) {
             if (region.contains(player, role)) {
                 result.add(region);
@@ -162,7 +158,7 @@ public class RegionManager {
         if (player.hasPermission(Permissions.admin)) {
             return true;
         }
-        List<Region> regions = get(player.getLocation());
+        Collection<Region> regions = get(player.getLocation());
         // Player not in region.
         if (regions.isEmpty()) {
             return true;

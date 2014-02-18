@@ -15,14 +15,13 @@ import ru.gtncraft.worldprotect.Messages;
 import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.flags.Prevent;
-
-import java.util.List;
+import java.util.Collection;
 
 public class PlayerListener implements Listener {
 
     private final RegionManager manager;
-    private final List<String> preventCommands;
-    private final List<Material> preventUse;
+    private final Collection<String> preventCommands;
+    private final Collection<Material> preventUse;
     private final Material tool;
     private final Config config;
 

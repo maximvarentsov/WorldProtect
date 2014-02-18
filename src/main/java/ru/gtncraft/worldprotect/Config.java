@@ -7,17 +7,14 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import ru.gtncraft.worldprotect.region.Region;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Config extends YamlConfiguration {
 
-    private final List<String> preventCommands;
-    private final List<Material> preventUse;
+    private final Collection<String> preventCommands;
+    private final Collection<Material> preventUse;
     private final Material tool;
-    private final List<String> worlds;
+    private final Collection<String> worlds;
 
     public Config(final FileConfiguration config) {
 
@@ -56,11 +53,11 @@ public class Config extends YamlConfiguration {
         return tool;
     }
 
-    public List<String> getPreventCommands() {
+    public Collection<String> getPreventCommands() {
         return preventCommands;
     }
 
-    public List<Material> getPreventUse() {
+    public Collection<Material> getPreventUse() {
         return preventUse;
     }
 
@@ -72,8 +69,8 @@ public class Config extends YamlConfiguration {
         return String.format(getMessage(message), args);
     }
 
-    public String[] getMessage(List<Region> regions) {
-        List<String> messages = new ArrayList<>();
+    public String[] getMessage(Collection<Region> regions) {
+        Collection<String> messages = new ArrayList<>();
         if (regions.size() > 0) {
             for (Region region : regions) {
                 messages.addAll(Arrays.asList(getMessage(region)));
@@ -85,13 +82,13 @@ public class Config extends YamlConfiguration {
     }
 
     public String[] getMessage(Region region) {
-        List<String> messages = new ArrayList<>();
+        Collection<String> messages = new ArrayList<>();
 
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_name) + ": "    + ChatColor.WHITE + region.getName());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_size) + ": " + ChatColor.WHITE + region.getSize());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + region.get(Roles.owner));
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + region.get(Roles.member));
-        List<String> flags = new ArrayList<>();
+        Collection<String> flags = new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : region.get().entrySet()) {
             String value = entry.getValue() ? ChatColor.RED + getMessage(Messages.flag_true) : ChatColor.GRAY + getMessage(Messages.flag_false);
             flags.add(ChatColor.WHITE + entry.getKey() + ": " + value + ChatColor.WHITE);
