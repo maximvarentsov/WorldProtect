@@ -12,5 +12,6 @@ public enum Prevent {
     grow,
     fade,
     burn,
-    pvp
+    pvp,
+    piston
 }

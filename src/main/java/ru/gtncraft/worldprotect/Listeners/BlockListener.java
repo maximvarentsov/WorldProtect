@@ -1,6 +1,7 @@
 package ru.gtncraft.worldprotect.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -179,5 +180,22 @@ public class BlockListener implements Listener {
         event.setCancelled(
             manager.prevent(event.getBlock().getLocation(), Prevent.build)
         );
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPistonEvent(final BlockPistonExtendEvent event) {
+        for (Block block : event.getBlocks()) {
+            if (manager.prevent(block.getLocation(), Prevent.piston)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPistonEvent(final BlockPistonRetractEvent event) {
+        if (manager.prevent(event.getRetractLocation(), Prevent.piston)) {
+            event.setCancelled(true);
+        }
     }
 }
