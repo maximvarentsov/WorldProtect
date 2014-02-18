@@ -25,8 +25,8 @@ public class CommandRegion implements CommandExecutor {
     public CommandRegion(final WorldProtect plugin) {
         this.plugin = plugin;
         this.we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-        this.regionPerPlayer = plugin.getConfig().getInt("region.maxPerPlayer", 8);
-        this.regionMaxVolume = plugin.getConfig().getInt("region.maxVolume", 30000);
+        this.regionPerPlayer = plugin.getConfig().getInt("region.maxPerPlayer");
+        this.regionMaxVolume = plugin.getConfig().getInt("region.maxVolume");
 
         final PluginCommand command = plugin.getCommand("region");
         command.setExecutor(this);
