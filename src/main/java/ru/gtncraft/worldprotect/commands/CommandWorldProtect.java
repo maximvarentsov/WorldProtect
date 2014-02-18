@@ -2,14 +2,18 @@ package ru.gtncraft.worldprotect.commands;
 
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.*;
-import ru.gtncraft.worldprotect.Config;
-import ru.gtncraft.worldprotect.Messages;
-import ru.gtncraft.worldprotect.RegionManager;
-import ru.gtncraft.worldprotect.WorldProtect;
+import org.bukkit.entity.Player;
+import ru.gtncraft.worldprotect.*;
 import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.Storage;
+import ru.gtncraft.worldprotect.region.Region;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import static ru.gtncraft.worldprotect.util.Strings.partial;
 
@@ -30,9 +34,16 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length <= 1) {
-            return partial(args[0], ImmutableList.of("save", "convert"));
+    public List<String> onTabComplete(CommandSender sender, Command pcommand, String label, String[] args) {
+        if (args.length > 1) {
+            final String lastArg = args[args.length - 1];
+            final String command = args[0].toLowerCase();
+            switch (command) {
+                case "tp":
+                    return partial(lastArg, allRegions(sender));
+            }
+        } else if (args.length <= 1) {
+            return partial(args[0], ImmutableList.of("save", "convert", "tp"));
         }
         return ImmutableList.of();
     }
@@ -45,6 +56,10 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
                     return commandSave(sender);
                 case "convert":
                     return commandConvert(sender);
+                case "tp":
+                    if (sender instanceof Player) {
+                        return commandTeleport((Player) sender, args[1]);
+                    }
             }
         } catch (CommandException ex) {
             sender.sendMessage(ex.getMessage());
@@ -80,5 +95,43 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         }
         sender.sendMessage(config.getMessage(Messages.success_region_converted, "mongodb", "file"));
         return true;
+    }
+
+    private boolean commandTeleport(final Player sender, final String name) throws CommandException {
+        final Region region = regions.get(sender.getWorld(), name);
+        if (region == null) {
+            throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
+        }
+
+        if (isFree(region.getCuboid().getUpperSW())) {
+            sender.teleport(region.getCuboid().getUpperSW());
+        } else if (isFree(region.getCuboid().getLowerNE())) {
+            sender.teleport(region.getCuboid().getUpperSW());
+        } else {
+            sender.teleport(region.getCuboid().getCenter());
+        }
+
+        return true;
+    }
+
+    private boolean isFree(final Location location) {
+        final int x = location.getBlockX();
+        final int y = location.getBlockZ();
+        final int z = location.getBlockZ();
+
+        return location.getWorld().getBlockAt(x,y + 1,z).getType().equals(Material.AIR);
+    }
+
+    private Collection<String> allRegions(final CommandSender sender) {
+        final Collection<String> result = new ArrayList<>();
+        if (sender instanceof Player) {
+            final Player player = (Player) sender;
+            if (player.hasPermission(Permissions.admin)) {
+                for (Region region: regions.get(player.getWorld()).values()) {
+                    result.add(region.getName());
+                }
+            }
+        }
+        return result;
     }
 }
