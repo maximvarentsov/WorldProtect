@@ -8,7 +8,6 @@ public class Flags extends BasicDBObject {
 
     public Flags(final Map map) {
         putAll(map);
-        set(Prevent.piston, true);
     }
     /**
      * Set default flags state.
