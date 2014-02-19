@@ -16,10 +16,11 @@ import java.util.*;
 public class RegionManager {
 
     private final Storage storage;
+    private final WorldProtect plugin;
     private final Map<String, Map<String, Region>> regions = new HashMap<>();
 
     public RegionManager(final WorldProtect plugin) throws IOException {
-
+        this.plugin = plugin;
         switch (plugin.getConfig().getString("storage.type")) {
             case "mongodb":
                 this.storage = new MongoDB(plugin);
@@ -40,7 +41,11 @@ public class RegionManager {
      * @param world World
      */
     public void load(final World world) {
-        regions.put(world.getName(), storage.load(world));
+        Map<String, Region> values = new HashMap<>();
+        if (plugin.getConfig().useRegions(world)) {
+            values = storage.load(world);
+        }
+        regions.put(world.getName(), values);
     }
     /**
      * Delete region from world.

@@ -29,9 +29,6 @@ public class WorldListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onLoad(final WorldLoadEvent event) {
-        if (!plugin.getConfig().useRegions(event.getWorld())) {
-            return;
-        }
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
