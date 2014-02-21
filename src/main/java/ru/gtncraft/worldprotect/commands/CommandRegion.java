@@ -170,15 +170,17 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
                     throw new CommandException(config.getMessage(Messages.error_region_overlay));
                 }
             }
-            /**
-             * Check region per player limit.
-             */
-            final int max = config.getInt("region.maxPerPlayer");
-            final int total = regions.get(sender, Roles.owner).size();
-            if (max > 0 && total >= max) {
-                throw new CommandException(
-                    config.getMessage(Messages.error_region_created_max, max)
-                );
+            if (!sender.hasPermission(Permissions.moder)) {
+                /**
+                 * Check region per player limit.
+                 */
+                final int max = config.getInt("region.maxPerPlayer");
+                final int total = regions.get(sender, Roles.owner).size();
+                if (max > 0 && total >= max) {
+                    throw new CommandException(
+                        config.getMessage(Messages.error_region_created_max, max)
+                    );
+                }
             }
         }
         regions.add(sender.getWorld(), region);
