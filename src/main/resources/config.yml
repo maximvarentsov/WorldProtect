@@ -11,6 +11,11 @@ region:
     maxPerPlayer: 8
     maxVolume: 30000
     tool: STICK
+    flags:
+        allowed:
+            - piston
+            - pvp
+            - leavesDecay
     prevent:
         use:
             - CHEST

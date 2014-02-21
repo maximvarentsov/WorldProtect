@@ -251,15 +251,28 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
                 throw new CommandException(config.getMessage(Messages.error_input_flag_invalid_value));
         }
 
-        if (!sender.hasPermission(Permissions.admin)) {
-            throw new CommandException(config.getMessage(Messages.error_no_permission));
-        }
-
+        Prevent prevent;
         try {
-            region.set(Prevent.valueOf(flag), valueFlag);
-            sender.sendMessage(config.getMessage(Messages.success_region_flag_set, flag, name));
+            prevent = Prevent.valueOf(flag);
         } catch (IllegalArgumentException ex) {
             throw new CommandException(config.getMessage(Messages.error_input_flag_unknown, flag));
+        }
+
+        boolean perms = false;
+
+        if (sender.hasPermission(Permissions.admin)) {
+            perms = true;
+        } else if (sender.hasPermission(Permissions.moder) || region.contains(sender, Roles.owner)) {
+            if (config.isAllowedFlag(prevent)) {
+                perms = true;
+            }
+        }
+
+        if (perms) {
+            region.set(prevent, valueFlag);
+            sender.sendMessage(config.getMessage(Messages.success_region_flag_set, flag, name));
+        } else {
+            throw new CommandException(config.getMessage(Messages.error_no_permission));
         }
 
         return true;
@@ -314,7 +327,7 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
 
     private void checkPermission(final Player sender, final Region region) throws CommandException {
         if (!(sender.hasPermission(Permissions.admin) || region.contains(sender, Roles.owner))) {
-            throw new CommandException(config.getMessage(Messages.error_region_protected));
+            throw new CommandException(config.getMessage(Messages.error_no_permission));
         }
     }
 

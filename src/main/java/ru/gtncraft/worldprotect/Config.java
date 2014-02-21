@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Region;
 import java.util.*;
 
@@ -15,6 +16,7 @@ public class Config extends YamlConfiguration {
     private final Collection<Material> preventUse;
     private final Material tool;
     private final Collection<String> worlds;
+    private final Collection<Prevent> allowedFlags;
 
     public Config(final FileConfiguration config) {
 
@@ -47,6 +49,15 @@ public class Config extends YamlConfiguration {
         for (String world : this.getStringList("region.worlds")) {
             worlds.add(world.toLowerCase());
         }
+
+        this.allowedFlags = new ArrayList<>();
+        for (String flag : this.getStringList("region.flags.allowed")) {
+            try {
+                allowedFlags.add(Prevent.valueOf(flag.toLowerCase()));
+            } catch (IllegalArgumentException ex) {
+
+            }
+        }
     }
 
     public Material getInfoTool() {
@@ -59,6 +70,10 @@ public class Config extends YamlConfiguration {
 
     public Collection<Material> getPreventUse() {
         return preventUse;
+    }
+
+    public boolean isAllowedFlag(Prevent flag) {
+        return allowedFlags.contains(flag);
     }
 
     public String getMessage(final Messages message) {
