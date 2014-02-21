@@ -66,12 +66,16 @@ public class RegionManager {
         storage.save(world, get(world));
     }
     /**
-     * Save all worlds regions.
-     *
+     * Save all worlds regions and close storage.
      */
-    public void saveAll() {
+    public void disable() {
         for (World world : Bukkit.getWorlds()) {
             save(world);
+        }
+        try {
+            storage.close();
+        } catch (Exception ex) {
+            plugin.getLogger().severe(ex.getMessage());
         }
     }
     /**

@@ -13,14 +13,15 @@ public class MongoDB implements Storage {
 
     private final DB db;
     private final Config config;
+    private final MongoClient client;
 
     public MongoDB(final WorldProtect plugin) throws IOException {
         this.config = plugin.getConfig();
-        MongoClient mongoClient = new MongoClient(
+        this.client = new MongoClient(
             plugin.getConfig().getString("storage.host"),
             plugin.getConfig().getInt("storage.port")
         );
-        db = mongoClient.getDB(plugin.getConfig().getString("storage.name"));
+        this.db = client.getDB(plugin.getConfig().getString("storage.name"));
     }
 
 
@@ -55,5 +56,10 @@ public class MongoDB implements Storage {
             }
         }
         return values;
+    }
+
+    @Override
+    public void close() throws Exception {
+        client.close();
     }
 }

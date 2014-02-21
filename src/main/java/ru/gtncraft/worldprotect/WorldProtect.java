@@ -46,7 +46,7 @@ public final class WorldProtect extends JavaPlugin {
     @Override
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
-        getRegionManager().saveAll();
+        getRegionManager().disable();
     }
     /**
      * API

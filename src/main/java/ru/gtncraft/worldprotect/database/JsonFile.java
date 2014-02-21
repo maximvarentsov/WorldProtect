@@ -73,4 +73,9 @@ public class JsonFile implements Storage {
         }
         return result;
     }
+
+    @Override
+    public void close() throws Exception {
+
+    }
 }
