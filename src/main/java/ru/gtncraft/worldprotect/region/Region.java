@@ -170,10 +170,7 @@ public class Region extends BasicDBObject {
     }
 
     public int volume() {
-        int xLength = p1.getX() - p2.getX() + 1;
-        int yLength = p1.getY() - p2.getY() + 1;
-        int zLength = p1.getZ() - p2.getZ() + 1;
-        return xLength * yLength * zLength;
+        return cuboid.getVolume();
     }
 
     public String getSize() {
