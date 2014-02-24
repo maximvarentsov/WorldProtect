@@ -38,9 +38,11 @@ public class VehicleListener implements Listener {
                 player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         } else {
-            event.setCancelled(
-                manager.prevent(event.getVehicle().getLocation(), Prevent.build)
-            );
+            if (manager.prevent(event.getVehicle().getLocation(), Prevent.vehicleNaturalDestroy)) {
+                event.setCancelled(
+                    manager.prevent(event.getVehicle().getLocation(), Prevent.build)
+                );
+            }
         }
     }
     /**
