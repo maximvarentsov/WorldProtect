@@ -79,7 +79,6 @@ public class EntityListener implements Listener {
         if (event instanceof EntityDamageByEntityEvent) {
             final EntityDamageByEntityEvent ev = (EntityDamageByEntityEvent) event;
             final Entity damager = ev.getDamager();
-
             if (target instanceof Player) {
                 if (damager instanceof Player) {
                     final Player player = (Player) damager;
@@ -101,7 +100,6 @@ public class EntityListener implements Listener {
                 }
             }
         }
-
         if (manager.prevent(target.getLocation(), Prevent.damage)) {
             event.setCancelled(true);
         }

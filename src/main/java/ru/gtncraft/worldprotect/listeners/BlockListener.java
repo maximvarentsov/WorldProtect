@@ -30,7 +30,7 @@ public class BlockListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBreak(final BlockBreakEvent event) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
@@ -43,7 +43,7 @@ public class BlockListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlace(final BlockPlaceEvent event) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
@@ -57,7 +57,7 @@ public class BlockListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onIgnite(final BlockIgniteEvent event) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         if (player instanceof Player) {
             if (manager.prevent(event.getBlock().getLocation(), player, Prevent.burn)) {
                 event.setCancelled(true);
@@ -76,7 +76,7 @@ public class BlockListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSignChange(final SignChangeEvent event) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
@@ -184,7 +184,7 @@ public class BlockListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonEvent(final BlockPistonExtendEvent event) {
-        for (Block block : event.getBlocks()) {
+        for (final Block block : event.getBlocks()) {
             if (manager.prevent(block.getLocation(), Prevent.piston)) {
                 event.setCancelled(true);
                 break;

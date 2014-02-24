@@ -30,9 +30,9 @@ public class VehicleListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDestory(final VehicleDestroyEvent event) {
-        Entity attacker = event.getAttacker();
+        final Entity attacker = event.getAttacker();
         if (attacker instanceof Player) {
-            Player player = (Player) attacker;
+            final Player player = (Player) attacker;
             if (manager.prevent(event.getVehicle().getLocation(), player, Prevent.build)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));
@@ -48,9 +48,9 @@ public class VehicleListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEnter(final VehicleEnterEvent event) {
-        Entity passenger = event.getEntered().getPassenger();
+        final Entity passenger = event.getEntered().getPassenger();
         if (passenger instanceof Player) {
-            Player player = (Player) passenger;
+            final Player player = (Player) passenger;
             if (manager.prevent(event.getVehicle().getLocation(), player, Prevent.use)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));

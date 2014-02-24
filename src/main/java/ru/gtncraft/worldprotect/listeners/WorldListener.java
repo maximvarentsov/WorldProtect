@@ -39,11 +39,6 @@ public class WorldListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onUnload(final WorldUnloadEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                plugin.getRegionManager().unload(event.getWorld());
-            }
-        });
+        plugin.getRegionManager().unload(event.getWorld());
     }
 }
