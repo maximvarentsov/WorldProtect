@@ -8,26 +8,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.ItemStack;
 import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.Messages;
 import ru.gtncraft.worldprotect.RegionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.flags.Prevent;
-import java.util.Collection;
 
 public class PlayerListener implements Listener {
 
     private final RegionManager manager;
-
-    private final Collection<Material> preventUse;
     private final Material tool;
     private final Config config;
 
     public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.manager = plugin.getRegionManager();
-        this.preventUse = plugin.getConfig().getPreventUse();
         this.tool = plugin.getConfig().getInfoTool();
         this.config = plugin.getConfig();
     }
@@ -40,22 +35,20 @@ public class PlayerListener implements Listener {
         final Location location = event.getClickedBlock().getLocation();
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
-                if (preventUse.contains(event.getClickedBlock().getType())) {
-                    if (manager.prevent(location, player, Prevent.use)) {
-                        event.setCancelled(true);
-                        player.sendMessage(config.getMessage(Messages.error_region_protected));
-                    }
-                } else if (event.getItem() != null) {
-                    final ItemStack itemStack = event.getItem();
-                    if (tool.equals(itemStack.getType())) {
-                        player.sendMessage(config.getMessage(manager.get(location)));
-                        event.setCancelled(true);
-                    } else if (Material.INK_SACK.equals(itemStack.getType()) && itemStack.getDurability() == 15) {
-                        if (manager.prevent(location, player, Prevent.grow)) {
-                            event.setCancelled(true);
-                            player.sendMessage(config.getMessage(Messages.error_region_protected));
-                        }
-                    }
+                if (tool == event.getMaterial()) {
+                    event.setCancelled(true);
+                    player.sendMessage(config.getMessage(manager.get(location)));
+                    return;
+                }
+                if (manager.prevent(location, player, event.getClickedBlock().getType())) {
+                    event.setCancelled(true);
+                    player.sendMessage(config.getMessage(Messages.error_region_protected));
+                    return;
+                }
+                if (manager.prevent(location, player, event.getItem())) {
+                    event.setCancelled(true);
+                    player.sendMessage(config.getMessage(Messages.error_region_protected));
+                    return;
                 }
                 break;
             case LEFT_CLICK_BLOCK:

@@ -2,8 +2,10 @@ package ru.gtncraft.worldprotect;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.MongoDB;
 import ru.gtncraft.worldprotect.database.Storage;
@@ -11,7 +13,10 @@ import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Cuboid;
 import ru.gtncraft.worldprotect.region.Region;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegionManager {
 
@@ -19,6 +24,7 @@ public class RegionManager {
     private final WorldProtect plugin;
     private final Map<String, Map<String, Region>> regions = new HashMap<>();
     private final Collection<String> preventCommands;
+    private final Collection<Material> preventUse;
 
     public RegionManager(final WorldProtect plugin) throws IOException {
         this.plugin = plugin;
@@ -36,6 +42,7 @@ public class RegionManager {
             load(world);
         }
         this.preventCommands = plugin.getConfig().getPreventCommands();
+        this.preventUse = plugin.getConfig().getPreventUse();
     }
     /**
      * Load regions for world.
@@ -192,6 +199,26 @@ public class RegionManager {
             return false;
         }
         return preventCommands.contains(command.toLowerCase());
+    }
+    /**
+     * Prevent guests use some items like bone meal.
+     */
+    public boolean prevent(final Location location, final Player player, final ItemStack item) {
+        if (item != null) {
+            if (item.getType().equals(Material.INK_SACK) && item.getDurability() == 15) {
+                return prevent(location, player, Prevent.use);
+            }
+        }
+        return false;
+    }
+    /**
+     * Check guest can use some material.
+     */
+    public boolean prevent(final Location location, final Player player, final Material material) {
+        if (preventUse.contains(material)) {
+            return prevent(location, player, Prevent.use);
+        }
+        return false;
     }
     /**
      * Check player is owner/member of any region inside location with true prevent flag.
