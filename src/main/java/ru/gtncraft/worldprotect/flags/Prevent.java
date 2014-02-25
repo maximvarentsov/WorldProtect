@@ -21,7 +21,7 @@ public enum Prevent {
 
     public static Collection<String> toArray() {
         Collection<String> result = new ArrayList<>();
-        for (Prevent flag : values()) {
+        for (final Prevent flag : values()) {
             result.add(flag.name());
         }
         return result;

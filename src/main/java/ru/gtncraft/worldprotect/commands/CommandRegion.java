@@ -35,7 +35,7 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command pcommand, String label, String[] args) {
 
-        Collection<String> commands = ImmutableList.of(
+        final Collection<String> commands = ImmutableList.of(
             "define", "delete", "addowner", "deleteowner", "addmemeber", "deletemember", "info", "list", "flag"
         );
 
@@ -165,7 +165,7 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
             /**
              *  Check region have overlay with another.
              */
-            for (Region overlay : regions.getOverlays(region)) {
+            for (final Region overlay : regions.getOverlays(region)) {
                 if (!overlay.contains(sender, Roles.owner)) {
                     throw new CommandException(config.getMessage(Messages.error_region_overlay));
                 }
@@ -190,7 +190,7 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
 
     private boolean list(final Player sender) {
         sender.sendMessage(config.getMessage(Messages.region_own_list) + ":");
-        for (Region region : regions.get(sender, Roles.owner)) {
+        for (final Region region : regions.get(sender, Roles.owner)) {
             sender.sendMessage(config.getMessage(Messages.region_name) + ": " + region.getName() + " " + region.getSize());
         }
         return true;
@@ -198,24 +198,23 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
 
     private boolean info(final Player sender, final String[] args) throws CommandException {
         if (args.length == 2) {
-            String name = args[1];
-            Region region = regions.get(sender.getWorld(), name);
+            final String name = args[1];
+            final Region region = regions.get(sender.getWorld(), name);
             if (region == null) {
                 throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
             }
             sender.sendMessage(config.getMessage(region));
             return true;
         } else if (args.length == 1) {
-            Collection<Region> regions = this.regions.get(sender.getLocation());
-            sender.sendMessage(config.getMessage(regions));
+            sender.sendMessage(config.getMessage(regions.get(sender.getLocation())));
             return true;
         }
         return false;
     }
 
     private boolean delete(final Player sender, final String[] args) throws CommandException {
-        String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
-        Region region = regions.get(sender.getWorld(), name);
+        final String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
+        final Region region = regions.get(sender.getWorld(), name);
 
         if (region == null) {
             throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
@@ -229,15 +228,15 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
     }
 
     private boolean flag(final Player sender, final String[] args) throws CommandException {
-        String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
-        Region region = regions.get(sender.getWorld(), name);
+        final String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
+        final Region region = regions.get(sender.getWorld(), name);
 
         if (region == null) {
             throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
         }
 
-        String flag = getParam(args, 3, config.getMessage(Messages.error_input_flag));
-        String value = getParam(args, 4, config.getMessage(Messages.error_input_flag_value));
+        final String flag = getParam(args, 3, config.getMessage(Messages.error_input_flag));
+        final String value = getParam(args, 4, config.getMessage(Messages.error_input_flag_value));
         boolean valueFlag;
         // reverse values, prevent true
         switch (value.toLowerCase()) {
@@ -279,14 +278,14 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
     }
 
     private boolean addPlayer(final Player sender, final String[] args, final Roles role) throws CommandException {
-        String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
-        Region region = regions.get(sender.getWorld(), name);
+        final String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
+        final Region region = regions.get(sender.getWorld(), name);
 
         if (region == null) {
             throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
         }
 
-        String player = getParam(args, 2, config.getMessage(Messages.error_input_player));
+        final String player = getParam(args, 2, config.getMessage(Messages.error_input_player));
 
         checkPermission(sender, region);
 
@@ -298,14 +297,14 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
     }
 
     private boolean removePlayer(final Player sender, final String[] args, final Roles role) throws CommandException {
-        String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
-        Region region = regions.get(sender.getWorld(), name);
+        final String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
+        final Region region = regions.get(sender.getWorld(), name);
 
         if (region == null) {
             throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
         }
 
-        String player = getParam(args, 2, config.getMessage(Messages.error_input_player));
+        final String player = getParam(args, 2, config.getMessage(Messages.error_input_player));
 
         checkPermission(sender, region);
 
@@ -332,13 +331,13 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
     }
 
     private Collection<String> allRegions(final Player player) {
-        Collection<String> result = new ArrayList<>();
+        final Collection<String> result = new ArrayList<>();
         if (player.hasPermission(Permissions.admin)) {
-            for (Region region: regions.get(player.getWorld()).values()) {
+            for (final Region region: regions.get(player.getWorld()).values()) {
                 result.add(region.getName());
             }
         } else {
-            for (Region region : regions.get(player, Roles.owner)) {
+            for (final Region region : regions.get(player, Roles.owner)) {
                 result.add(region.getName());
             }
         }
@@ -346,8 +345,8 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
     }
 
     private Collection<String> allRegionPlayers(final World world, final String name, Roles role) {
-        Collection<String> result = new ArrayList<>();
-        Region region = regions.get(world, name);
+        final Collection<String> result = new ArrayList<>();
+        final Region region = regions.get(world, name);
         if (region != null) {
             for (String player : region.get(role)) {
                 result.add(player);

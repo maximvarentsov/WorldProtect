@@ -31,7 +31,7 @@ public class RegionManager {
             default:
                 throw new IOException("Unknown regions storage.");
         }
-        for (World world : Bukkit.getServer().getWorlds()) {
+        for (final World world : Bukkit.getServer().getWorlds()) {
             load(world);
         }
     }
@@ -69,7 +69,7 @@ public class RegionManager {
      * Save all worlds regions and close storage.
      */
     public void disable() {
-        for (World world : Bukkit.getWorlds()) {
+        for (final World world : Bukkit.getWorlds()) {
             save(world);
         }
         try {
@@ -110,9 +110,9 @@ public class RegionManager {
      * @param value region.
      */
     public Collection<Region> getOverlays(final Region value) {
-        Collection<Region> result = new ArrayList<>();
+        final Collection<Region> result = new ArrayList<>();
         final Cuboid cuboid = value.getCuboid();
-        for (Region region : get(cuboid.getWorld()).values()) {
+        for (final Region region : get(cuboid.getWorld()).values()) {
             if (region.contains(cuboid.getLowerNE()) || region.contains(cuboid.getUpperSW()) || // inside
                 cuboid.contains(region.getCuboid().getLowerNE()) || cuboid.contains(region.getCuboid().getUpperSW())) { // outside
                 result.add(region);
@@ -126,8 +126,8 @@ public class RegionManager {
      * @param location Current location.
      */
     public Collection<Region> get(final Location location) {
-        Collection<Region> result = new ArrayList<>();
-        for (Region region: get(location.getWorld()).values()) {
+        final Collection<Region> result = new ArrayList<>();
+        for (final Region region: get(location.getWorld()).values()) {
             if (region.contains(location)) {
                 result.add(region);
             }
@@ -150,8 +150,8 @@ public class RegionManager {
      * @param role Player Roles in region.
      */
     public Collection<Region> get(final Player player, final Roles role) {
-        Collection<Region> result = new ArrayList<>();
-        for (Region region : get(player.getWorld()).values()) {
+        final Collection<Region> result = new ArrayList<>();
+        for (final Region region : get(player.getWorld()).values()) {
             if (region.contains(player, role)) {
                 result.add(region);
             }
@@ -167,12 +167,12 @@ public class RegionManager {
         if (player.hasPermission(Permissions.admin)) {
             return true;
         }
-        Collection<Region> regions = get(player.getLocation());
+        final Collection<Region> regions = get(player.getLocation());
         // Player not in region.
         if (regions.isEmpty()) {
             return true;
         }
-        for (Region region : regions) {
+        for (final Region region : regions) {
             if (region.contains(player.getName())) {
                 return true;
             }
@@ -186,8 +186,8 @@ public class RegionManager {
         if (player.hasPermission(Permissions.admin) || player.hasPermission(Permissions.moder)) {
             return false;
         }
-        for (Region region : get(location)) {
-            if (region.get(flag) && (!region.contains(player.getName()))) {
+        for (final Region region : get(location)) {
+            if (region.get(flag) && !region.contains(player.getName())) {
                 return true;
             }
         }
@@ -197,7 +197,7 @@ public class RegionManager {
      * Search any region inside location with true prevent flag.
      */
     public boolean prevent(final Location location, final Prevent flag) {
-        for (Region region : get(location)) {
+        for (final Region region : get(location)) {
             if (region.get(flag)) {
                 return true;
             }

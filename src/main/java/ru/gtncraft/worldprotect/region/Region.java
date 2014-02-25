@@ -52,7 +52,7 @@ public class Region extends BasicDBObject {
      * Return region flags with state.
      */
     public Map<String, Boolean> get() {
-        Map<String, Boolean> values = new HashMap<>();
+        final Map<String, Boolean> values = new HashMap<>();
         for (Prevent flag : Prevent.values()) {
             values.put(flag.name(), flags.get(flag));
         }

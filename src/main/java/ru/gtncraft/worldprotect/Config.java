@@ -25,20 +25,20 @@ public class Config extends YamlConfiguration {
         this.addDefaults(config.getRoot());
 
         this.preventCommands = new ArrayList<>();
-        for (String command : this.getStringList("region.prevent.commands")) {
+        for (final String command : this.getStringList("region.prevent.commands")) {
             this.preventCommands.add(command.toLowerCase());
         }
 
         this.preventUse = new ArrayList<>();
-        for (String value : this.getStringList("region.prevent.use")) {
-            Material material = Material.matchMaterial(value.toUpperCase());
+        for (final String value : this.getStringList("region.prevent.use")) {
+            final Material material = Material.matchMaterial(value.toUpperCase());
             if (material != null) {
                 this.preventUse.add(material);
             }
         }
 
-        String material = this.getString("region.tool");
-        Material tool = Material.matchMaterial(material.toUpperCase());
+        final String material = this.getString("region.tool");
+        final Material tool = Material.matchMaterial(material.toUpperCase());
         if (tool == null) {
             this.tool = Material.STICK;
         } else {
@@ -46,12 +46,12 @@ public class Config extends YamlConfiguration {
         }
 
         this.worlds = new ArrayList<>();
-        for (String world : this.getStringList("region.worlds")) {
+        for (final String world : this.getStringList("region.worlds")) {
             worlds.add(world.toLowerCase());
         }
 
         this.allowedFlags = new ArrayList<>();
-        for (String flag : this.getStringList("region.flags.allowed")) {
+        for (final String flag : this.getStringList("region.flags.allowed")) {
             try {
                 allowedFlags.add(Prevent.valueOf(flag.toLowerCase()));
             } catch (IllegalArgumentException ex) {
@@ -85,31 +85,29 @@ public class Config extends YamlConfiguration {
     }
 
     public String[] getMessage(Collection<Region> regions) {
-        Collection<String> messages = new ArrayList<>();
-        if (regions.size() > 0) {
-            for (Region region : regions) {
+        final Collection<String> messages = new ArrayList<>();
+        if (regions.isEmpty()) {
+            messages.add(getMessage(Messages.error_region_not_found));
+        } else {
+            for (final Region region : regions) {
                 messages.addAll(Arrays.asList(getMessage(region)));
             }
-        } else {
-            messages.add(getMessage(Messages.error_region_not_found));
         }
         return messages.toArray(new String[0]);
     }
 
     public String[] getMessage(Region region) {
-        Collection<String> messages = new ArrayList<>();
-
+        final Collection<String> messages = new ArrayList<>();
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_name) + ": "    + ChatColor.WHITE + region.getName());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_size) + ": " + ChatColor.WHITE + region.getSize());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + region.get(Roles.owner));
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + region.get(Roles.member));
-        Collection<String> flags = new ArrayList<>();
-        for (Map.Entry<String, Boolean> entry : region.get().entrySet()) {
-            String value = entry.getValue() ? ChatColor.RED + getMessage(Messages.flag_true) : ChatColor.GRAY + getMessage(Messages.flag_false);
+        final Collection<String> flags = new ArrayList<>();
+        for (final Map.Entry<String, Boolean> entry : region.get().entrySet()) {
+            final String value = entry.getValue() ? ChatColor.RED + getMessage(Messages.flag_true) : ChatColor.GRAY + getMessage(Messages.flag_false);
             flags.add(ChatColor.WHITE + entry.getKey() + ": " + value + ChatColor.WHITE);
         }
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_flags) + ": " + Joiner.on(", ").join(flags));
-
         return messages.toArray(new String[0]);
     }
 
