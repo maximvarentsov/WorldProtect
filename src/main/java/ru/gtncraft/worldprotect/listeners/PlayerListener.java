@@ -141,11 +141,9 @@ public class PlayerListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onTeleport(final PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
-        if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL)) {
-            if (manager.prevent(player.getLocation(), player, Prevent.teleport)) {
-                event.setCancelled(true);
-                player.sendMessage(config.getMessage(Messages.error_region_protected));
-            }
+        if (manager.prevent(player.getLocation(), player, Prevent.teleport)) {
+            event.setCancelled(true);
+            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
 }
