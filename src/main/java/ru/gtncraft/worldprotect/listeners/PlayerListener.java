@@ -34,9 +34,7 @@ public class PlayerListener implements Listener {
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
                 if (config.getInfoTool() == event.getMaterial()) {
-                    event.setCancelled(true);
                     player.sendMessage(config.getMessage(manager.get(location)));
-                    return;
                 }
                 if (manager.prevent(location, player, event.getClickedBlock().getType())) {
                     event.setCancelled(true);
