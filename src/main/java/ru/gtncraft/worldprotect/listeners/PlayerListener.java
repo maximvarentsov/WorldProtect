@@ -72,7 +72,11 @@ public class PlayerListener implements Listener {
                 final Block type = event.getClickedBlock().getRelative(event.getBlockFace());
                 // dont't allow extinguish fire.
                 if (Material.FIRE.equals(type.getType())) {
-                    prevent = true;
+                    if (manager.prevent(location, player, Prevent.build)) {
+                        event.setCancelled(true);
+                        player.sendMessage(config.getMessage(Messages.error_region_protected));
+                        return;
+                    }
                 }
                 break;
             case PHYSICAL:
