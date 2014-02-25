@@ -18,6 +18,7 @@ public class RegionManager {
     private final Storage storage;
     private final WorldProtect plugin;
     private final Map<String, Map<String, Region>> regions = new HashMap<>();
+    private final Collection<String> preventCommands;
 
     public RegionManager(final WorldProtect plugin) throws IOException {
         this.plugin = plugin;
@@ -34,6 +35,7 @@ public class RegionManager {
         for (final World world : Bukkit.getServer().getWorlds()) {
             load(world);
         }
+        this.preventCommands = plugin.getConfig().getPreventCommands();
     }
     /**
      * Load regions for world.
@@ -163,7 +165,7 @@ public class RegionManager {
      *
      * @param player Player
      */
-    public boolean hasAccess(final Player player) {
+    private boolean hasAccess(final Player player) {
         if (player.hasPermission(Permissions.admin)) {
             return true;
         }
@@ -178,6 +180,18 @@ public class RegionManager {
             }
         }
         return false;
+    }
+    /**
+     * If player is region guest and command not allowed in region for guests.
+     */
+    public boolean prevent(final Location location, final Player player, final String command) {
+        if (prevent(location, player, Prevent.command)) {
+            return true;
+        }
+        if (hasAccess(player)) {
+            return false;
+        }
+        return preventCommands.contains(command.toLowerCase());
     }
     /**
      * Check player is owner/member of any region inside location with true prevent flag.

@@ -19,7 +19,7 @@ import java.util.Collection;
 public class PlayerListener implements Listener {
 
     private final RegionManager manager;
-    private final Collection<String> preventCommands;
+
     private final Collection<Material> preventUse;
     private final Material tool;
     private final Config config;
@@ -27,18 +27,9 @@ public class PlayerListener implements Listener {
     public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.manager = plugin.getRegionManager();
-        this.preventCommands = plugin.getConfig().getPreventCommands();
         this.preventUse = plugin.getConfig().getPreventUse();
         this.tool = plugin.getConfig().getInfoTool();
         this.config = plugin.getConfig();
-    }
-
-    private boolean preventCommand(final Player player, final String message) {
-        if (manager.hasAccess(player)) {
-            return false;
-        }
-        final String command = message.substring(1).split(" ")[0];
-        return preventCommands.contains(command.toLowerCase());
     }
     /**
      * Called when a player interacts with an object or air.
@@ -135,9 +126,10 @@ public class PlayerListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         final Player player = event.getPlayer();
-        if (manager.prevent(player.getLocation(), player, Prevent.command) || preventCommand(player, event.getMessage())) {
+        final String command = event.getMessage().substring(1).split(" ")[0];
+        if (manager.prevent(player.getLocation(), player, command)) {
             event.setCancelled(true);
-            player.sendMessage(config.getMessage(Messages.error_command_disabled, event.getMessage()));
+            player.sendMessage(config.getMessage(Messages.error_command_disabled, command));
         }
     }
     /**
