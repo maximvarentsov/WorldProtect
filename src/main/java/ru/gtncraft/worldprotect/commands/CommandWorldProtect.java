@@ -75,7 +75,7 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                for (World world : Bukkit.getWorlds()) {
+                for (final World world : Bukkit.getWorlds()) {
                     regions.save(world);
                 }
             }
@@ -89,7 +89,7 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
             throw new CommandException("Only convert from " + Types.mongodb.name() + " to " + Types.file.name() + " support now.");
         }
         final Storage storage = new JsonFile(plugin);
-        for (World world : Bukkit.getServer().getWorlds()) {
+        for (final World world : Bukkit.getServer().getWorlds()) {
             if (config.useRegions(world)) {
                 storage.save(world, regions.get(world));
             }
