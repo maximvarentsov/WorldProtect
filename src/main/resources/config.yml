@@ -16,6 +16,7 @@ region:
             - piston
             - pvp
             - leavesDecay
+            - vehicleNaturalDestroy
     prevent:
         use:
             - CHEST
