@@ -102,15 +102,13 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         if (region == null) {
             throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
         }
-
         if (isFree(region.getCuboid().getUpperSW())) {
-            sender.teleport(region.getCuboid().getUpperSW());
+            sender.teleport(center(region.getCuboid().getUpperSW()));
         } else if (isFree(region.getCuboid().getLowerNE())) {
-            sender.teleport(region.getCuboid().getUpperSW());
+            sender.teleport(center(region.getCuboid().getUpperSW()));
         } else {
-            sender.teleport(region.getCuboid().getCenter());
+            sender.teleport(center(region.getCuboid().getCenter()));
         }
-
         return true;
     }
 
@@ -118,8 +116,11 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         final int x = location.getBlockX();
         final int y = location.getBlockZ();
         final int z = location.getBlockZ();
-
         return location.getWorld().getBlockAt(x,y + 1,z).getType().equals(Material.AIR);
+    }
+
+    private Location center(final Location location) {
+        return new Location(location.getWorld(), location.getBlockX() + 0.5, location.getBlockY(), location.getBlockZ() + 0.5);
     }
 
     private Collection<String> allRegions(final CommandSender sender) {
