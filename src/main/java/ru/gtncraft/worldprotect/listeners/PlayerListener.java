@@ -59,7 +59,11 @@ public class PlayerListener implements Listener {
                         player.sendMessage(config.getMessage(manager.get(location)));
                         return;
                     } else if (Material.INK_SACK.equals(itemStack.getType()) && itemStack.getDurability() == 15) {
-                        prevent = true;
+                        if (manager.prevent(location, player, Prevent.grow)) {
+                            event.setCancelled(true);
+                            player.sendMessage(config.getMessage(Messages.error_region_protected));
+                            return;
+                        }
                     }
                 }
                 break;
