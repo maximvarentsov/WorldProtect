@@ -57,6 +57,7 @@ public class PlayerListener implements Listener {
                 } else if (itemStack != null) {
                     if (tool.equals(itemStack.getType())) {
                         player.sendMessage(config.getMessage(manager.get(location)));
+                        event.setCancelled(true);
                         return;
                     } else if (Material.INK_SACK.equals(itemStack.getType()) && itemStack.getDurability() == 15) {
                         if (manager.prevent(location, player, Prevent.grow)) {
