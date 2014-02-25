@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import ru.gtncraft.worldprotect.database.Types;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Region;
 import java.util.*;
@@ -113,5 +114,13 @@ public class Config extends YamlConfiguration {
 
     public boolean useRegions(final World world) {
         return worlds.contains(world.getName().toLowerCase());
+    }
+
+    public Types getStorage() {
+        try {
+            return Types.valueOf(getString("storage.type").toLowerCase());
+        } catch (IllegalArgumentException ex) {
+            return Types.file;
+        }
     }
 }

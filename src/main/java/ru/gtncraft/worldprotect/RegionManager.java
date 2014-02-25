@@ -21,11 +21,11 @@ public class RegionManager {
 
     public RegionManager(final WorldProtect plugin) throws IOException {
         this.plugin = plugin;
-        switch (plugin.getConfig().getString("storage.type")) {
-            case "mongodb":
+        switch (plugin.getConfig().getStorage()) {
+            case mongodb:
                 this.storage = new MongoDB(plugin);
                 break;
-            case "file":
+            case file:
                 this.storage = new JsonFile(plugin);
                 break;
             default:

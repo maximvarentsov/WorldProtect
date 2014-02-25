@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.*;
 import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.Storage;
+import ru.gtncraft.worldprotect.database.Types;
 import ru.gtncraft.worldprotect.region.Region;
 
 import java.util.ArrayList;
@@ -84,8 +85,8 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
     }
     // TODO: covert is a toggler
     private boolean commandConvert(final CommandSender sender) throws CommandException {
-        if ("file".equals(config.getString("storage.type"))) {
-            throw new CommandException("Only convert from mongodb to file support now.");
+        if (config.getStorage() == Types.file) {
+            throw new CommandException("Only convert from " + Types.mongodb.name() + " to " + Types.file.name() + " support now.");
         }
         final Storage storage = new JsonFile(plugin);
         for (World world : Bukkit.getServer().getWorlds()) {
@@ -93,7 +94,7 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
                 storage.save(world, regions.get(world));
             }
         }
-        sender.sendMessage(config.getMessage(Messages.success_region_converted, "mongodb", "file"));
+        sender.sendMessage(config.getMessage(Messages.success_region_converted, Types.mongodb.name(), Types.file.name()));
         return true;
     }
 
