@@ -3,7 +3,6 @@ package ru.gtncraft.worldprotect.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -48,44 +47,41 @@ public class PlayerListener implements Listener {
     public void onInteract(final PlayerInteractEvent event) {
         final Player player = event.getPlayer();
         final Location location = event.getClickedBlock().getLocation();
-        boolean prevent = false;
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
-                final ItemStack itemStack = event.getItem();
                 if (preventUse.contains(event.getClickedBlock().getType())) {
-                    prevent = true;
-                } else if (itemStack != null) {
+                    if (manager.prevent(location, player, Prevent.use)) {
+                        event.setCancelled(true);
+                        player.sendMessage(config.getMessage(Messages.error_region_protected));
+                    }
+                } else if (event.getItem() != null) {
+                    final ItemStack itemStack = event.getItem();
                     if (tool.equals(itemStack.getType())) {
                         player.sendMessage(config.getMessage(manager.get(location)));
                         event.setCancelled(true);
-                        return;
                     } else if (Material.INK_SACK.equals(itemStack.getType()) && itemStack.getDurability() == 15) {
                         if (manager.prevent(location, player, Prevent.grow)) {
                             event.setCancelled(true);
                             player.sendMessage(config.getMessage(Messages.error_region_protected));
-                            return;
                         }
                     }
                 }
                 break;
             case LEFT_CLICK_BLOCK:
-                final Block type = event.getClickedBlock().getRelative(event.getBlockFace());
                 // dont't allow extinguish fire.
-                if (Material.FIRE.equals(type.getType())) {
+                if (Material.FIRE.equals(event.getClickedBlock().getRelative(event.getBlockFace()).getType())) {
                     if (manager.prevent(location, player, Prevent.build)) {
                         event.setCancelled(true);
                         player.sendMessage(config.getMessage(Messages.error_region_protected));
-                        return;
                     }
                 }
                 break;
             case PHYSICAL:
-                prevent = true;
+                if (manager.prevent(location, player, Prevent.use)) {
+                    event.setCancelled(true);
+                    player.sendMessage(config.getMessage(Messages.error_region_protected));
+                }
                 break;
-        }
-        if (prevent && manager.prevent(location, player, Prevent.use)) {
-            event.setCancelled(true);
-            player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
     /**
