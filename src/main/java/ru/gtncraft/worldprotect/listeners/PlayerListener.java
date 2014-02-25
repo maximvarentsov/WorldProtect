@@ -17,13 +17,11 @@ import ru.gtncraft.worldprotect.flags.Prevent;
 public class PlayerListener implements Listener {
 
     private final RegionManager manager;
-    private final Material tool;
     private final Config config;
 
     public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.manager = plugin.getRegionManager();
-        this.tool = plugin.getConfig().getInfoTool();
         this.config = plugin.getConfig();
     }
     /**
@@ -35,7 +33,7 @@ public class PlayerListener implements Listener {
         final Location location = event.getClickedBlock().getLocation();
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
-                if (tool == event.getMaterial()) {
+                if (config.getInfoTool() == event.getMaterial()) {
                     event.setCancelled(true);
                     player.sendMessage(config.getMessage(manager.get(location)));
                     return;
