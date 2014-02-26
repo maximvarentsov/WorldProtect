@@ -154,15 +154,6 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
 
         if (!sender.hasPermission(Permissions.admin)) {
             /**
-             * Check region volume
-             */
-            final int maxVolume = config.getInt("region.maxVolume");
-            if (region.volume() > maxVolume) {
-                throw new CommandException(
-                    config.getMessage(Messages.error_region_max_volume, maxVolume, region.volume())
-                );
-            }
-            /**
              *  Check region have overlay with another.
              */
             for (final Region overlay : regions.getOverlays(region)) {
@@ -179,6 +170,15 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
                 if (max > 0 && total >= max) {
                     throw new CommandException(
                         config.getMessage(Messages.error_region_created_max, max)
+                    );
+                }
+                /**
+                 * Check region volume
+                 */
+                final int maxVolume = config.getInt("region.maxVolume");
+                if (region.volume() > maxVolume) {
+                    throw new CommandException(
+                            config.getMessage(Messages.error_region_max_volume, maxVolume, region.volume())
                     );
                 }
             }
