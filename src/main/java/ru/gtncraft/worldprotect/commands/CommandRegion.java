@@ -197,19 +197,17 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
     }
 
     private boolean info(final Player sender, final String[] args) throws CommandException {
-        if (args.length == 2) {
+        if (args.length > 1) {
             final String name = args[1];
             final Region region = regions.get(sender.getWorld(), name);
             if (region == null) {
                 throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
             }
             sender.sendMessage(config.getMessage(region));
-            return true;
-        } else if (args.length == 1) {
+        } else {
             sender.sendMessage(config.getMessage(regions.get(sender.getLocation())));
-            return true;
         }
-        return false;
+        return true;
     }
 
     private boolean delete(final Player sender, final String[] args) throws CommandException {
