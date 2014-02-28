@@ -20,7 +20,7 @@ public enum Prevent {
     vehicleNaturalDestroy;
 
     public static Collection<String> toArray() {
-        Collection<String> result = new ArrayList<>();
+        final Collection<String> result = new ArrayList<>();
         for (final Prevent flag : values()) {
             result.add(flag.name());
         }
