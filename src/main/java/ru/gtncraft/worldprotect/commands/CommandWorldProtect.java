@@ -91,7 +91,7 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         final Storage storage = new JsonFile(plugin);
         for (final World world : Bukkit.getServer().getWorlds()) {
             if (config.useRegions(world)) {
-                storage.save(world, regions.get(world));
+                storage.save(world, regions.get(world).values());
             }
         }
         sender.sendMessage(config.getMessage(Messages.success_region_converted, Types.mongodb.name(), Types.file.name()));
