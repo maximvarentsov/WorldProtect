@@ -1,9 +1,8 @@
 package ru.gtncraft.worldprotect;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import ru.gtncraft.worldprotect.database.JsonFile;
@@ -22,12 +21,15 @@ public class RegionManager {
 
     private final Storage storage;
     private final WorldProtect plugin;
-    private final Map<String, Map<String, Region>> regions = new HashMap<>();
+    private final Map<String, Map<String, Region>> regions;
+    private final Map<String, Table<Integer, Integer, Collection<Region>>> chunks;
     private final Collection<String> preventCommands;
     private final Collection<Material> preventUse;
 
     public RegionManager(final WorldProtect plugin) throws IOException {
         this.plugin = plugin;
+        this.regions = new HashMap<>();
+        this.chunks = new HashMap<>();
         switch (plugin.getConfig().getStorage()) {
             case mongodb:
                 this.storage = new MongoDB(plugin);
@@ -50,11 +52,25 @@ public class RegionManager {
      * @param world World
      */
     public void load(final World world) {
-        Map<String, Region> values = new HashMap<>();
+        final Map<String, Region> values = new HashMap<>();
+        final Table<Integer, Integer, Collection<Region>> table = HashBasedTable.create();
         if (plugin.getConfig().useRegions(world)) {
-            values = storage.load(world);
+            for (final Region region : storage.load(world)) {
+                plugin.getLogger().info(region.getCuboid().toString());
+                for (final Map.Entry<Integer, Integer> entry : region.getCuboid().getChunksCoords().entries()) {
+                    final int x = entry.getKey();
+                    final int z = entry.getValue();
+                    plugin.getLogger().info("rg " +region.getName() + ":" + x + "," + z);
+                    if (!table.contains(x, z)) {
+                        table.put(x, z, new ArrayList<Region>());
+                    }
+                    table.get(x, z).add(region);
+                }
+                values.put(region.getName(), region);
+            }
         }
         regions.put(world.getName(), values);
+        chunks.put(world.getName(), table);
     }
     /**
      * Delete region from world.
@@ -63,8 +79,18 @@ public class RegionManager {
      * @param name region name
      */
     public void delete(final World world, final String name) {
-        get(world).remove(name);
+        final Region region = get(world, name.toLowerCase());
         storage.delete(world, name);
+        for (final Map.Entry<Integer, Integer> entry : region.getCuboid().getChunksCoords().entries()) {
+            final int x = entry.getKey();
+            final int z = entry.getValue();
+            final Collection<Region> coll = chunks.get(world.getName()).get(x, z);
+            coll.remove(region);
+            if (coll.size() == 0) {
+                chunks.get(world.getName()).remove(x, z);
+            }
+        }
+        get(world).remove(name.toLowerCase());
     }
     /**
      * Save world regions.
@@ -72,7 +98,10 @@ public class RegionManager {
      * @param world World.
      */
     public void save(final World world) {
-        storage.save(world, get(world));
+        if (plugin.getConfig().useRegions(world)) {
+            plugin.getLogger().info("Save region for world " + world.getName());
+            storage.save(world, get(world).values());
+        }
     }
     /**
      * Save all worlds regions and close storage.
@@ -95,6 +124,7 @@ public class RegionManager {
     public void unload(final World world) {
         save(world);
         regions.remove(world.getName());
+        chunks.remove(world.getName());
     }
     /**
      * Add new region in world.
@@ -104,6 +134,16 @@ public class RegionManager {
      */
     public void add(final World world, final Region region) {
         get(world).put(region.getName(), region);
+        final Table<Integer, Integer, Collection<Region>> table = chunks.get(world.getName());
+        for (final Map.Entry<Integer, Integer> entry : region.getCuboid().getChunksCoords().entries()) {
+            final int x = entry.getKey();
+            final int z = entry.getValue();
+            if (!table.contains(x, z)) {
+                table.put(x, z, new ArrayList<Region>());
+            }
+            table.get(x, z).add(region);
+            plugin.getLogger().info("rg " + region.getName() + ":" + x + "," + z);
+        }
     }
     /**
      * Get world regions.
@@ -136,9 +176,13 @@ public class RegionManager {
      */
     public Collection<Region> get(final Location location) {
         final Collection<Region> result = new ArrayList<>();
-        for (final Region region: get(location.getWorld()).values()) {
-            if (region.contains(location)) {
-                result.add(region);
+        final Chunk chunk = location.getChunk();
+        final Collection<Region> regions = chunks.get(location.getWorld().getName()).get(chunk.getX(), chunk.getZ());
+        if (regions != null) {
+            for (Region region : regions) {
+                if (region.contains(location)) {
+                    result.add(region);
+                }
             }
         }
         return result;
@@ -172,7 +216,7 @@ public class RegionManager {
      *
      * @param player Player
      */
-    private boolean hasAccess(final Player player) {
+    public boolean hasAccess(final Player player) {
         if (player.hasPermission(Permissions.admin)) {
             return true;
         }
@@ -228,8 +272,10 @@ public class RegionManager {
             return false;
         }
         for (final Region region : get(location)) {
-            if (region.get(flag) && !region.contains(player.getName())) {
-                return true;
+            if (region.contains(location)) {
+                if (region.get(flag) && !region.contains(player.getName())) {
+                    return true;
+                }
             }
         }
         return false;
@@ -238,9 +284,11 @@ public class RegionManager {
      * Search any region inside location with true prevent flag.
      */
     public boolean prevent(final Location location, final Prevent flag) {
-        for (final Region region : get(location)) {
-            if (region.get(flag)) {
-                return true;
+        for (final Region region: get(location)) {
+            if (region.contains(location)) {
+                if (region.get(flag)) {
+                    return true;
+                }
             }
         }
         return false;
