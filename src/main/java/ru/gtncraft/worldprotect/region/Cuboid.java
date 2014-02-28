@@ -1,5 +1,7 @@
 package ru.gtncraft.worldprotect.region;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -509,7 +511,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
     public Collection<Chunk> getChunks() {
         final Collection<Chunk> result = new ArrayList<>();
         final World world = this.getWorld();
-        for (final Map.Entry<Integer, Integer> entry : getChunksCoords().entrySet()) {
+        for (final Map.Entry<Integer, Integer> entry : getChunksCoords().entries()) {
             final int x = entry.getKey();
             final int z = entry.getValue();
             result.add(world.getChunkAt(x, z));
@@ -517,8 +519,8 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
         return result;
     }
 
-    public Map<Integer, Integer> getChunksCoords() {
-        final Map<Integer, Integer> result = new HashMap<>();
+    public Multimap<Integer, Integer> getChunksCoords() {
+        final Multimap<Integer, Integer> result = ArrayListMultimap.create();
         final int x1 = this.getLowerX() & ~0xf;
         final int x2 = this.getUpperX() & ~0xf;
         final int z1 = this.getLowerZ() & ~0xf;
