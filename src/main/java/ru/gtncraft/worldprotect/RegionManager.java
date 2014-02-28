@@ -56,11 +56,9 @@ public class RegionManager {
         final Table<Integer, Integer, Collection<Region>> table = HashBasedTable.create();
         if (plugin.getConfig().useRegions(world)) {
             for (final Region region : storage.load(world)) {
-                plugin.getLogger().info(region.getCuboid().toString());
                 for (final Map.Entry<Integer, Integer> entry : region.getCuboid().getChunksCoords().entries()) {
                     final int x = entry.getKey();
                     final int z = entry.getValue();
-                    plugin.getLogger().info("rg " +region.getName() + ":" + x + "," + z);
                     if (!table.contains(x, z)) {
                         table.put(x, z, new ArrayList<Region>());
                     }
@@ -142,7 +140,6 @@ public class RegionManager {
                 table.put(x, z, new ArrayList<Region>());
             }
             table.get(x, z).add(region);
-            plugin.getLogger().info("rg " + region.getName() + ":" + x + "," + z);
         }
     }
     /**
