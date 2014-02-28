@@ -39,8 +39,12 @@ public class MongoDB implements Storage {
     }
 
     @Override
-    public void delete(final World world, final String name) {
-        db.getCollection(world.getName()).remove(new BasicDBObject("name", name));
+    public Region delete(final World world, final String name) {
+        DBObject obj = db.getCollection(world.getName()).findAndRemove(new BasicDBObject("name", name));
+        if (obj != null) {
+            return new Region(obj.toMap(), world);
+        }
+        return null;
     }
 
     @Override

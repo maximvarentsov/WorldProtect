@@ -49,7 +49,8 @@ public class JsonFile implements Storage {
     }
 
     @Override
-    public void delete(final World world, final String name) {
+    public Region delete(final World world, final String name) {
+        return null;
     }
 
     @Override
