@@ -17,7 +17,8 @@ public enum Prevent {
     burn,
     pvp,
     piston,
-    vehicleNaturalDestroy;
+    vehicleNaturalDestroy,
+    fallingBlocks;
 
     public static Collection<String> toArray() {
         final Collection<String> result = new ArrayList<>();

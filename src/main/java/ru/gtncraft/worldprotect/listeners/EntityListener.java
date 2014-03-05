@@ -3,6 +3,7 @@ package ru.gtncraft.worldprotect.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -66,9 +67,15 @@ public class EntityListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onChangeBlock(final EntityChangeBlockEvent event) {
-        event.setCancelled(
-            manager.prevent(event.getBlock().getLocation(), Prevent.build)
-        );
+        if (event.getEntityType() == EntityType.FALLING_BLOCK) {
+            if (manager.prevent(event.getBlock().getLocation(), Prevent.fallingBlocks)) {
+                event.setCancelled(true);
+            }
+        } else {
+            event.setCancelled(
+                manager.prevent(event.getBlock().getLocation(), Prevent.build)
+            );
+        }
     }
     /**
      * Stores data for damage events.

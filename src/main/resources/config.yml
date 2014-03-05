@@ -17,6 +17,7 @@ region:
             - pvp
             - leavesDecay
             - vehicleNaturalDestroy
+            - fallingBlocks
     prevent:
         use:
             - CHEST
