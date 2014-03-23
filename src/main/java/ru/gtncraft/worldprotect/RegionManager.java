@@ -84,7 +84,7 @@ public class RegionManager {
             final int z = entry.getValue();
             final Collection<Region> coll = chunks.get(world.getName()).get(x, z);
             coll.remove(region);
-            if (coll.size() == 0) {
+            if (coll.isEmpty()) {
                 chunks.get(world.getName()).remove(x, z);
             }
         }
