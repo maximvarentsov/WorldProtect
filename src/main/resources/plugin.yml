@@ -1,5 +1,5 @@
 name: ${artifactId}
-main: ru.gtncraft.worldprotect.WorldProtect
+main: ${groupId}.${artifactId}
 author: Mete0 <admin@gtn-craft.ru>
 version: ${version}
 softdepend: [WorldEdit]
