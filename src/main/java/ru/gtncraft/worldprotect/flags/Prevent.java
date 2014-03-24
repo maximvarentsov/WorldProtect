@@ -20,11 +20,15 @@ public enum Prevent {
     vehicleNaturalDestroy,
     fallingBlocks;
 
-    public static Collection<String> toArray() {
-        final Collection<String> result = new ArrayList<>();
+    public final static Collection<String> values = new ArrayList<>();
+
+    static {
         for (final Prevent flag : values()) {
-            result.add(flag.name());
+            values.add(flag.name());
         }
-        return result;
+    }
+
+    public static Collection<String> toArray() {
+        return values;
     }
 }
