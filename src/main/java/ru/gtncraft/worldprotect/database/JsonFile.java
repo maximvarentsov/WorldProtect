@@ -2,16 +2,21 @@ package ru.gtncraft.worldprotect.database;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
-import com.mongodb.BasicDBList;
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
+import org.bson.BSONReader;
 import org.bukkit.World;
+import org.mongodb.Document;
+import org.mongodb.codecs.DocumentCodec;
+import org.mongodb.json.JSONMode;
+import org.mongodb.json.JSONReader;
+import org.mongodb.json.JSONReaderSettings;
+import ru.gtncraft.worldprotect.Entity;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.region.Region;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.stream.Stream;
 
 public class JsonFile implements Storage {
 
@@ -22,22 +27,16 @@ public class JsonFile implements Storage {
     }
 
     @Override
-    public void save(final World world, final Collection<Region> regions) {
-        final File file = getFile(world);
-        try (final OutputStream os = new FileOutputStream(file)) {
-            final BasicDBList list = new BasicDBList();
-            for (final Region region : regions) {
-                region.update();
-                list.add(region);
+    public void save(final World world, final Stream<Region> regions) {
+        Collection<Region> values = new LinkedList<>();
+        regions.map(Region::update).forEach(values::add);
+        byte[] bytes = new Document("regions", values).toString().getBytes();
+        if (!values.isEmpty()) {
+            try (OutputStream os = new FileOutputStream(getFile(world))) {
+                os.write(bytes);
+            } catch(IOException ex) {
+                plugin.getLogger().severe(ex.getMessage());
             }
-            if (list.size() > 0) {
-                if (!file.exists()) {
-                    file.createNewFile();
-                }
-                os.write(list.toString().getBytes());
-            }
-        } catch (IOException ex) {
-            plugin.getLogger().severe(ex.getMessage());
         }
     }
 
@@ -45,30 +44,32 @@ public class JsonFile implements Storage {
         return new File(plugin.getDataFolder().getAbsolutePath() + File.separator + world.getName() + ".json");
     }
 
+    public Entity parse(final String data) throws Exception {
+        BSONReader bsonReader = new JSONReader(new JSONReaderSettings(JSONMode.STRICT), data);
+        return new Entity(new DocumentCodec().decode(bsonReader));
+    }
+
     @Override
     public void delete(final World world, final String name) {
     }
 
     @Override
-    public Collection<Region> load(final World world) {
-        final Collection<Region> result = new ArrayList<>();
-        try (final InputStream in = new FileInputStream(getFile(world))) {
-            final String json = CharStreams.toString(new InputStreamReader(in, Charsets.UTF_8));
-            final BasicDBList list = (BasicDBList) JSON.parse(json);
-            if (list == null) {
-                return result;
-            }
-            for (final Object obj : list) {
-                result.add(new Region(((DBObject) obj).toMap(), world));
+    public Stream<Region> load(final World world) {
+        try (InputStream in = new FileInputStream(getFile(world))) {
+            String json = CharStreams.toString(new InputStreamReader(in, Charsets.UTF_8));
+            try {
+                return parse(json).stream("regions").map(e -> new Region(e, world));
+            } catch (Throwable ex) {
+                plugin.getLogger().severe("Could not parse " + world.getName() + ".json.");
             }
         } catch (FileNotFoundException ex) {
         } catch (IOException ex) {
             plugin.getLogger().severe(ex.getMessage());
         }
-        return result;
+        return Stream.of();
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
     }
 }

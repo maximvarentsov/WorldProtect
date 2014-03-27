@@ -1,59 +1,58 @@
 package ru.gtncraft.worldprotect.database;
 
-import com.mongodb.*;
+import com.google.common.collect.ImmutableList;
 import org.bukkit.World;
+import org.mongodb.*;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.region.Region;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.stream.Stream;
 
 public class MongoDB implements Storage {
 
-    private final DB db;
+    private final MongoDatabase db;
     private final MongoClient client;
 
     public MongoDB(final WorldProtect plugin) throws IOException {
-        this.client = new MongoClient(
-            plugin.getConfig().getString("storage.host"),
-            plugin.getConfig().getInt("storage.port")
+        client = MongoClients.create(
+                plugin.getConfig().getReplicaSet()
         );
-        this.db = client.getDB(plugin.getConfig().getString("storage.name"));
+        db = client.getDatabase(plugin.getConfig().getString("storage.name"));
     }
 
-
     @Override
-    public void save(final World world, final Collection<Region> regions) {
-        final DBCollection coll = db.getCollection(world.getName());
-        if (coll.count() == 0) {
-            coll.ensureIndex(new BasicDBObject("name", 1).append("unique", true));
-        }
-        for (final Region region : regions) {
+    public void save(final World world, final Stream<Region> regions) {
+        MongoCollection<Document> collection = db.getCollection(world.getName());
+
+        collection.tools().createIndexes(
+            ImmutableList.of(Index.builder().addKey("name").unique().build())
+        );
+
+        regions.forEach(region -> {
             region.update();
-            coll.update(new BasicDBObject("name", region.getName()), region, true, false);
-        }
+            collection.find(new Document("name", region.getName())).upsert().updateOne(region);
+        });
     }
 
     @Override
     public void delete(final World world, final String name) {
-        db.getCollection(world.getName()).remove(new BasicDBObject("name", name));
+        db.getCollection(world.getName()).find(new Document("name", name)).removeOne();
     }
 
     @Override
-    public Collection<Region> load(final World world) {
-        final Collection<Region> result = new ArrayList<>();
-        final DBCollection coll = db.getCollection(world.getName());
-        try (final DBCursor curr = coll.find(new BasicDBObject("name", new BasicDBObject("$exists", true)))) {
-            while (curr.hasNext()) {
-                result.add(new Region(curr.next().toMap(), world));
-            }
+    public Stream<Region> load(final World world) {
+        Collection<Region> regions = new LinkedList<>();
+        try (MongoCursor cursor = db.getCollection(world.getName()).find().get()) {
+            cursor.forEachRemaining(obj -> regions.add(new Region((Document) obj, world)));
         }
-        return result;
+        return regions.stream();
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         client.close();
     }
 }

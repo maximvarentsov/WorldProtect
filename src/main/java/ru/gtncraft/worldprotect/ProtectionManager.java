@@ -11,22 +11,21 @@ import ru.gtncraft.worldprotect.database.Storage;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Cuboid;
 import ru.gtncraft.worldprotect.region.Region;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
-public class RegionManager {
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Stream;
+
+public class ProtectionManager {
 
     private final Storage storage;
     private final WorldProtect plugin;
-    private final Map<String, Map<String, Region>> regions;
+    private final Map<String, Collection<Region>> regions;
     private final Map<String, Table<Integer, Integer, Collection<Region>>> chunks;
     private final Collection<String> preventCommands;
     private final Collection<Material> preventUse;
 
-    public RegionManager(final WorldProtect plugin) throws IOException {
+    public ProtectionManager(final WorldProtect plugin) throws IOException {
         this.plugin = plugin;
         this.regions = new HashMap<>();
         this.chunks = new HashMap<>();
@@ -40,9 +39,7 @@ public class RegionManager {
             default:
                 throw new IOException("Unknown regions storage.");
         }
-        for (final World world : Bukkit.getServer().getWorlds()) {
-            load(world);
-        }
+        Bukkit.getServer().getWorlds().forEach(this::load);
         this.preventCommands = plugin.getConfig().getPreventCommands();
         this.preventUse = plugin.getConfig().getPreventUse();
     }
@@ -52,20 +49,20 @@ public class RegionManager {
      * @param world World
      */
     public void load(final World world) {
-        final Map<String, Region> values = new HashMap<>();
-        final Table<Integer, Integer, Collection<Region>> table = HashBasedTable.create();
+        Collection<Region> values = new ArrayList<>();
+        Table<Integer, Integer, Collection<Region>> table = HashBasedTable.create();
         if (plugin.getConfig().useRegions(world)) {
-            for (final Region region : storage.load(world)) {
-                for (final Map.Entry<Integer, Integer> entry : region.getCuboid().getChunksCoords().entries()) {
-                    final int x = entry.getKey();
-                    final int z = entry.getValue();
+            storage.load(world).forEach(region -> {
+                region.getCuboid().getChunks().entries().stream().forEach(entry -> {
+                    int x = entry.getKey();
+                    int z = entry.getValue();
                     if (!table.contains(x, z)) {
-                        table.put(x, z, new ArrayList<Region>());
+                        table.put(x, z, new ArrayList<>());
                     }
                     table.get(x, z).add(region);
-                }
-                values.put(region.getName(), region);
-            }
+                });
+                values.add(region);
+            });
         }
         regions.put(world.getName(), values);
         chunks.put(world.getName(), table);
@@ -77,18 +74,18 @@ public class RegionManager {
      * @param name region name
      */
     public void delete(final World world, final String name) {
-        final Region region = get(world, name.toLowerCase());
         storage.delete(world, name);
-        for (final Map.Entry<Integer, Integer> entry : region.getCuboid().getChunksCoords().entries()) {
-            final int x = entry.getKey();
-            final int z = entry.getValue();
-            final Collection<Region> coll = chunks.get(world.getName()).get(x, z);
+        Region region = get(world, name);
+        region.getCuboid().getChunks().entries().stream().forEach(entry -> {
+            int x = entry.getKey();
+            int z = entry.getValue();
+            Collection<Region> coll = chunks.get(world.getName()).get(x, z);
             coll.remove(region);
             if (coll.isEmpty()) {
                 chunks.get(world.getName()).remove(x, z);
             }
-        }
-        get(world).remove(name.toLowerCase());
+        });
+        regions.get(world.getName()).remove(region);
     }
     /**
      * Save world regions.
@@ -98,16 +95,14 @@ public class RegionManager {
     public void save(final World world) {
         if (plugin.getConfig().useRegions(world)) {
             plugin.getLogger().info("Save region for world " + world.getName());
-            storage.save(world, get(world).values());
+            storage.save(world, get(world));
         }
     }
     /**
      * Save all worlds regions and close storage.
      */
     public void disable() {
-        for (final World world : Bukkit.getWorlds()) {
-            save(world);
-        }
+        Bukkit.getWorlds().forEach(this::save);
         try {
             storage.close();
         } catch (Exception ex) {
@@ -131,58 +126,37 @@ public class RegionManager {
      * @param region region.
      */
     public void add(final World world, final Region region) {
-        get(world).put(region.getName(), region);
-        final Table<Integer, Integer, Collection<Region>> table = chunks.get(world.getName());
-        for (final Map.Entry<Integer, Integer> entry : region.getCuboid().getChunksCoords().entries()) {
-            final int x = entry.getKey();
-            final int z = entry.getValue();
+        regions.get(world.getName()).add(region);
+        Table<Integer, Integer, Collection<Region>> table = chunks.get(world.getName());
+        region.getCuboid().getChunks().entries().stream().forEach(e -> {
+            int x = e.getKey();
+            int z = e.getValue();
             if (!table.contains(x, z)) {
-                table.put(x, z, new ArrayList<Region>());
+                table.put(x, z, new ArrayList<>());
             }
             table.get(x, z).add(region);
-        }
+        });
     }
     /**
      * Get world regions.
      *
      * @param world World.
      */
-    public Map<String, Region> get(final World world) {
-        return regions.get(world.getName());
-    }
-    /**
-     * Get regions overlays.
-     *
-     * @param value region.
-     */
-    public Collection<Region> getOverlays(final Region value) {
-        final Collection<Region> result = new ArrayList<>();
-        final Cuboid cuboid = value.getCuboid();
-        for (final Region region : get(cuboid.getWorld()).values()) {
-            if (region.contains(cuboid.getLowerNE()) || region.contains(cuboid.getUpperSW()) || // inside
-                cuboid.contains(region.getCuboid().getLowerNE()) || cuboid.contains(region.getCuboid().getUpperSW())) { // outside
-                result.add(region);
-            }
-        }
-        return result;
+    public Stream<Region> get(final World world) {
+        return regions.get(world.getName()).stream();
     }
     /**
      * Get regions inside current location.
      *
      * @param location Current location.
      */
-    public Collection<Region> get(final Location location) {
-        final Collection<Region> result = new ArrayList<>();
-        final Chunk chunk = location.getChunk();
-        final Collection<Region> regions = chunks.get(location.getWorld().getName()).get(chunk.getX(), chunk.getZ());
+    public Stream<Region> get(final Location location) {
+        Chunk chunk = location.getChunk();
+        Collection<Region> regions = chunks.get(location.getWorld().getName()).get(chunk.getX(), chunk.getZ());
         if (regions != null) {
-            for (Region region : regions) {
-                if (region.contains(location)) {
-                    result.add(region);
-                }
-            }
+            return regions.stream().filter(region -> region.contains(location));
         }
-        return result;
+        return null;
     }
     /**
      * Get region in current world by name.
@@ -191,7 +165,8 @@ public class RegionManager {
      * @param name region name.
      */
     public Region get(final World world, final String name) {
-        return get(world).get(name.toLowerCase());
+        Optional<Region> o = get(world).filter(regions -> regions.getName().equalsIgnoreCase(name)).findAny();
+        return o.isPresent() ? o.get() : null;
     }
     /**
      * Return regions owned by player in current world.
@@ -199,35 +174,20 @@ public class RegionManager {
      * @param player Player.
      * @param role Player Roles in region.
      */
-    public Collection<Region> get(final Player player, final Roles role) {
-        final Collection<Region> result = new ArrayList<>();
-        for (final Region region : get(player.getWorld()).values()) {
-            if (region.contains(player, role)) {
-                result.add(region);
-            }
-        }
-        return result;
+    public Stream<Region> get(final Player player, final Roles role) {
+        return get(player.getWorld()).filter(region -> region.contains(player, role));
     }
     /**
-     * Check player member or owner of region.
+     * Get regions overlays.
      *
-     * @param player Player
+     * @param value region.
      */
-    public boolean hasAccess(final Player player) {
-        if (player.hasPermission(Permissions.admin)) {
-            return true;
-        }
-        final Collection<Region> regions = get(player.getLocation());
-        // Player not in region.
-        if (regions.isEmpty()) {
-            return true;
-        }
-        for (final Region region : regions) {
-            if (region.contains(player.getName())) {
-                return true;
-            }
-        }
-        return false;
+    public Stream<Region> get(final Region value) {
+        Cuboid cuboid = value.getCuboid();
+        return get(cuboid.getWorld()).filter(region ->
+            region.contains(cuboid.getLowerNE()) || region.contains(cuboid.getUpperSW()) ||
+            cuboid.contains(region.getCuboid().getLowerNE()) || cuboid.contains(region.getCuboid().getUpperSW())
+        );
     }
     /**
      * If player is region guest and command not allowed in region for guests.
@@ -245,10 +205,8 @@ public class RegionManager {
      * Prevent guests use some items like bone meal.
      */
     public boolean prevent(final Location location, final Player player, final ItemStack item) {
-        if (item != null) {
-            if (item.getType().equals(Material.INK_SACK) && item.getDurability() == 15) {
-                return prevent(location, player, Prevent.use);
-            }
+        if (item != null && item.getType().equals(Material.INK_SACK) && item.getDurability() == 15) {
+            return prevent(location, player, Prevent.use);
         }
         return false;
     }
@@ -268,26 +226,35 @@ public class RegionManager {
         if (player.hasPermission(Permissions.admin) || player.hasPermission(Permissions.moder)) {
             return false;
         }
-        for (final Region region : get(location)) {
-            if (region.contains(location)) {
-                if (region.get(flag) && !region.contains(player.getName())) {
-                    return true;
-                }
-            }
+        Stream<Region> regions = get(location);
+        if (regions == null) {
+            return false; // TODO check world flags
         }
-        return false;
+        return regions.filter(region -> region.get(flag) && !region.contains(player.getName())).findAny().isPresent();
     }
     /**
      * Search any region inside location with true prevent flag.
      */
     public boolean prevent(final Location location, final Prevent flag) {
-        for (final Region region: get(location)) {
-            if (region.contains(location)) {
-                if (region.get(flag)) {
-                    return true;
-                }
-            }
+        Stream<Region> regions = get(location);
+        if (regions == null) {
+            return false; // TODO check world flags
         }
-        return false;
+        return get(location).filter(region -> region.get(flag)).findAny().isPresent();
+    }
+    /**
+     * Check player member or owner of region.
+     *
+     * @param player Player
+     */
+    public boolean hasAccess(final Player player) {
+        if (player.hasPermission(Permissions.admin)) {
+            return true;
+        }
+        Stream<Region> regions = get(player.getLocation());
+        if (regions == null) {
+            return true;
+        }
+        return regions.filter(region -> region.contains(player.getName())).findAny().isPresent();
     }
 }

@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public final class WorldProtect extends JavaPlugin {
 
-    private RegionManager manager;
+    private ProtectionManager manager;
     private Config config;
 
     @Override
@@ -20,7 +20,7 @@ public final class WorldProtect extends JavaPlugin {
         config = new Config(super.getConfig());
 
         try {
-            manager = new RegionManager(this);
+            manager = new ProtectionManager(this);
         } catch (IOException ex) {
             getLogger().severe(ex.getMessage());
             setEnabled(false);
@@ -45,13 +45,13 @@ public final class WorldProtect extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getRegionManager().disable();
+        getProtectionManager().disable();
         getServer().getScheduler().cancelTasks(this);
     }
     /**
      * API
      */
-    public RegionManager getRegionManager() {
+    public ProtectionManager getProtectionManager() {
         return manager;
     }
 }

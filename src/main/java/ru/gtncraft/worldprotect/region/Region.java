@@ -1,47 +1,50 @@
 package ru.gtncraft.worldprotect.region;
 
 import com.google.common.collect.ImmutableList;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import com.google.common.collect.ImmutableMap;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import ru.gtncraft.worldprotect.Entity;
 import ru.gtncraft.worldprotect.Roles;
 import ru.gtncraft.worldprotect.flags.Prevent;
+
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
-public class Region extends BasicDBObject {
+public class Region extends Entity {
 
-    private final Point p1;
-    private final Point p2;
     private final Flags flags;
-    private final BasicDBList owners;
-    private final BasicDBList members;
+    private final Collection<String> owners = new LinkedList<>();
+    private final Collection<String> members= new LinkedList<>();
     private final Cuboid cuboid;
 
     public Region(final Map map, final World world) {
-        this.putAll(map);
-        this.p1 = new Point(((DBObject) this.get("p1")).toMap());
-        this.p2 = new Point(((DBObject) this.get("p2")).toMap());
-        this.flags = new Flags(((DBObject) this.get("flags")).toMap());
-        this.owners  = (BasicDBList) this.get("owners");
-        this.members = (BasicDBList) this.get("members");
-        this.cuboid = new Cuboid(world, p1.getX(), p1.getY(), p1.getZ(), p2.getX(), p2.getY(), p2.getZ());
+        super(map);
+        flags = new Flags(asEntity("flags"));
+        owners.addAll(asListString("owners"));
+        members.addAll(asListString("members"));
+        Entity p1 = asEntity("p1");
+        Entity p2 = asEntity("p2");
+        cuboid = new Cuboid(
+            new Location(world, p1.getInteger("x"), p1.getInteger("y"), p1.getInteger("z")),
+            new Location(world, p2.getInteger("x"), p2.getInteger("y"), p2.getInteger("z"))
+        );
     }
 
-    public Region(final Location p1, final Location p2) {
-        this.p1 = new Point(p1);
-        this.p2 = new Point(p2);
-        this.flags = new Flags();
-        this.owners = new BasicDBList();
-        this.members = new BasicDBList();
-        this.cuboid = new Cuboid(p1, p2);
-        this.update();
+    public Region(final Location point1, final Location point2) {
+        super(ImmutableMap.of());
+        flags = new Flags(ImmutableMap.of(
+                Prevent.build.name(), true,
+                Prevent.use.name(), true,
+                Prevent.pvp.name(), true,
+                Prevent.piston.name(), true
+        ));
+        cuboid = new Cuboid(point1, point2);
+        update();
     }
-
     /**
      * Get region name.
      */
@@ -52,7 +55,7 @@ public class Region extends BasicDBObject {
      * Return region flags with state.
      */
     public Map<String, Boolean> get() {
-        final Map<String, Boolean> values = new HashMap<>();
+        Map<String, Boolean> values = new HashMap<>();
         for (Prevent flag : Prevent.values()) {
             values.put(flag.name(), flags.get(flag));
         }
@@ -72,9 +75,9 @@ public class Region extends BasicDBObject {
     public Collection<String> get(final Roles role) {
         switch (role) {
             case member:
-                return ImmutableList.copyOf(members.toArray(new String[0]));
+                return members;
             case owner:
-                return ImmutableList.copyOf(owners.toArray(new String[0]));
+                return owners;
         }
         return ImmutableList.of();
     }
@@ -161,12 +164,13 @@ public class Region extends BasicDBObject {
         }
     }
 
-    public void update() {
-        this.put("p1", this.p1);
-        this.put("p2", this.p2);
-        this.put("flags", this.flags);
-        this.put("members", this.members);
-        this.put("owners", this.owners);
+    public Region update() {
+        put("p1", cuboid.asEntity("p1"));
+        put("p2", cuboid.asEntity("p2"));
+        put("flags", flags);
+        put("members", members);
+        put("owners", owners);
+        return this;
     }
 
     public int volume() {
@@ -174,7 +178,7 @@ public class Region extends BasicDBObject {
     }
 
     public String getSize() {
-        return "( p1: " + p1 + " p2: " + p2 + " )";
+        return cuboid.toString();
     }
 
     public Cuboid getCuboid() {

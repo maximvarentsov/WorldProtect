@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.*;
@@ -13,23 +12,24 @@ import ru.gtncraft.worldprotect.database.Storage;
 import ru.gtncraft.worldprotect.database.Types;
 import ru.gtncraft.worldprotect.region.Region;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import static ru.gtncraft.worldprotect.util.Strings.partial;
 
 public class CommandWorldProtect implements CommandExecutor, TabCompleter {
 
     private final Config config;
-    private final RegionManager regions;
+    private final ProtectionManager regions;
     private final WorldProtect plugin;
 
     public CommandWorldProtect(final WorldProtect plugin) {
         this.config = plugin.getConfig();
-        this.regions = plugin.getRegionManager();
+        this.regions = plugin.getProtectionManager();
         this.plugin = plugin;
 
-        final PluginCommand command = plugin.getCommand("worldprotect");
+        PluginCommand command = plugin.getCommand("worldprotect");
         command.setExecutor(this);
         command.setPermissionMessage(config.getMessage(Messages.error_no_permission));
     }
@@ -54,12 +54,15 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         try {
             switch (args[0].toLowerCase()) {
                 case "save":
-                    return commandSave(sender);
+                    commandSave(sender);
+                    return true;
                 case "convert":
-                    return commandConvert(sender);
+                    commandConvert(sender);
+                    return true;
                 case "tp":
                     if (sender instanceof Player) {
-                        return commandTeleport((Player) sender, args[1]);
+                        commandTeleport((Player) sender, args[1]);
+                        return true;
                     }
             }
         } catch (CommandException ex) {
@@ -71,34 +74,21 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         return false;
     }
 
-    private boolean commandSave(final CommandSender sender) throws CommandException {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                for (final World world : Bukkit.getWorlds()) {
-                    regions.save(world);
-                }
-            }
-        });
+    private void commandSave(final CommandSender sender) throws CommandException {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> Bukkit.getWorlds().forEach(regions::save));
         sender.sendMessage(config.getMessage(Messages.success_region_saved));
-        return true;
     }
-    // TODO: covert is a toggler
-    private boolean commandConvert(final CommandSender sender) throws CommandException {
+
+    private void commandConvert(final CommandSender sender) throws CommandException {
         if (config.getStorage() == Types.file) {
             throw new CommandException("Only convert from " + Types.mongodb.name() + " to " + Types.file.name() + " support now.");
         }
         final Storage storage = new JsonFile(plugin);
-        for (final World world : Bukkit.getServer().getWorlds()) {
-            if (config.useRegions(world)) {
-                storage.save(world, regions.get(world).values());
-            }
-        }
+        Bukkit.getServer().getWorlds().stream().filter(config::useRegions).forEach(world -> storage.save(world, regions.get(world)));
         sender.sendMessage(config.getMessage(Messages.success_region_converted, Types.mongodb.name(), Types.file.name()));
-        return true;
     }
 
-    private boolean commandTeleport(final Player sender, final String name) throws CommandException {
+    private void commandTeleport(final Player sender, final String name) throws CommandException {
         final Region region = regions.get(sender.getWorld(), name);
         if (region == null) {
             throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
@@ -110,7 +100,6 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         } else {
             sender.teleport(center(region.getCuboid().getCenter()));
         }
-        return true;
     }
 
     private boolean isFree(final Location location) {
@@ -125,15 +114,12 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
     }
 
     private Collection<String> allRegions(final CommandSender sender) {
-        final Collection<String> result = new ArrayList<>();
         if (sender instanceof Player) {
-            final Player player = (Player) sender;
+            Player player = (Player) sender;
             if (player.hasPermission(Permissions.admin)) {
-                for (Region region: regions.get(player.getWorld()).values()) {
-                    result.add(region.getName());
-                }
+                return regions.get(player.getWorld()).map(Region::getName).collect(Collectors.toList());
             }
         }
-        return result;
+        return ImmutableList.of();
     }
 }

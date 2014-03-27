@@ -1,8 +1,8 @@
 storage:
     type: file
-    host: localhost
-    port: 27017
     name: worldprotect
+    hosts:
+        - localhost:27017
 region:
     worlds:
         - world
@@ -63,7 +63,7 @@ messages:
     error_region_protected: "&4У вас нет прав на редактирование этого региона."
     error_regions_disabled: "&4В мире %s создание регионов отключено."
     error_no_permission: "&4У вас нет прав на использования этой комманды."
-    error_command_disabled: "&4У вас нет прав на использования комманды %s в этом регионе."
+    error_command_disabled: "&4У вас нет прав использовать комманду /%s в этом регионе."
     error_pvp_disabled: "&4PVP отключен в этом регионе."
     error_region_max_volume: "&4Максимальный объём региона %s, ваш регион %s."
     region_name: "Регион"

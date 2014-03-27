@@ -17,28 +17,21 @@ public class WorldListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler()
+    @SuppressWarnings("unused")
     public void onSave(final WorldSaveEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                plugin.getRegionManager().save(event.getWorld());
-            }
-        });
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getProtectionManager().save(event.getWorld()));
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler()
+    @SuppressWarnings("unused")
     public void onLoad(final WorldLoadEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                plugin.getRegionManager().load(event.getWorld());
-            }
-        });
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getProtectionManager().load(event.getWorld()));
     }
 
     @EventHandler(ignoreCancelled = true)
+    @SuppressWarnings("unused")
     public void onUnload(final WorldUnloadEvent event) {
-        plugin.getRegionManager().unload(event.getWorld());
+        plugin.getProtectionManager().unload(event.getWorld());
     }
 }

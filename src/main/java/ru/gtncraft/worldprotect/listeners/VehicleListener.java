@@ -10,18 +10,18 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.Messages;
-import ru.gtncraft.worldprotect.RegionManager;
+import ru.gtncraft.worldprotect.ProtectionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.flags.Prevent;
 
 public class VehicleListener implements Listener {
 
-    private final RegionManager manager;
+    private final ProtectionManager manager;
     private final Config config;
 
     public VehicleListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        this.manager = plugin.getRegionManager();
+        this.manager = plugin.getProtectionManager();
         this.config = plugin.getConfig();
     }
     /**
@@ -29,19 +29,20 @@ public class VehicleListener implements Listener {
      * This is not raised if the boat is simply 'removed' due to other means.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onDestory(final VehicleDestroyEvent event) {
-        final Entity attacker = event.getAttacker();
+        Entity attacker = event.getAttacker();
         if (attacker instanceof Player) {
-            final Player player = (Player) attacker;
+            Player player = (Player) attacker;
             if (manager.prevent(event.getVehicle().getLocation(), player, Prevent.build)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         } else {
             if (manager.prevent(event.getVehicle().getLocation(), Prevent.vehicleNaturalDestroy)) {
-                event.setCancelled(
-                    manager.prevent(event.getVehicle().getLocation(), Prevent.build)
-                );
+                if (manager.prevent(event.getVehicle().getLocation(), Prevent.build)) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
@@ -49,10 +50,11 @@ public class VehicleListener implements Listener {
      * Raised when an entity enters a vehicle.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onEnter(final VehicleEnterEvent event) {
-        final Entity passenger = event.getEntered().getPassenger();
+        Entity passenger = event.getEntered().getPassenger();
         if (passenger instanceof Player) {
-            final Player player = (Player) passenger;
+            Player player = (Player) passenger;
             if (manager.prevent(event.getVehicle().getLocation(), player, Prevent.use)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));

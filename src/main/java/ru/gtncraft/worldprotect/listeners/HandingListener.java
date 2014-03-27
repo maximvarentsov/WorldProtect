@@ -11,44 +11,46 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.Messages;
-import ru.gtncraft.worldprotect.RegionManager;
+import ru.gtncraft.worldprotect.ProtectionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.flags.Prevent;
 
 public class HandingListener implements Listener {
 
-    private final RegionManager manager;
+    private final ProtectionManager manager;
     private final Config config;
 
     public HandingListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        this.manager = plugin.getRegionManager();
+        this.manager = plugin.getProtectionManager();
         this.config = plugin.getConfig();
     }
     /**
      * Triggered when a hanging entity is removed by an entity.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onBreakByEntityEvent(final HangingBreakByEntityEvent event) {
-        final Location location = event.getEntity().getLocation();
+        Location location = event.getEntity().getLocation();
         if (event.getRemover().getType() == EntityType.PLAYER) {
-            final Player player = (Player) event.getRemover();
+            Player player = (Player) event.getRemover();
             if (manager.prevent(location, player, Prevent.build)) {
                 event.setCancelled(true);
                 player.sendMessage(config.getMessage(Messages.error_region_protected));
             }
         } else {
-            event.setCancelled(
-                manager.prevent(location, Prevent.build)
-            );
+            if (manager.prevent(location, Prevent.build)) {
+                event.setCancelled(true);
+            }
         }
     }
     /**
      * Triggered when a hanging entity is created in the world.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onPlace(final HangingPlaceEvent event) {
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
         if (manager.prevent(event.getEntity().getLocation(), player, Prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));

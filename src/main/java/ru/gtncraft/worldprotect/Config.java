@@ -6,10 +6,17 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.mongodb.connection.ServerAddress;
 import ru.gtncraft.worldprotect.database.Types;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Region;
-import java.util.*;
+
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Config extends YamlConfiguration {
 
@@ -25,10 +32,7 @@ public class Config extends YamlConfiguration {
 
         this.addDefaults(config.getRoot());
 
-        this.preventCommands = new ArrayList<>();
-        for (final String command : this.getStringList("region.prevent.commands")) {
-            this.preventCommands.add(command.toLowerCase());
-        }
+        this.preventCommands = this.getStringList("region.prevent.commands").stream().map(String::toLowerCase).collect(Collectors.toList());
 
         this.preventUse = new ArrayList<>();
         for (final String value : this.getStringList("region.prevent.use")) {
@@ -46,10 +50,7 @@ public class Config extends YamlConfiguration {
             this.tool = tool;
         }
 
-        this.worlds = new ArrayList<>();
-        for (final String world : this.getStringList("region.worlds")) {
-            worlds.add(world.toLowerCase());
-        }
+        this.worlds = this.getStringList("region.worlds").stream().map(String::toLowerCase).collect(Collectors.toList());
 
         this.allowedFlags = new ArrayList<>();
         for (final String flag : this.getStringList("region.flags.allowed")) {
@@ -59,6 +60,14 @@ public class Config extends YamlConfiguration {
 
             }
         }
+    }
+
+    public List<ServerAddress> getReplicaSet() throws UnknownHostException {
+        List<ServerAddress> addresses = new ArrayList<>();
+        for (String host : getStringList("storage.hosts")) {
+            addresses.add(new ServerAddress(host));
+        }
+        return addresses;
     }
 
     public Material getInfoTool() {
@@ -85,21 +94,9 @@ public class Config extends YamlConfiguration {
         return String.format(getMessage(message), args);
     }
 
-    public String[] getMessage(Collection<Region> regions) {
+    public String[] getMessage(final Region region) {
         final Collection<String> messages = new ArrayList<>();
-        if (regions.isEmpty()) {
-            messages.add(getMessage(Messages.error_region_not_found));
-        } else {
-            for (final Region region : regions) {
-                messages.addAll(Arrays.asList(getMessage(region)));
-            }
-        }
-        return messages.toArray(new String[0]);
-    }
-
-    public String[] getMessage(Region region) {
-        final Collection<String> messages = new ArrayList<>();
-        messages.add(ChatColor.YELLOW + getMessage(Messages.region_name) + ": "    + ChatColor.WHITE + region.getName());
+        messages.add(ChatColor.YELLOW + getMessage(Messages.region_name) + ": " + ChatColor.WHITE + region.getName());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_size) + ": " + ChatColor.WHITE + region.getSize());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + region.get(Roles.owner));
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + region.get(Roles.member));
@@ -109,7 +106,7 @@ public class Config extends YamlConfiguration {
             flags.add(ChatColor.WHITE + entry.getKey() + ": " + value + ChatColor.WHITE);
         }
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_flags) + ": " + Joiner.on(", ").join(flags));
-        return messages.toArray(new String[0]);
+        return messages.toArray(new String[messages.size()]);
     }
 
     public boolean useRegions(final World world) {

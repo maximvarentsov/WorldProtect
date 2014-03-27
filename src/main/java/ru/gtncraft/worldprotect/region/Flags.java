@@ -1,22 +1,14 @@
 package ru.gtncraft.worldprotect.region;
 
-import com.mongodb.BasicDBObject;
+import ru.gtncraft.worldprotect.Entity;
 import ru.gtncraft.worldprotect.flags.Prevent;
+
 import java.util.Map;
 
-public class Flags extends BasicDBObject {
+public class Flags extends Entity {
 
     public Flags(final Map map) {
-        putAll(map);
-    }
-    /**
-     * Set default flags state.
-     */
-    public Flags() {
-        set(Prevent.build, true);
-        set(Prevent.use, true);
-        set(Prevent.pvp, true);
-        set(Prevent.piston, true);
+        super(map);
     }
     /**
      * Change flag state.

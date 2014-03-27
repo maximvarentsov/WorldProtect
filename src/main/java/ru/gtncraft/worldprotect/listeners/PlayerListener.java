@@ -10,31 +10,32 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.Messages;
-import ru.gtncraft.worldprotect.RegionManager;
+import ru.gtncraft.worldprotect.ProtectionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.flags.Prevent;
 
 public class PlayerListener implements Listener {
 
-    private final RegionManager manager;
+    private final ProtectionManager manager;
     private final Config config;
 
     public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        this.manager = plugin.getRegionManager();
+        this.manager = plugin.getProtectionManager();
         this.config = plugin.getConfig();
     }
     /**
      * Called when a player interacts with an object or air.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onInteract(final PlayerInteractEvent event) {
-        final Player player = event.getPlayer();
-        final Location location = event.getClickedBlock().getLocation();
+        Player player = event.getPlayer();
+        Location location = event.getClickedBlock().getLocation();
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
                 if (config.getInfoTool() == event.getMaterial()) {
-                    player.sendMessage(config.getMessage(manager.get(location)));
+                    manager.get(location).forEach(region -> player.sendMessage(config.getMessage(region)));
                 }
                 if (manager.prevent(location, player, event.getClickedBlock().getType())) {
                     event.setCancelled(true);
@@ -68,8 +69,9 @@ public class PlayerListener implements Listener {
      * This event is fired when the player is almost about to enter the bed.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onBedEnter(final PlayerBedEnterEvent event) {
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
         if (manager.prevent(event.getBed().getLocation(), player, Prevent.use)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
@@ -79,8 +81,9 @@ public class PlayerListener implements Listener {
      * Called when a player fill a Bucket.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onBucketFill(final PlayerBucketFillEvent event) {
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
         if (manager.prevent(event.getBlockClicked().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
@@ -90,8 +93,9 @@ public class PlayerListener implements Listener {
      * Called when a player empty a Bucket.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onBucketEmpty(final PlayerBucketEmptyEvent event) {
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
         if (manager.prevent(event.getBlockClicked().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
@@ -101,8 +105,9 @@ public class PlayerListener implements Listener {
      * Represents an event that is called when a player right clicks an entity.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onInteractEntity(final PlayerInteractEntityEvent event) {
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
         if (manager.prevent(event.getRightClicked().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
@@ -113,9 +118,10 @@ public class PlayerListener implements Listener {
      * cases and you should not normally use it.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
-        final Player player = event.getPlayer();
-        final String command = event.getMessage().substring(1).split(" ")[0];
+        Player player = event.getPlayer();
+        String command = event.getMessage().substring(1).split(" ")[0];
         if (manager.prevent(player.getLocation(), player, command)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_command_disabled, command));
@@ -125,8 +131,9 @@ public class PlayerListener implements Listener {
      * Holds information for player teleport events.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
     public void onTeleport(final PlayerTeleportEvent event) {
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
         if (manager.prevent(player.getLocation(), player, Prevent.teleport)) {
             event.setCancelled(true);
             player.sendMessage(config.getMessage(Messages.error_region_protected));
