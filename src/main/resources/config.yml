@@ -42,6 +42,8 @@ region:
             - WOODEN_DOOR
             - GOLD_PLATE
             - IRON_PLATE
+            - FURNACE
+            - BURNING_FURNACE
         commands:
             - sethome
 messages:
