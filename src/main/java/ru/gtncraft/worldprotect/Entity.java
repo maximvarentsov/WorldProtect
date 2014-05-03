@@ -1,31 +1,25 @@
 package ru.gtncraft.worldprotect;
 
-import com.google.common.collect.ImmutableList;
 import org.mongodb.Document;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Entity extends Document {
 
-    public Entity(final Map map) {
+    public Entity(final Map<String, Object> map) {
         putAll(map);
     }
 
-    public List<Entity> asList(final String key) {
-        if (containsKey(key)) {
-            return ((List<Document>) get(key)).stream().map(Entity::new).collect(Collectors.toList());
-        }
-        return ImmutableList.of();
+    @SuppressWarnings("unchecked")
+    public <E> Collection<E> asCollection(final String key) {
+        return (Collection<E>) get(key);
     }
 
-    public List<String> asListString(final String key) {
-        if (containsKey(key)) {
-            return ((List<String>) get(key));
-        }
-        return ImmutableList.of();
+    @SuppressWarnings("unchecked")
+    public <E> Stream<E> stream(final String key) {
+        return (Stream<E>) asCollection(key).stream();
     }
 
     public Entity asEntity(final String key) {
@@ -33,9 +27,5 @@ public class Entity extends Document {
             return new Entity((Document) get(key));
         }
         return null;
-    }
-
-    public Stream<Entity> stream(final String key) {
-        return asList(key).stream();
     }
 }

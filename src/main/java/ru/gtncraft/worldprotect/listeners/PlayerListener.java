@@ -14,7 +14,7 @@ import ru.gtncraft.worldprotect.ProtectionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.flags.Prevent;
 
-public class PlayerListener implements Listener {
+class PlayerListener implements Listener {
 
     private final ProtectionManager manager;
     private final Config config;

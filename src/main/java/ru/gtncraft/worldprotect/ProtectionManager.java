@@ -18,12 +18,12 @@ import java.util.stream.Stream;
 
 public class ProtectionManager {
 
-    private final Storage storage;
-    private final WorldProtect plugin;
-    private final Map<String, Collection<Region>> regions;
-    private final Map<String, Table<Integer, Integer, Collection<Region>>> chunks;
-    private final Collection<String> preventCommands;
-    private final Collection<Material> preventUse;
+    final Storage storage;
+    final WorldProtect plugin;
+    final Map<String, Collection<Region>> regions;
+    final Map<String, Table<Integer, Integer, Collection<Region>>> chunks;
+    final Collection<String> preventCommands;
+    final Collection<Material> preventUse;
 
     public ProtectionManager(final WorldProtect plugin) throws IOException {
         this.plugin = plugin;
@@ -74,18 +74,19 @@ public class ProtectionManager {
      * @param name region name
      */
     public void delete(final World world, final String name) {
-        storage.delete(world, name);
-        Region region = get(world, name);
-        region.getCuboid().getChunks().entries().stream().forEach(entry -> {
-            int x = entry.getKey();
-            int z = entry.getValue();
-            Collection<Region> coll = chunks.get(world.getName()).get(x, z);
-            coll.remove(region);
-            if (coll.isEmpty()) {
-                chunks.get(world.getName()).remove(x, z);
-            }
+        get(world, name).ifPresent((region) -> {
+            storage.delete(world, name);
+            region.getCuboid().getChunks().entries().forEach((entry) -> {
+                int x = entry.getKey();
+                int z = entry.getValue();
+                Collection<Region> coll = chunks.get(world.getName()).get(x, z);
+                coll.remove(region);
+                if (coll.isEmpty()) {
+                    chunks.get(world.getName()).remove(x, z);
+                }
+            });
+            regions.get(world.getName()).remove(region);
         });
-        regions.get(world.getName()).remove(region);
     }
     /**
      * Save world regions.
@@ -164,9 +165,8 @@ public class ProtectionManager {
      * @param world World.
      * @param name region name.
      */
-    public Region get(final World world, final String name) {
-        Optional<Region> o = get(world).filter(regions -> regions.getName().equalsIgnoreCase(name)).findAny();
-        return o.isPresent() ? o.get() : null;
+    public Optional<Region> get(final World world, final String name) {
+        return get(world).filter(regions -> regions.getName().equalsIgnoreCase(name)).findAny();
     }
     /**
      * Return regions owned by player in current world.
@@ -205,10 +205,7 @@ public class ProtectionManager {
      * Prevent guests use some items like bone meal.
      */
     public boolean prevent(final Location location, final Player player, final ItemStack item) {
-        if (item != null && item.getType().equals(Material.INK_SACK) && item.getDurability() == 15) {
-            return prevent(location, player, Prevent.use);
-        }
-        return false;
+        return item != null && item.getType() == Material.INK_SACK && item.getDurability() == 15 && prevent(location, player, Prevent.use);
     }
     /**
      * Check guest can use some material.
@@ -230,7 +227,7 @@ public class ProtectionManager {
         if (regions == null) {
             return false; // TODO check world flags
         }
-        return regions.filter(region -> region.get(flag) && !region.contains(player.getName())).findAny().isPresent();
+        return regions.filter(region -> region.get(flag) && !region.contains(player.getUniqueId())).findAny().isPresent();
     }
     /**
      * Search any region inside location with true prevent flag.
@@ -255,6 +252,6 @@ public class ProtectionManager {
         if (regions == null) {
             return true;
         }
-        return regions.filter(region -> region.contains(player.getName())).findAny().isPresent();
+        return regions.filter(region -> region.contains(player.getUniqueId())).findAny().isPresent();
     }
 }

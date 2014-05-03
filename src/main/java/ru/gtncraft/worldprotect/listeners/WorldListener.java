@@ -8,7 +8,7 @@ import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import ru.gtncraft.worldprotect.WorldProtect;
 
-public class WorldListener implements Listener {
+class WorldListener implements Listener {
 
     private final WorldProtect plugin;
 

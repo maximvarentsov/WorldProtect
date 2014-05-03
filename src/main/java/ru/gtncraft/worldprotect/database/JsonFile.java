@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 public class JsonFile implements Storage {
 
-    private final WorldProtect plugin;
+    final WorldProtect plugin;
 
     public JsonFile(final WorldProtect plugin) {
         this.plugin = plugin;
@@ -58,11 +58,11 @@ public class JsonFile implements Storage {
         try (InputStream in = new FileInputStream(getFile(world))) {
             String json = CharStreams.toString(new InputStreamReader(in, Charsets.UTF_8));
             try {
-                return parse(json).stream("regions").map(e -> new Region(e, world));
+                return parse(json).<Entity>stream("regions").map(e -> new Region(e, world));
             } catch (Throwable ex) {
-                plugin.getLogger().severe("Could not parse " + world.getName() + ".json.");
+                plugin.getLogger().warning("Could not parse " + world.getName() + ".json.");
             }
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ignore) {
         } catch (IOException ex) {
             plugin.getLogger().severe(ex.getMessage());
         }

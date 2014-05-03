@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 
 public class MongoDB implements Storage {
 
-    private final MongoDatabase db;
-    private final MongoClient client;
+    final MongoDatabase db;
+    final MongoClient client;
 
     public MongoDB(final WorldProtect plugin) throws IOException {
         client = MongoClients.create(

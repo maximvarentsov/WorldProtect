@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 
 import static ru.gtncraft.worldprotect.util.Strings.partial;
 
-public class CommandWorldProtect implements CommandExecutor, TabCompleter {
+class CommandWorldProtect implements CommandExecutor, TabCompleter {
 
-    private final Config config;
-    private final ProtectionManager regions;
-    private final WorldProtect plugin;
+    final Config config;
+    final ProtectionManager regions;
+    final WorldProtect plugin;
 
     public CommandWorldProtect(final WorldProtect plugin) {
         this.config = plugin.getConfig();
@@ -74,12 +74,12 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         return false;
     }
 
-    private void commandSave(final CommandSender sender) throws CommandException {
+    void commandSave(final CommandSender sender) throws CommandException {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> Bukkit.getWorlds().forEach(regions::save));
         sender.sendMessage(config.getMessage(Messages.success_region_saved));
     }
 
-    private void commandConvert(final CommandSender sender) throws CommandException {
+    void commandConvert(final CommandSender sender) throws CommandException {
         if (config.getStorage() == Types.file) {
             throw new CommandException("Only convert from " + Types.mongodb.name() + " to " + Types.file.name() + " support now.");
         }
@@ -88,11 +88,12 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         sender.sendMessage(config.getMessage(Messages.success_region_converted, Types.mongodb.name(), Types.file.name()));
     }
 
-    private void commandTeleport(final Player sender, final String name) throws CommandException {
-        final Region region = regions.get(sender.getWorld(), name);
-        if (region == null) {
-            throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
-        }
+    void commandTeleport(final Player sender, final String name) throws CommandException {
+
+        Region region = regions.get(sender.getWorld(), name).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_region_not_found, name)
+        ));
+
         if (isFree(region.getCuboid().getUpperSW())) {
             sender.teleport(center(region.getCuboid().getUpperSW()));
         } else if (isFree(region.getCuboid().getLowerNE())) {
@@ -102,18 +103,18 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         }
     }
 
-    private boolean isFree(final Location location) {
+    boolean isFree(final Location location) {
         final int x = location.getBlockX();
         final int y = location.getBlockZ();
         final int z = location.getBlockZ();
         return location.getWorld().getBlockAt(x,y + 1,z).getType().equals(Material.AIR);
     }
 
-    private Location center(final Location location) {
+    Location center(final Location location) {
         return new Location(location.getWorld(), location.getBlockX() + 0.5, location.getBlockY(), location.getBlockZ() + 0.5);
     }
 
-    private Collection<String> allRegions(final CommandSender sender) {
+    Collection<String> allRegions(final CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (player.hasPermission(Permissions.admin)) {

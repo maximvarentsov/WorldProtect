@@ -11,7 +11,6 @@ import ru.gtncraft.worldprotect.database.Types;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Region;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,11 +19,11 @@ import java.util.stream.Collectors;
 
 public class Config extends YamlConfiguration {
 
-    private final Collection<String> preventCommands;
-    private final Collection<Material> preventUse;
-    private final Material tool;
-    private final Collection<String> worlds;
-    private final Collection<Prevent> allowedFlags;
+    final Collection<String> preventCommands;
+    final Collection<Material> preventUse;
+    final Material tool;
+    final Collection<String> worlds;
+    final Collection<Prevent> allowedFlags;
 
     public Config(final FileConfiguration config) {
 
@@ -62,12 +61,8 @@ public class Config extends YamlConfiguration {
         }
     }
 
-    public List<ServerAddress> getReplicaSet() throws UnknownHostException {
-        List<ServerAddress> addresses = new ArrayList<>();
-        for (String host : getStringList("storage.hosts")) {
-            addresses.add(new ServerAddress(host));
-        }
-        return addresses;
+    public List<ServerAddress> getReplicaSet() {
+        return getStringList("storage.hosts").stream().map(ServerAddress::new).collect(Collectors.toList());
     }
 
     public Material getInfoTool() {

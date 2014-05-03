@@ -5,6 +5,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -13,18 +14,21 @@ import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Region;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.gtncraft.worldprotect.util.Commands.getParam;
+import static ru.gtncraft.worldprotect.util.Commands.getPlayer;
 import static ru.gtncraft.worldprotect.util.Strings.partial;
 
-public class CommandRegion implements CommandExecutor, TabCompleter {
+class CommandRegion implements CommandExecutor, TabCompleter {
 
-    private final Config config;
-    private final ProtectionManager regions;
-    private final WorldEditPlugin we;
-    private final Collection<String> commands = ImmutableList.of(
-            "define", "delete", "addowner", "deleteowner", "addmemeber", "deletemember", "info", "list", "flag"
+    final Config config;
+    final ProtectionManager regions;
+    final WorldEditPlugin we;
+    final Collection<String> commands = ImmutableList.of(
+        "define", "delete", "addowner", "deleteowner", "addmemeber", "deletemember", "info", "list", "flag"
     );
 
     public CommandRegion(final WorldProtect plugin) {
@@ -151,15 +155,18 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
 
         final Location p1 = selection.getMinimumPoint();
         final Location p2 = selection.getMaximumPoint();
-        final String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
 
-        if (regions.get(sender.getWorld(), name) != null) {
+        String name = getParam(args, 1).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_region_name)
+        ));
+
+        if (regions.get(sender.getWorld(), name).isPresent()) {
             throw new CommandException(config.getMessage(Messages.error_region_name_exists, name));
         }
 
         Region region = new Region(p1, p2);
         region.setName(name);
-        region.add(sender.getName(), Roles.owner);
+        region.add(sender.getUniqueId(), Roles.owner);
 
         if (!sender.hasPermission(Permissions.admin)) {
             /**
@@ -194,33 +201,34 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
         sender.sendMessage(config.getMessage(Messages.success_region_created, name));
     }
 
-    private void list(final Player sender) {
+    void list(final Player sender) {
         sender.sendMessage(config.getMessage(Messages.region_own_list) + ":");
         regions.get(sender, Roles.owner).forEach((region) -> sender.sendMessage(
             config.getMessage(Messages.region_name) + ": " + region.getName() + " " + region.getSize()
         ));
     }
 
-    private void info(final Player sender, final String[] args) throws CommandException {
+    void info(final Player sender, final String[] args) throws CommandException {
         if (args.length > 1) {
             String name = args[1];
-            Region region = regions.get(sender.getWorld(), name);
-            if (region == null) {
-                throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
-            }
+            Region region = regions.get(sender.getWorld(), name).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_region_not_found, name))
+            );
             sender.sendMessage(config.getMessage(region));
         } else {
             regions.get(sender.getLocation()).forEach(region -> sender.sendMessage(config.getMessage(region)));
         }
     }
 
-    private void delete(final Player sender, final String[] args) throws CommandException {
-        String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
-        Region region = regions.get(sender.getWorld(), name);
+    void delete(final Player sender, final String[] args) throws CommandException {
 
-        if (region == null) {
-            throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
-        }
+        String name = getParam(args, 1).orElseThrow(() -> new CommandException(
+            config.getMessage(Messages.error_input_region_name)
+        ));
+
+        Region region = regions.get(sender.getWorld(), name).orElseThrow(() -> new CommandException(
+            config.getMessage(Messages.error_input_region_not_found, name)
+        ));
 
         checkPermission(sender, region);
 
@@ -228,16 +236,24 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
         sender.sendMessage(config.getMessage(Messages.success_region_deleted, name));
     }
 
-    private void flag(final Player sender, final String[] args) throws CommandException {
-        final String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
-        final Region region = regions.get(sender.getWorld(), name);
+    void flag(final Player sender, final String[] args) throws CommandException {
 
-        if (region == null) {
-            throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
-        }
+        String name = getParam(args, 1).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_region_name)
+        ));
 
-        final String flag = getParam(args, 3, config.getMessage(Messages.error_input_flag));
-        final String value = getParam(args, 4, config.getMessage(Messages.error_input_flag_value));
+        Region region = regions.get(sender.getWorld(), name).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_region_not_found, name)
+        ));
+
+        String flag = getParam(args, 3).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_flag)
+        ));
+
+        String value = getParam(args, 4).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_flag_value)
+        ));
+
         boolean valueFlag;
         // reverse values, prevent true
         switch (value.toLowerCase()) {
@@ -276,69 +292,69 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void addPlayer(final Player sender, final String[] args, final Roles role) throws CommandException {
-        final String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
-        final Region region = regions.get(sender.getWorld(), name);
+    void addPlayer(final Player sender, final String[] args, final Roles role) throws CommandException {
 
-        if (region == null) {
-            throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
-        }
+        String name = getParam(args, 1).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_region_name)
+        ));
 
-        final String player = getParam(args, 2, config.getMessage(Messages.error_input_player));
+        Region region = regions.get(sender.getWorld(), name).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_region_not_found, name)
+        ));
+
+        OfflinePlayer player = getPlayer(args, 2).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_player)
+        ));
 
         checkPermission(sender, region);
 
-        if (!region.add(player, role)) {
+        if (!region.add(player.getUniqueId(), role)) {
             throw new CommandException(config.getMessage(Messages.error_region_contains_player, player));
         }
         sender.sendMessage(config.getMessage(Messages.success_region_player_add, player, name));
     }
 
-    private void removePlayer(final Player sender, final String[] args, final Roles role) throws CommandException {
-        final String name = getParam(args, 1, config.getMessage(Messages.error_input_region_name));
-        final Region region = regions.get(sender.getWorld(), name);
+    void removePlayer(final Player sender, final String[] args, final Roles role) throws CommandException {
 
-        if (region == null) {
-            throw new CommandException(config.getMessage(Messages.error_input_region_not_found, name));
-        }
+        String name = getParam(args, 1).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_region_name)
+        ));
 
-        final String player = getParam(args, 2, config.getMessage(Messages.error_input_player));
+        Region region = regions.get(sender.getWorld(), name).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_region_not_found, name)
+        ));
+
+        OfflinePlayer player = getPlayer(args, 2).orElseThrow(() -> new CommandException(
+                config.getMessage(Messages.error_input_player)
+        ));
 
         checkPermission(sender, region);
 
-        if (!region.remove(player, role)) {
+        if (!region.remove(player.getUniqueId(), role)) {
             throw new CommandException(config.getMessage(Messages.error_region_player_exists, player, name));
         }
 
         sender.sendMessage(config.getMessage(Messages.success_region_player_delete, player, name));
     }
 
-    private String getParam(final String args[], final int index, final String message) throws CommandException {
-        try {
-            return args[index];
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            throw new CommandException(message);
-        }
-    }
-
-    private void checkPermission(final Player sender, final Region region) throws CommandException {
+    void checkPermission(final Player sender, final Region region) throws CommandException {
         if (!(sender.hasPermission(Permissions.admin) || region.contains(sender, Roles.owner))) {
             throw new CommandException(config.getMessage(Messages.error_no_permission));
         }
     }
 
-    private Collection<String> allRegions(final Player player) {
+    Collection<String> allRegions(final Player player) {
         if (player.hasPermission(Permissions.admin)) {
             return regions.get(player.getWorld()).map(Region::getName).collect(Collectors.toList());
         }
         return regions.get(player, Roles.owner).map(Region::getName).collect(Collectors.toList());
     }
 
-    private Collection<String> allRegionPlayers(final World world, final String name, final Roles role) {
-        final Region region = regions.get(world, name);
-        if (region != null) {
-            return region.get(role);
-        }
-        return ImmutableList.of();
+    Collection<String> allRegionPlayers(final World world, final String name, final Roles role) {
+        Collection<String> result = new LinkedList<>();
+        regions.get(world, name).ifPresent(
+                region -> region.get(role).stream().map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).forEach(result::add)
+        );
+        return result;
     }
 }

@@ -9,23 +9,22 @@ import ru.gtncraft.worldprotect.Entity;
 import ru.gtncraft.worldprotect.Roles;
 import ru.gtncraft.worldprotect.flags.Prevent;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class Region extends Entity {
 
-    private final Flags flags;
-    private final Collection<String> owners = new LinkedList<>();
-    private final Collection<String> members= new LinkedList<>();
-    private final Cuboid cuboid;
+    final Flags flags;
+    final Collection<UUID> owners;
+    final Collection<UUID> members;
+    final Cuboid cuboid;
 
     public Region(final Map map, final World world) {
         super(map);
         flags = new Flags(asEntity("flags"));
-        owners.addAll(asListString("owners"));
-        members.addAll(asListString("members"));
+
+        owners = asCollection("owners");
+        members = asCollection("members");
+
         Entity p1 = asEntity("p1");
         Entity p2 = asEntity("p2");
         cuboid = new Cuboid(
@@ -42,6 +41,10 @@ public class Region extends Entity {
                 Prevent.pvp.name(), true,
                 Prevent.piston.name(), true
         ));
+
+        owners = new LinkedList<>();
+        members = new LinkedList<>();
+
         cuboid = new Cuboid(point1, point2);
         update();
     }
@@ -72,7 +75,7 @@ public class Region extends Entity {
      * Get region players owners/members.
      * @param role player role.
      */
-    public Collection<String> get(final Roles role) {
+    public Collection<UUID> get(final Roles role) {
         switch (role) {
             case member:
                 return members;
@@ -87,29 +90,29 @@ public class Region extends Entity {
      * @param role Player role owner/member.
      */
     public boolean contains(final Player player, final Roles role) {
-        return contains(player.getName(), role);
+        return contains(player.getUniqueId(), role);
     }
     /**
      * Check player with role exists in region.
      * @param player region player.
      * @param role Player role owner/member.
      */
-    private boolean contains(final String player, final Roles role) {
+    private boolean contains(final UUID player, final Roles role) {
         switch (role) {
             case owner:
-                return owners.contains(player.toLowerCase());
+                return owners.contains(player);
             case member:
-                return members.contains(player.toLowerCase());
+                return members.contains(player);
             case guest:
-                return ! contains(player.toLowerCase());
+                return ! contains(player);
         }
         return false;
     }
     /**
      * Check player exists in region.
      */
-    public boolean contains(final String player) {
-        return members.contains(player.toLowerCase()) || owners.contains(player.toLowerCase());
+    public boolean contains(final UUID player) {
+        return members.contains(player) || owners.contains(player);
     }
     /**
      * Check location contains region.
@@ -138,27 +141,27 @@ public class Region extends Entity {
      * @param player Player name.
      * @param role Player region role Owner/Member.
      */
-    public boolean remove(final String player, final Roles role) {
+    public boolean remove(final UUID player, final Roles role) {
         switch (role) {
             case owner:
-                return owners.remove(player.toLowerCase());
+                return owners.remove(player);
             case member:
-                return members.remove(player.toLowerCase());
+                return members.remove(player);
         }
         return false;
     }
     /**
      * Add owner/member to region.
      */
-    public boolean add(final String player, final Roles role) {
+    public boolean add(final UUID player, final Roles role) {
         if (contains(player, role)) {
             return false;
         }
         switch (role) {
             case owner:
-                return owners.add(player.toLowerCase());
+                return owners.add(player);
             case member:
-                return members.add(player.toLowerCase());
+                return members.add(player);
             default:
                 return false;
         }
@@ -183,5 +186,10 @@ public class Region extends Entity {
 
     public Cuboid getCuboid() {
         return cuboid;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

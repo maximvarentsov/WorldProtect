@@ -1,16 +1,15 @@
 package ru.gtncraft.worldprotect;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.gtncraft.worldprotect.commands.CommandWorldProtect;
-import ru.gtncraft.worldprotect.listeners.*;
-import ru.gtncraft.worldprotect.commands.CommandRegion;
+import ru.gtncraft.worldprotect.commands.Commands;
+import ru.gtncraft.worldprotect.listeners.Listeners;
 
 import java.io.IOException;
 
 public final class WorldProtect extends JavaPlugin {
 
-    private ProtectionManager manager;
-    private Config config;
+    ProtectionManager manager;
+    Config config;
 
     @Override
     public void onEnable() {
@@ -27,15 +26,8 @@ public final class WorldProtect extends JavaPlugin {
             return;
         }
 
-        new BlockListener(this);
-        new EntityListener(this);
-        new PlayerListener(this);
-        new VehicleListener(this);
-        new HandingListener(this);
-        new WorldListener(this);
-
-        new CommandWorldProtect(this);
-        new CommandRegion(this);
+        new Listeners(this);
+        new Commands(this);
     }
 
     @Override
