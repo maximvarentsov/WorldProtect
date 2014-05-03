@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import ru.gtncraft.worldprotect.database.JsonFile;
 import ru.gtncraft.worldprotect.database.MongoDB;
 import ru.gtncraft.worldprotect.database.Storage;
+import ru.gtncraft.worldprotect.region.Role;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Cuboid;
 import ru.gtncraft.worldprotect.region.Region;
@@ -174,8 +175,8 @@ public class ProtectionManager {
      * @param player Player.
      * @param role Player Roles in region.
      */
-    public Stream<Region> get(final Player player, final Roles role) {
-        return get(player.getWorld()).filter(region -> region.contains(player, role));
+    public Stream<Region> get(final Player player, final Role role) {
+        return get(player.getWorld()).filter(region -> region.player(player.getUniqueId(), role));
     }
     /**
      * Get regions overlays.
@@ -227,7 +228,7 @@ public class ProtectionManager {
         if (regions == null) {
             return false; // TODO check world flags
         }
-        return regions.filter(region -> region.get(flag) && !region.contains(player.getUniqueId())).findAny().isPresent();
+        return regions.filter(region -> region.flag(flag) && !region.player(player.getUniqueId())).findAny().isPresent();
     }
     /**
      * Search any region inside location with true prevent flag.
@@ -237,7 +238,7 @@ public class ProtectionManager {
         if (regions == null) {
             return false; // TODO check world flags
         }
-        return get(location).filter(region -> region.get(flag)).findAny().isPresent();
+        return get(location).filter(region -> region.flag(flag)).findAny().isPresent();
     }
     /**
      * Check player member or owner of region.
@@ -252,6 +253,6 @@ public class ProtectionManager {
         if (regions == null) {
             return true;
         }
-        return regions.filter(region -> region.contains(player.getUniqueId())).findAny().isPresent();
+        return regions.filter(region -> region.player(player.getUniqueId())).findAny().isPresent();
     }
 }

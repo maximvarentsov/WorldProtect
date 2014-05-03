@@ -1,32 +1,31 @@
 package ru.gtncraft.worldprotect.region;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.Entity;
-import ru.gtncraft.worldprotect.Roles;
 import ru.gtncraft.worldprotect.flags.Prevent;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Region extends Entity {
 
     final Flags flags;
-    final Collection<UUID> owners;
-    final Collection<UUID> members;
+    final Map<UUID, Role> players = new LinkedHashMap<>();
     final Cuboid cuboid;
 
-    public Region(final Map map, final World world) {
+    public Region(final Map<String, Object> map, final World world) {
         super(map);
+
         flags = new Flags(asEntity("flags"));
 
-        owners = asCollection("owners");
-        members = asCollection("members");
+        this.<UUID>asCollection("owners").forEach(v -> players.put(v, Role.owner));
+        this.<UUID>asCollection("members").forEach(v -> players.put(v, Role.member));
 
         Entity p1 = asEntity("p1");
         Entity p2 = asEntity("p2");
+
         cuboid = new Cuboid(
             new Location(world, p1.getInteger("x"), p1.getInteger("y"), p1.getInteger("z")),
             new Location(world, p2.getInteger("x"), p2.getInteger("y"), p2.getInteger("z"))
@@ -42,9 +41,6 @@ public class Region extends Entity {
                 Prevent.piston.name(), true
         ));
 
-        owners = new LinkedList<>();
-        members = new LinkedList<>();
-
         cuboid = new Cuboid(point1, point2);
         update();
     }
@@ -57,7 +53,7 @@ public class Region extends Entity {
     /**
      * Return region flags with state.
      */
-    public Map<String, Boolean> get() {
+    public Map<String, Boolean> flags() {
         Map<String, Boolean> values = new HashMap<>();
         for (Prevent flag : Prevent.values()) {
             values.put(flag.name(), flags.get(flag));
@@ -68,52 +64,46 @@ public class Region extends Entity {
      * Get region flag state.
      * @param flag region flag.
      */
-    public boolean get(final Prevent flag) {
+    public boolean flag(final Prevent flag) {
         return flags.get(flag);
     }
     /**
      * Get region players owners/members.
-     * @param role player role.
+     * @param roles player role.
      */
-    public Collection<UUID> get(final Roles role) {
-        switch (role) {
-            case member:
-                return members;
-            case owner:
-                return owners;
+    public Collection<UUID> players(final Role...roles) {
+
+        if (roles.length == 0) {
+            return players.keySet();
         }
-        return ImmutableList.of();
+
+        Collection<UUID> result = new TreeSet<>();
+        Collection<Role> values = Arrays.asList(roles);
+
+        players.entrySet().forEach(e -> {
+            if (values.contains(e.getValue())) {
+                result.add(e.getKey());
+            }
+        });
+
+        return result;
     }
     /**
      * Check player with role exists in region.
+     *
      * @param player region player.
-     * @param role Player role owner/member.
+     * @param roles Player roles.
      */
-    public boolean contains(final Player player, final Roles role) {
-        return contains(player.getUniqueId(), role);
-    }
-    /**
-     * Check player with role exists in region.
-     * @param player region player.
-     * @param role Player role owner/member.
-     */
-    private boolean contains(final UUID player, final Roles role) {
-        switch (role) {
-            case owner:
-                return owners.contains(player);
-            case member:
-                return members.contains(player);
-            case guest:
-                return ! contains(player);
+    public boolean player(final UUID player, final Role...roles) {
+        if (players.containsKey(player)) {
+            if (roles.length == 0) {
+                return true;
+            }
+            return Arrays.asList(roles).contains(players.get(player));
         }
         return false;
     }
-    /**
-     * Check player exists in region.
-     */
-    public boolean contains(final UUID player) {
-        return members.contains(player) || owners.contains(player);
-    }
+
     /**
      * Check location contains region.
      * @param location Location.
@@ -141,38 +131,26 @@ public class Region extends Entity {
      * @param player Player name.
      * @param role Player region role Owner/Member.
      */
-    public boolean remove(final UUID player, final Roles role) {
-        switch (role) {
-            case owner:
-                return owners.remove(player);
-            case member:
-                return members.remove(player);
-        }
-        return false;
+    public boolean playerDelete(final UUID player, final Role role) {
+        return players.remove(player, role);
     }
     /**
      * Add owner/member to region.
      */
-    public boolean add(final UUID player, final Roles role) {
-        if (contains(player, role)) {
+    public boolean playerAdd(final UUID player, final Role role) {
+        if (players.containsKey(player)) {
             return false;
         }
-        switch (role) {
-            case owner:
-                return owners.add(player);
-            case member:
-                return members.add(player);
-            default:
-                return false;
-        }
+        players.put(player, role);
+        return true;
     }
 
     public Region update() {
         put("p1", cuboid.asEntity("p1"));
         put("p2", cuboid.asEntity("p2"));
         put("flags", flags);
-        put("members", members);
-        put("owners", owners);
+        put("members", players.entrySet().stream().filter(e -> e.getValue() == Role.member).map(Entry::getKey).collect(Collectors.toList()));
+        put("owners", players.entrySet().stream().filter(e -> e.getValue() == Role.owner).map(Entry::getKey).collect(Collectors.toList()));
         return this;
     }
 

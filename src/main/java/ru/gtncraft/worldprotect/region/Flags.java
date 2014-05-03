@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Flags extends Entity {
 
-    public Flags(final Map map) {
+    public Flags(final Map<String, Object> map) {
         super(map);
     }
     /**

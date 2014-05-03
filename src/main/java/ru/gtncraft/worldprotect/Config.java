@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.mongodb.connection.ServerAddress;
 import ru.gtncraft.worldprotect.database.Types;
+import ru.gtncraft.worldprotect.region.Role;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Region;
 
@@ -93,10 +94,10 @@ public class Config extends YamlConfiguration {
         final Collection<String> messages = new ArrayList<>();
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_name) + ": " + ChatColor.WHITE + region.getName());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_size) + ": " + ChatColor.WHITE + region.getSize());
-        messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + region.get(Roles.owner));
-        messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + region.get(Roles.member));
+        messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + region.players(Role.owner));
+        messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + region.players(Role.member));
         final Collection<String> flags = new ArrayList<>();
-        for (final Map.Entry<String, Boolean> entry : region.get().entrySet()) {
+        for (final Map.Entry<String, Boolean> entry : region.flags().entrySet()) {
             final String value = entry.getValue() ? ChatColor.RED + getMessage(Messages.flag_true) : ChatColor.GRAY + getMessage(Messages.flag_false);
             flags.add(ChatColor.WHITE + entry.getKey() + ": " + value + ChatColor.WHITE);
         }
