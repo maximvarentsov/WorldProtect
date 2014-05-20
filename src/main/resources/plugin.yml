@@ -35,4 +35,3 @@ commands:
         usage: |
              /<command> save - Сохранить регионы.
              /<command> convert - Сохранить регионы.
-             /<command> tp <регион> - Телепортироваться в регион.
