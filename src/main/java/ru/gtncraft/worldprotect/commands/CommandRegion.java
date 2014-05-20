@@ -10,13 +10,14 @@ import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.*;
-import ru.gtncraft.worldprotect.region.Role;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Region;
+import ru.gtncraft.worldprotect.region.Role;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.gtncraft.worldprotect.util.Commands.getParam;
@@ -217,7 +218,14 @@ class CommandRegion implements CommandExecutor, TabCompleter {
             );
             sender.sendMessage(config.getMessage(region));
         } else {
-            regions.get(sender.getLocation()).forEach(region -> sender.sendMessage(config.getMessage(region)));
+            Optional<Collection<Region>> values = regions.get(sender.getLocation());
+            if (values.isPresent()) {
+                for (Region region : values.get()) {
+                    sender.sendMessage(config.getMessage(region));
+                }
+            } else {
+                sender.sendMessage(config.getMessage(Messages.error_region_not_found));
+            }
         }
     }
 
@@ -310,9 +318,9 @@ class CommandRegion implements CommandExecutor, TabCompleter {
         checkPermission(sender, region);
 
         if (!region.playerAdd(player.getUniqueId(), role)) {
-            throw new CommandException(config.getMessage(Messages.error_region_contains_player, player));
+            throw new CommandException(config.getMessage(Messages.error_region_contains_player, player.getName()));
         }
-        sender.sendMessage(config.getMessage(Messages.success_region_player_add, player, name));
+        sender.sendMessage(config.getMessage(Messages.success_region_player_add, player.getName(), name));
     }
 
     void removePlayer(final Player sender, final String[] args, final Role role) throws CommandException {
@@ -332,10 +340,10 @@ class CommandRegion implements CommandExecutor, TabCompleter {
         checkPermission(sender, region);
 
         if (!region.playerDelete(player.getUniqueId(), role)) {
-            throw new CommandException(config.getMessage(Messages.error_region_player_exists, player, name));
+            throw new CommandException(config.getMessage(Messages.error_region_player_exists, player.getName(), name));
         }
 
-        sender.sendMessage(config.getMessage(Messages.success_region_player_delete, player, name));
+        sender.sendMessage(config.getMessage(Messages.success_region_player_delete, player.getName(), name));
     }
 
     void checkPermission(final Player sender, final Region region) throws CommandException {

@@ -16,8 +16,8 @@ import ru.gtncraft.worldprotect.flags.Prevent;
 
 class PlayerListener implements Listener {
 
-    private final ProtectionManager manager;
-    private final Config config;
+    final ProtectionManager manager;
+    final Config config;
 
     public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -35,7 +35,9 @@ class PlayerListener implements Listener {
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
                 if (config.getInfoTool() == event.getMaterial()) {
-                    manager.get(location).forEach(region -> player.sendMessage(config.getMessage(region)));
+                    manager.get(location).ifPresent(
+                            v -> v.forEach(region -> player.sendMessage(config.getMessage(region)))
+                    );
                 }
                 if (manager.prevent(location, player, event.getClickedBlock().getType())) {
                     event.setCancelled(true);

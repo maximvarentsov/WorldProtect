@@ -10,7 +10,7 @@ import ru.gtncraft.worldprotect.WorldProtect;
 
 class WorldListener implements Listener {
 
-    private final WorldProtect plugin;
+    final WorldProtect plugin;
 
     public WorldListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);

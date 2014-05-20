@@ -16,8 +16,8 @@ import ru.gtncraft.worldprotect.flags.Prevent;
 
 class VehicleListener implements Listener {
 
-    private final ProtectionManager manager;
-    private final Config config;
+    final ProtectionManager manager;
+    final Config config;
 
     public VehicleListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);

@@ -109,7 +109,7 @@ public class Region extends Entity {
      * @param location Location.
      */
     public boolean contains(final Location location) {
-        return cuboid.contains(location);
+        return cuboid.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
     /**
      * Set region name.

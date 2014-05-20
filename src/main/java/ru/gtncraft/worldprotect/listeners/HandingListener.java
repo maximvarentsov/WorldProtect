@@ -17,8 +17,8 @@ import ru.gtncraft.worldprotect.flags.Prevent;
 
 class HandingListener implements Listener {
 
-    private final ProtectionManager manager;
-    private final Config config;
+    final ProtectionManager manager;
+    final Config config;
 
     public HandingListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);

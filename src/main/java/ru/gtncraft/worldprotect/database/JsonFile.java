@@ -16,6 +16,7 @@ import ru.gtncraft.worldprotect.region.Region;
 import java.io.*;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class JsonFile implements Storage {
@@ -58,7 +59,7 @@ public class JsonFile implements Storage {
         try (InputStream in = new FileInputStream(getFile(world))) {
             String json = CharStreams.toString(new InputStreamReader(in, Charsets.UTF_8));
             try {
-                return parse(json).<Entity>stream("regions").map(e -> new Region(e, world));
+                return parse(json).<Map>stream("regions").map(e -> new Region(e, world));
             } catch (Throwable ex) {
                 plugin.getLogger().warning("Could not parse " + world.getName() + ".json.");
             }

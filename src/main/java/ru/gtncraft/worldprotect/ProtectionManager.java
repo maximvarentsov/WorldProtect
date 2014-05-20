@@ -152,13 +152,19 @@ public class ProtectionManager {
      *
      * @param location Current location.
      */
-    public Stream<Region> get(final Location location) {
+    public Optional<Collection<Region>> get(final Location location) {
         Chunk chunk = location.getChunk();
         Collection<Region> regions = chunks.get(location.getWorld().getName()).get(chunk.getX(), chunk.getZ());
-        if (regions != null) {
-            return regions.stream().filter(region -> region.contains(location));
+        if (regions == null) {
+            return Optional.empty();
         }
-        return null;
+        Collection<Region> result = new ArrayList<>();
+        for (Region region : regions) {
+            if (region.contains(location)) {
+                result.add(region);
+            }
+        }
+        return result.isEmpty() ? Optional.empty() : Optional.of(result);
     }
     /**
      * Get region in current world by name.
@@ -197,7 +203,7 @@ public class ProtectionManager {
         if (prevent(location, player, Prevent.command)) {
             return true;
         }
-        if (hasAccess(player)) {
+        if (accesseble(player)) {
             return false;
         }
         return preventCommands.contains(command.toLowerCase());
@@ -224,35 +230,57 @@ public class ProtectionManager {
         if (player.hasPermission(Permissions.admin) || player.hasPermission(Permissions.moder)) {
             return false;
         }
-        Stream<Region> regions = get(location);
-        if (regions == null) {
-            return false; // TODO check world flags
+        Optional<Collection<Region>> regions = get(location);
+        if (regions.isPresent()) {
+            for (Region region : regions.get()) {
+                if (region.flag(flag) && !region.player(player.getUniqueId())) {
+                    return true;
+                }
+            }
         }
-        return regions.filter(region -> region.flag(flag) && !region.player(player.getUniqueId())).findAny().isPresent();
+        return WorldPrevent(location.getWorld(), flag);
     }
     /**
      * Search any region inside location with true prevent flag.
      */
     public boolean prevent(final Location location, final Prevent flag) {
-        Stream<Region> regions = get(location);
-        if (regions == null) {
-            return false; // TODO check world flags
+        Optional<Collection<Region>> regions = get(location);
+        if (regions.isPresent()) {
+            for (Region region : regions.get()) {
+                if (region.flag(flag)) {
+                    return true;
+                }
+            }
         }
-        return get(location).filter(region -> region.flag(flag)).findAny().isPresent();
+        return WorldPrevent(location.getWorld(), flag);
     }
     /**
      * Check player member or owner of region.
      *
      * @param player Player
      */
-    public boolean hasAccess(final Player player) {
-        if (player.hasPermission(Permissions.admin)) {
+    public boolean accesseble(final Player player) {
+
+        if (player.hasPermission(Permissions.admin) || player.hasPermission(Permissions.moder)) {
             return true;
         }
-        Stream<Region> regions = get(player.getLocation());
-        if (regions == null) {
+
+        Optional<Collection<Region>> regions = get(player.getLocation());
+
+        if (!regions.isPresent()) {
             return true;
         }
-        return regions.filter(region -> region.player(player.getUniqueId())).findAny().isPresent();
+
+        for (Region region : regions.get()) {
+            if (region.player(player.getUniqueId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    boolean WorldPrevent(final World world, final Prevent flag) {
+        return false;
     }
 }

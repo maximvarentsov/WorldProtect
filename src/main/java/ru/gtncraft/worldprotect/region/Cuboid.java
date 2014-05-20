@@ -175,7 +175,7 @@ public class Cuboid extends Entity {
      * @return true if the Location is within this Cuboid, false otherwise
      */
     public boolean contains(final Location location) {
-        return this.worldName.equals(location.getWorld().getName()) && this.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return this.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
     /**
      * Get the volume of this Cuboid.

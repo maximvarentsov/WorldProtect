@@ -1,21 +1,16 @@
 package ru.gtncraft.worldprotect;
 
 import com.google.common.base.Joiner;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.mongodb.connection.ServerAddress;
 import ru.gtncraft.worldprotect.database.Types;
-import ru.gtncraft.worldprotect.region.Role;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Region;
+import ru.gtncraft.worldprotect.region.Role;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Config extends YamlConfiguration {
@@ -94,8 +89,8 @@ public class Config extends YamlConfiguration {
         final Collection<String> messages = new ArrayList<>();
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_name) + ": " + ChatColor.WHITE + region.getName());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_size) + ": " + ChatColor.WHITE + region.getSize());
-        messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + region.players(Role.owner));
-        messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + region.players(Role.member));
+        messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + playerList(region.players(Role.owner)));
+        messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + playerList(region.players(Role.member)));
         final Collection<String> flags = new ArrayList<>();
         for (final Map.Entry<String, Boolean> entry : region.flags().entrySet()) {
             final String value = entry.getValue() ? ChatColor.RED + getMessage(Messages.flag_true) : ChatColor.GRAY + getMessage(Messages.flag_false);
@@ -103,6 +98,19 @@ public class Config extends YamlConfiguration {
         }
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_flags) + ": " + Joiner.on(", ").join(flags));
         return messages.toArray(new String[messages.size()]);
+    }
+
+    String playerList(Collection<UUID> uuids) {
+        List<String> names = new LinkedList<>();
+        for (UUID uuid : uuids) {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+            // TODO remove from region?
+            if (player == null) {
+                continue;
+            }
+            names.add(player.getName());
+        }
+        return Joiner.on(",").join(names);
     }
 
     public boolean useRegions(final World world) {

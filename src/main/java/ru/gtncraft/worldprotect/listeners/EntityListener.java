@@ -1,10 +1,7 @@
 package ru.gtncraft.worldprotect.listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,8 +14,8 @@ import ru.gtncraft.worldprotect.flags.Prevent;
 
 class EntityListener implements Listener {
 
-    private final ProtectionManager manager;
-    private final Config config;
+    final ProtectionManager manager;
+    final Config config;
 
     public EntityListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -92,28 +89,39 @@ class EntityListener implements Listener {
         if (event instanceof EntityDamageByEntityEvent) {
             Entity attacker = ((EntityDamageByEntityEvent) event).getDamager();
             if (target instanceof Player) {
-                if (attacker instanceof Player) {
-                    Player player = (Player) attacker;
-                    if (manager.prevent(target.getLocation(), player, Prevent.pvp)) {
-                        event.setCancelled(true);
-                        player.sendMessage(config.getMessage(Messages.error_pvp_disabled));
-                    }
+                if (prevent(attacker, target, Prevent.pvp, Messages.error_pvp_disabled)) {
+                    event.setCancelled(true);
                     return;
-                } else if (attacker instanceof Arrow) {
-                    Arrow arrow = (Arrow) attacker;
-                    if (arrow.getShooter() instanceof Player) {
-                        Player player = (Player) arrow.getShooter();
-                        if (manager.prevent(target.getLocation(), player, Prevent.pvp)) {
-                            event.setCancelled(true);
-                            player.sendMessage(config.getMessage(Messages.error_pvp_disabled));
-                        }
-                        return;
-                    }
+                }
+            } else if (target instanceof ItemFrame) {
+                if (prevent(attacker, target, Prevent.use, Messages.error_region_protected)) {
+                    event.setCancelled(true);
+                    return;
                 }
             }
         }
         if (manager.prevent(target.getLocation(), Prevent.damage)) {
             event.setCancelled(true);
         }
+    }
+
+    boolean prevent(final Entity attacker, final Entity target, final Prevent flag, final Messages message) {
+        if (attacker instanceof Player) {
+            Player player = (Player) attacker;
+            if (manager.prevent(target.getLocation(), player, flag)) {
+                player.sendMessage(config.getMessage(message));
+                return true;
+            }
+        } else if (attacker instanceof Arrow) {
+            Arrow arrow = (Arrow) attacker;
+            if (arrow.getShooter() instanceof Player) {
+                Player player = (Player) arrow.getShooter();
+                if (manager.prevent(target.getLocation(), player, flag)) {
+                    player.sendMessage(config.getMessage(message));
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
