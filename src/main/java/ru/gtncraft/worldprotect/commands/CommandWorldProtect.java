@@ -110,7 +110,7 @@ class CommandWorldProtect implements CommandExecutor, TabCompleter {
 
     void save(final CommandSender sender) throws CommandException {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> Bukkit.getWorlds().forEach(manager::save));
-        sender.sendMessage(config.getMessage(Messages.success_region_saved));
+        sender.sendMessage(config.getMessage(Messages.success_saved));
     }
 
     void convert(final CommandSender sender) throws CommandException {
@@ -185,7 +185,8 @@ class CommandWorldProtect implements CommandExecutor, TabCompleter {
 
         if (sender.hasPermission(Permissions.admin)) {
             manager.setWorldFlag(name, prevent, valueFlag);
-            sender.sendMessage(config.getMessage(Messages.success_world_flag_set, flag, name));
+            String flagState = valueFlag ? config.getMessage(Messages.flag_true) : config.getMessage(Messages.flag_false);
+            sender.sendMessage(config.getMessage(Messages.success_world_flag_set, flag, name, flagState));
         } else {
             throw new CommandException(config.getMessage(Messages.error_no_permission));
         }

@@ -47,7 +47,12 @@ public class Region extends Entity {
 
     public Region(final Location point1, final Location point2) {
         super(ImmutableMap.of());
-        flags = new Flags(Config.getInstance().getRegionFlags());
+
+        Map<String, Object> values = new HashMap<>();
+        for (Map.Entry<Prevent, Object> entry : Config.getInstance().getWorldFlags().entrySet()) {
+            values.put(entry.getKey().name(), entry.getValue());
+        }
+        flags = new Flags(values);
 
         cuboid = new Cuboid(point1, point2);
         update();
@@ -156,6 +161,10 @@ public class Region extends Entity {
         put("members", players.entrySet().stream().filter(e -> e.getValue() == Role.member).map(Entry::getKey).collect(Collectors.toList()));
         put("owners", players.entrySet().stream().filter(e -> e.getValue() == Role.owner).map(Entry::getKey).collect(Collectors.toList()));
         return this;
+    }
+
+    public Role getPlayerRole(final UUID player) {
+        return players.get(player);
     }
 
     public int volume() {

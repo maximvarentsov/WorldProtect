@@ -33,7 +33,7 @@ public enum Messages {
     success_region_deleted,
     success_region_player_add,
     success_region_player_delete,
-    success_region_saved,
+    success_saved,
     success_region_converted,
     success_world_flag_set,
     region_name,
@@ -43,5 +43,7 @@ public enum Messages {
     region_members,
     flags,
     flag_true,
-    flag_false
+    flag_false,
+    role_owner,
+    role_member
 }

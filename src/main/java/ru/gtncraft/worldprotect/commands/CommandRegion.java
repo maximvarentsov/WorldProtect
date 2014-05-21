@@ -303,7 +303,8 @@ class CommandRegion implements CommandExecutor, TabCompleter {
 
         if (perms) {
             region.set(prevent, valueFlag);
-            sender.sendMessage(config.getMessage(Messages.success_region_flag_set, flag, name));
+            String flagState = valueFlag ? config.getMessage(Messages.flag_true) : config.getMessage(Messages.flag_false);
+            sender.sendMessage(config.getMessage(Messages.success_region_flag_set, flag, name, flagState));
         } else {
             throw new CommandException(config.getMessage(Messages.error_no_permission));
         }
@@ -324,7 +325,12 @@ class CommandRegion implements CommandExecutor, TabCompleter {
         checkPermission(sender, region);
 
         if (!region.playerAdd(player.getUniqueId(), role)) {
-            throw new CommandException(config.getMessage(Messages.error_region_contains_player, player.getName()));
+            String playerRole = region.getPlayerRole(player.getUniqueId()) == Role.owner ?
+                                config.getMessage(Messages.role_owner) :
+                                config.getMessage(Messages.role_member);
+            throw new CommandException(
+                    config.getMessage(Messages.error_region_contains_player, player.getName(), name, playerRole)
+            );
         }
         sender.sendMessage(config.getMessage(Messages.success_region_player_add, player.getName(), name));
     }
