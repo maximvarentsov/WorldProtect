@@ -32,31 +32,37 @@ class CommandWorldProtect implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command pcommand, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command pcommand, String commandLabel, String[] args) {
         if (args.length <= 1) {
-            return partial(args[0], ImmutableList.of("save", "convert"));
+            return partial(args[0], ImmutableList.of("save", "convert", "help"));
         }
         return ImmutableList.of();
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+        boolean help = false;
         try {
             switch (args[0].toLowerCase()) {
                 case "save":
                     commandSave(sender);
-                    return true;
+                    break;
                 case "convert":
                     commandConvert(sender);
-                    return true;
+                    break;
+                case "help":
+                    help = true;
+                    break;
+                default:
+                    sender.sendMessage(config.getMessage(Messages.error_unknown_command, commandLabel));
+                    break;
             }
         } catch (CommandException ex) {
             sender.sendMessage(ex.getMessage());
-            return true;
         } catch (ArrayIndexOutOfBoundsException ex) {
-            return false;
+            sender.sendMessage(config.getMessage(Messages.error_unknown_command, commandLabel));
         }
-        return false;
+        return help ? false : true;
     }
 
     void commandSave(final CommandSender sender) throws CommandException {

@@ -29,9 +29,11 @@ commands:
              /<command> info [регион] - Показать информацию о регионе.
              /<command> list - Показать список доступных вам регионов.
              /<command> flag <регион> set <flag> <true|false> - Установить флаг для региона.
+             /<command> help - Показать список комманд.
     worldprotect:
         description: Админские комманды для управления регионами.
         permission: worldprotect.admin
         usage: |
              /<command> save - Сохранить регионы.
              /<command> convert - Сохранить регионы.
+             /<command> help - Показать список комманд.

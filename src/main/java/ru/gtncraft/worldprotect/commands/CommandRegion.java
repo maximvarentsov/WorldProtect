@@ -30,7 +30,7 @@ class CommandRegion implements CommandExecutor, TabCompleter {
     final ProtectionManager regions;
     final WorldEditPlugin we;
     final Collection<String> commands = ImmutableList.of(
-        "define", "delete", "addowner", "deleteowner", "addmemeber", "deletemember", "info", "list", "flag"
+        "define", "delete", "addowner", "deleteowner", "addmemeber", "deletemember", "info", "list", "flag", "help"
     );
 
     public CommandRegion(final WorldProtect plugin) {
@@ -89,9 +89,10 @@ class CommandRegion implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String commandLabel, final String[] args) {
+        boolean help = false;
 
         if (!(sender instanceof Player)) {
-            return false;
+            return true;
         }
 
         final Player player = (Player) sender;
@@ -107,42 +108,47 @@ class CommandRegion implements CommandExecutor, TabCompleter {
                 case "claim":
                 case "redefine":
                     define(player, args);
-                    return true;
+                    break;
                 case "delete":
                     delete(player, args);
-                    return true;
+                    break;
                 case "addowner":
                     addPlayer(player, args, Role.owner);
-                    return true;
+                    break;
                 case "deleteowner":
                     removePlayer(player, args, Role.owner);
-                    return true;
+                    break;
                 case "addmember":
                     addPlayer(player, args, Role.member);
-                    return true;
+                    break;
                 case "deletemember":
                     removePlayer(player, args, Role.member);
-                    return true;
+                    break;
                 case "info":
                     info(player, args);
-                    return true;
+                    break;
                 case "list":
                     list(player);
-                    return true;
+                    break;
                 case "flag":
                     switch (args[2].toLowerCase()) {
                         case "set":
                             flag(player, args);
-                            return true;
+                            break;
                     }
+                case "help":
+                    help = true;
+                    break;
+                default:
+                    player.sendMessage(config.getMessage(Messages.error_unknown_command, commandLabel));
+                    break;
             }
         } catch (CommandException ex) {
             player.sendMessage(ex.getMessage());
-            return true;
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            return false;
+        } catch (ArrayIndexOutOfBoundsException ignore) {
+            player.sendMessage(config.getMessage(Messages.error_unknown_command, commandLabel));
         }
-        return false;
+        return help ? false : true;
     }
 
     private void define(final Player sender, final String[] args) throws CommandException {
