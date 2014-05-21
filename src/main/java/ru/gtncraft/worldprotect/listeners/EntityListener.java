@@ -40,7 +40,7 @@ class EntityListener implements Listener {
     public void onExplode(final EntityExplodeEvent event) {
         if (manager.prevent(event.getLocation(), Prevent.explode)) {
             event.setCancelled(true);
-        } else if (manager.prevent(event.getLocation(), Prevent.entityBlockDamage)) {
+        } else if (manager.prevent(event.getLocation(), Prevent.entityBlockExplode)) {
             switch (event.getEntityType()) {
                 case CREEPER:
                     event.getLocation().getWorld().createExplosion(event.getLocation(), 0F);

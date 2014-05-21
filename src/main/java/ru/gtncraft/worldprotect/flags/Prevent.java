@@ -9,7 +9,7 @@ public enum Prevent {
     damage,
     teleport,
     creatureSpawn,
-    entityBlockDamage,
+    entityBlockExplode,
     command,
     explode,
     leavesDecay,
