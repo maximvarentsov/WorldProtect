@@ -57,7 +57,6 @@ class EntityListener implements Listener {
             }
             event.setCancelled(true);
         }
-        System.out.println(event.getEntity().getType() + " onExplode");
     }
     /**
      * Called when an entity has made a decision to explode.
@@ -66,7 +65,6 @@ class EntityListener implements Listener {
     @SuppressWarnings("unused")
     public void onExplosionPrime(final ExplosionPrimeEvent event) {
         if (manager.prevent(event.getEntity().getLocation(), Prevent.explode)) {
-            System.out.println(event.getEntity().getType() + " decision to explode");
             event.setCancelled(true);
         }
     }
