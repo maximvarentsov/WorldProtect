@@ -5,12 +5,12 @@ import org.bukkit.World;
 import org.mongodb.*;
 import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.WorldProtect;
-import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Flags;
 import ru.gtncraft.worldprotect.region.Region;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
 
 public class MongoDB implements Storage {
 
@@ -49,11 +49,7 @@ public class MongoDB implements Storage {
     public ProtectedWorld load(final World world) {
         Collection<Region> regions = new LinkedList<>();
 
-        Map<String, Object> flags = new HashMap<>();
-        for (Map.Entry<Prevent, Object> entry : Config.getInstance().getWorldFlags().entrySet()) {
-            flags.put(entry.getKey().name(), entry.getValue());
-        }
-        Flags worldFlags = new Flags(flags);
+        Flags worldFlags = new Flags(Config.getInstance().getWorldFlags());
 
         try (MongoCursor cursor = db.getCollection(world.getName()).find().get()) {
             cursor.forEachRemaining(obj -> regions.add(new Region((Document) obj, world)));

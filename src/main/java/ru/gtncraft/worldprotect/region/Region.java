@@ -19,8 +19,13 @@ public class Region extends Entity {
 
     public Region(final Map<String, Object> map, final World world) {
         super(map);
+        Entity ff = asEntity("flags");
+        // Conver stuff
+        for (Map.Entry<String, Object> entry : Config.getInstance().getRegionFlags().entrySet()) {
+            ff.append(entry.getKey(), entry.getValue());
+        }
 
-        flags = new Flags(asEntity("flags"));
+        flags = new Flags(ff);
 
         try {
             this.<UUID>asCollection("owners").forEach(v -> players.put(v, Role.owner));
@@ -48,11 +53,7 @@ public class Region extends Entity {
     public Region(final Location point1, final Location point2) {
         super(ImmutableMap.of());
 
-        Map<String, Object> values = new HashMap<>();
-        for (Map.Entry<Prevent, Object> entry : Config.getInstance().getWorldFlags().entrySet()) {
-            values.put(entry.getKey().name(), entry.getValue());
-        }
-        flags = new Flags(values);
+        flags = new Flags(Config.getInstance().getRegionFlags());
 
         cuboid = new Cuboid(point1, point2);
         update();

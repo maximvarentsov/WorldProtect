@@ -1,5 +1,6 @@
 package ru.gtncraft.worldprotect.storage;
 
+import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Flags;
 import ru.gtncraft.worldprotect.region.Region;
@@ -22,7 +23,7 @@ public class ProtectedWorld {
     }
 
     public Flags getFlags() {
-        Flags result = new Flags();
+        Flags result = new Flags(Config.getInstance().getRegionFlags());
         Prevent flag;
         boolean value;
         for (Map.Entry<String, Object> entry : flags.entrySet()) {
