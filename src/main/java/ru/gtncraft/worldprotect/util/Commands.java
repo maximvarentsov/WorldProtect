@@ -3,6 +3,8 @@ package ru.gtncraft.worldprotect.util;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandException;
+import ru.gtncraft.worldprotect.Config;
+import ru.gtncraft.worldprotect.Messages;
 
 import java.util.Optional;
 
@@ -15,21 +17,21 @@ public class Commands {
         return Optional.of(args[index]);
     }
 
-    public static Optional<OfflinePlayer> getPlayer(final String args[], final int index) throws CommandException {
+    public static OfflinePlayer getPlayer(final String args[], final int index) throws CommandException {
 
         if (args[index] == null) {
-            return Optional.empty();
+            throw new CommandException(Config.getInstance().getMessage(Messages.error_input_player));
         }
 
         String name = args[index];
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
 
-        if (player == null) {
-            return Optional.empty();
+        if (player.getFirstPlayed() == 0) {
+            throw new CommandException(Config.getInstance().getMessage(Messages.error_player_not_found, name));
         }
 
-        return Optional.of(player);
+        return player;
     }
 
 }

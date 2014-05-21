@@ -48,6 +48,7 @@ region:
             - sethome
 messages:
     error_worldedit_not_found: "&4Плагин WorldEdit не найден."
+    error_player_not_found: "&4Игрок с именем %s не зарегистрирован."
     error_region_selection: "&4Сначала выделите регион."
     error_region_overlay: "&4Регион пересекается с другим."
     error_region_not_found: "&4Регион в этой области не существует."

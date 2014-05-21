@@ -2,6 +2,7 @@ package ru.gtncraft.worldprotect;
 
 public enum Messages {
     error_worldedit_not_found,
+    error_player_not_found,
     error_region_selection,
     error_region_overlay,
     error_region_not_found,

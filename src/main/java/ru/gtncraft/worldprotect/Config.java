@@ -20,6 +20,7 @@ public class Config extends YamlConfiguration {
     final Material tool;
     final Collection<String> worlds;
     final Collection<Prevent> allowedFlags;
+    static Config instance;
 
     public Config(final FileConfiguration config) {
 
@@ -55,6 +56,12 @@ public class Config extends YamlConfiguration {
 
             }
         }
+
+        instance = this;
+    }
+
+    public static Config getInstance() {
+        return instance;
     }
 
     public List<ServerAddress> getReplicaSet() {

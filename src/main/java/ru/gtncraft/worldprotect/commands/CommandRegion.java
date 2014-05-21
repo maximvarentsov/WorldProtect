@@ -311,9 +311,7 @@ class CommandRegion implements CommandExecutor, TabCompleter {
                 config.getMessage(Messages.error_input_region_not_found, name)
         ));
 
-        OfflinePlayer player = getPlayer(args, 2).orElseThrow(() -> new CommandException(
-                config.getMessage(Messages.error_input_player)
-        ));
+        OfflinePlayer player = getPlayer(args, 2);
 
         checkPermission(sender, region);
 
@@ -333,9 +331,7 @@ class CommandRegion implements CommandExecutor, TabCompleter {
                 config.getMessage(Messages.error_input_region_not_found, name)
         ));
 
-        OfflinePlayer player = getPlayer(args, 2).orElseThrow(() -> new CommandException(
-                config.getMessage(Messages.error_input_player)
-        ));
+        OfflinePlayer player = getPlayer(args, 2);
 
         checkPermission(sender, region);
 
