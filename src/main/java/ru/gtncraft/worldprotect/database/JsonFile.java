@@ -1,5 +1,6 @@
 package ru.gtncraft.worldprotect.database;
 
+import com.cedarsoftware.util.io.JsonWriter;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import org.bson.BSONReader;
@@ -31,13 +32,17 @@ public class JsonFile implements Storage {
     public void save(final World world, final Stream<Region> regions) {
         Collection<Region> values = new LinkedList<>();
         regions.map(Region::update).forEach(values::add);
-        byte[] bytes = new Document("regions", values).toString().getBytes();
-        if (!values.isEmpty()) {
-            try (OutputStream os = new FileOutputStream(getFile(world))) {
-                os.write(bytes);
-            } catch(IOException ex) {
-                plugin.getLogger().severe(ex.getMessage());
+        try {
+            byte[] bytes = JsonWriter.formatJson(new Document("regions", values).toString()).getBytes();
+            if (!values.isEmpty()) {
+                try (OutputStream os = new FileOutputStream(getFile(world))) {
+                    os.write(bytes);
+                } catch(IOException ex) {
+                    plugin.getLogger().severe(ex.getMessage());
+                }
             }
+        } catch (IOException ex) {
+            plugin.getLogger().severe(ex.getMessage());
         }
     }
 
