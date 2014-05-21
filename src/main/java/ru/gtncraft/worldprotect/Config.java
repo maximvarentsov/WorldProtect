@@ -21,6 +21,8 @@ public class Config extends YamlConfiguration {
     final Material tool;
     final Collection<String> worlds;
     final Collection<Prevent> allowedFlags;
+    final Map<Prevent, Object> defaultWorldFlags;
+    final Map<Prevent, Object> defaultRegionFlags;
     static Config instance;
 
     public Config(final FileConfiguration config) {
@@ -53,8 +55,23 @@ public class Config extends YamlConfiguration {
         for (final String flag : this.getStringList("region.flags.allowed")) {
             try {
                 allowedFlags.add(Prevent.valueOf(flag.toLowerCase()));
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException ignore) {
+            }
+        }
 
+        defaultWorldFlags = new HashMap<>();
+        for (String name : getStringList("world.flags.default")) {
+            try {
+                defaultWorldFlags.put(Prevent.valueOf(name.toLowerCase()), true);
+            } catch (Throwable ignore) {
+            }
+        }
+
+        defaultRegionFlags = new HashMap<>();
+        for (String name : getStringList("region.flags.default")) {
+            try {
+                defaultRegionFlags.put(Prevent.valueOf(name.toLowerCase()), true);
+            } catch (Throwable ignore) {
             }
         }
 
@@ -138,25 +155,11 @@ public class Config extends YamlConfiguration {
         }
     }
 
-    public Map<Prevent, Boolean> getRegionFlags() {
-        Map<Prevent, Boolean> result = new HashMap<>();
-        for (String name : getStringList("region.flags.default")) {
-            try {
-                result.put(Prevent.valueOf(name.toLowerCase()), true);
-            } catch (Throwable ignore) {
-            }
-        }
-        return result;
+    public Map<Prevent, Object> getWorldFlags() {
+        return defaultWorldFlags;
     }
 
-    public Map<Prevent, Boolean> getWorldFlags() {
-        Map<Prevent, Boolean> result = new HashMap<>();
-        for (String name : getStringList("world.flags.default")) {
-            try {
-                result.put(Prevent.valueOf(name.toLowerCase()), true);
-            } catch (Throwable ignore) {
-            }
-        }
-        return result;
+    public Map<Prevent, Object> getRegionFlags() {
+        return defaultRegionFlags;
     }
 }

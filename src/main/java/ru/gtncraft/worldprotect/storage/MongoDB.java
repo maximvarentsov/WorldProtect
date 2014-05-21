@@ -3,7 +3,9 @@ package ru.gtncraft.worldprotect.storage;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.World;
 import org.mongodb.*;
+import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.WorldProtect;
+import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Flags;
 import ru.gtncraft.worldprotect.region.Region;
 
@@ -46,7 +48,12 @@ public class MongoDB implements Storage {
     @Override
     public ProtectedWorld load(final World world) {
         Collection<Region> regions = new LinkedList<>();
-        Flags worldFlags = new Flags();
+
+        Map<String, Object> flags = new HashMap<>();
+        for (Map.Entry<Prevent, Object> entry : Config.getInstance().getWorldFlags().entrySet()) {
+            flags.put(entry.getKey().name(), entry.getValue());
+        }
+        Flags worldFlags = new Flags(flags);
 
         try (MongoCursor cursor = db.getCollection(world.getName()).find().get()) {
             cursor.forEachRemaining(obj -> regions.add(new Region((Document) obj, world)));
