@@ -1,7 +1,6 @@
 package ru.gtncraft.worldprotect.region;
 
 import com.google.common.collect.ImmutableMap;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import ru.gtncraft.worldprotect.Config;
@@ -22,14 +21,8 @@ public class Region extends Entity {
 
         flags = new Flags(asEntity("flags"));
 
-        this.<String>asCollection("owners")
-                .stream()
-                .map(v -> Bukkit.getOfflinePlayer(v).getUniqueId())
-                .forEach(v -> players.put(v, Role.owner));
-        this.<String>asCollection("members")
-                .stream()
-                .map(v -> Bukkit.getOfflinePlayer(v).getUniqueId())
-                .forEach(v -> players.put(v, Role.member));
+        this.<UUID>asCollection("owners").forEach(v -> players.put(v, Role.owner));
+        this.<UUID>asCollection("members").forEach(v -> players.put(v, Role.member));
 
         Entity p1 = asEntity("p1");
         Entity p2 = asEntity("p2");
