@@ -1,5 +1,6 @@
 package ru.gtncraft.worldprotect;
 
+import com.google.common.collect.ImmutableMap;
 import org.mongodb.Document;
 
 import java.util.Collection;
@@ -26,6 +27,6 @@ public class Entity extends Document {
         if (containsKey(key)) {
             return new Entity((Document) get(key));
         }
-        return null;
+        return new Entity(ImmutableMap.of());
     }
 }

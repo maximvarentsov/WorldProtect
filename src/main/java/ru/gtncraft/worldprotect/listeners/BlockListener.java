@@ -34,7 +34,7 @@ class BlockListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(config.getMessage(Messages.error_region_protected));
+            player.sendMessage(config.getMessage(Messages.error_cant_build));
         }
     }
     /**
@@ -48,7 +48,7 @@ class BlockListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
-            player.sendMessage(config.getMessage(Messages.error_region_protected));
+            player.sendMessage(config.getMessage(Messages.error_cant_build));
         }
     }
     /**

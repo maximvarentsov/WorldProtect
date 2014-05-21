@@ -1,15 +1,14 @@
-package ru.gtncraft.worldprotect.database;
+package ru.gtncraft.worldprotect.storage;
 
 import com.google.common.collect.ImmutableList;
 import org.bukkit.World;
 import org.mongodb.*;
 import ru.gtncraft.worldprotect.WorldProtect;
+import ru.gtncraft.worldprotect.region.Flags;
 import ru.gtncraft.worldprotect.region.Region;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.stream.Stream;
+import java.util.*;
 
 public class MongoDB implements Storage {
 
@@ -24,17 +23,19 @@ public class MongoDB implements Storage {
     }
 
     @Override
-    public void save(final World world, final Stream<Region> regions) {
+    public void save(final World world, final ProtectedWorld data) {
         MongoCollection<Document> collection = db.getCollection(world.getName());
 
         collection.tools().createIndexes(
             ImmutableList.of(Index.builder().addKey("name").unique().build())
         );
 
-        regions.forEach(region -> {
+        data.getRegions().forEach(region -> {
             region.update();
             collection.find(new Document("name", region.getName())).upsert().updateOne(region);
         });
+
+        collection.find(new Document("world", world.getName())).upsert().updateOne(data.getFlags());
     }
 
     @Override
@@ -43,12 +44,19 @@ public class MongoDB implements Storage {
     }
 
     @Override
-    public Stream<Region> load(final World world) {
+    public ProtectedWorld load(final World world) {
         Collection<Region> regions = new LinkedList<>();
+        Flags worldFlags = new Flags();
+
         try (MongoCursor cursor = db.getCollection(world.getName()).find().get()) {
             cursor.forEachRemaining(obj -> regions.add(new Region((Document) obj, world)));
+            Document document = db.getCollection("world_flags").find(new Document("world", world.getName())).getOne();
+            if (document != null) {
+                worldFlags = new Flags(worldFlags);
+            }
         }
-        return regions.stream();
+
+        return new ProtectedWorld(regions, worldFlags);
     }
 
     @Override

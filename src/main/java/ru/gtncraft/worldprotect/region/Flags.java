@@ -1,5 +1,6 @@
 package ru.gtncraft.worldprotect.region;
 
+import com.google.common.collect.ImmutableMap;
 import ru.gtncraft.worldprotect.Entity;
 import ru.gtncraft.worldprotect.flags.Prevent;
 
@@ -10,6 +11,11 @@ public class Flags extends Entity {
     public Flags(final Map<String, Object> map) {
         super(map);
     }
+
+    public Flags() {
+        this(ImmutableMap.of());
+    }
+
     /**
      * Change flag state.
      */

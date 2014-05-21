@@ -1,24 +1,24 @@
-package ru.gtncraft.worldprotect.database;
+package ru.gtncraft.worldprotect.storage;
 
 import com.cedarsoftware.util.io.JsonWriter;
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;
 import org.bson.BSONReader;
 import org.bukkit.World;
-import org.mongodb.Document;
 import org.mongodb.codecs.DocumentCodec;
 import org.mongodb.json.JSONMode;
 import org.mongodb.json.JSONReader;
 import org.mongodb.json.JSONReaderSettings;
 import ru.gtncraft.worldprotect.Entity;
 import ru.gtncraft.worldprotect.WorldProtect;
+import ru.gtncraft.worldprotect.region.Flags;
 import ru.gtncraft.worldprotect.region.Region;
 
 import java.io.*;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class JsonFile implements Storage {
 
@@ -29,12 +29,14 @@ public class JsonFile implements Storage {
     }
 
     @Override
-    public void save(final World world, final Stream<Region> regions) {
-        Collection<Region> values = new LinkedList<>();
-        regions.map(Region::update).forEach(values::add);
+    public void save(final World world, final ProtectedWorld data) {
         try {
-            byte[] bytes = JsonWriter.formatJson(new Document("regions", values).toString()).getBytes();
-            if (!values.isEmpty()) {
+            Entity entity = new Entity(ImmutableMap.of(
+                    "world", new Entity(ImmutableMap.of("flags", data.getFlags())),
+                    "regions", data.getRegions())
+            );
+            byte[] bytes = JsonWriter.formatJson(entity.toString()).getBytes();
+            if (!entity.isEmpty()) {
                 try (OutputStream os = new FileOutputStream(getFile(world))) {
                     os.write(bytes);
                 } catch(IOException ex) {
@@ -46,25 +48,29 @@ public class JsonFile implements Storage {
         }
     }
 
-    public File getFile(final World world) {
+    File getFile(final World world) {
         return new File(plugin.getDataFolder().getAbsolutePath() + File.separator + world.getName() + ".json");
     }
 
-    public Entity parse(final String data) throws Exception {
+    Entity parse(final String data) throws Exception {
         BSONReader bsonReader = new JSONReader(new JSONReaderSettings(JSONMode.STRICT), data);
         return new Entity(new DocumentCodec().decode(bsonReader));
     }
 
     @Override
-    public void delete(final World world, final String name) {
-    }
+    public void delete(final World world, final String name) {}
 
     @Override
-    public Stream<Region> load(final World world) {
-        try (InputStream in = new FileInputStream(getFile(world))) {
-            String json = CharStreams.toString(new InputStreamReader(in, Charsets.UTF_8));
+    public ProtectedWorld load(final World world) {
+        Collection<Region> regions = new LinkedList<>();
+        Entity worldFlags = new Flags();
+
+        try (InputStream is = new FileInputStream(getFile(world))) {
+            String json = CharStreams.toString(new InputStreamReader(is, Charsets.UTF_8));
             try {
-                return parse(json).<Map>stream("regions").map(e -> new Region(e, world));
+                Entity document = parse(json);
+                worldFlags = new Flags(document.asEntity("world").asEntity("flags"));
+                document.<Map<String, Object>>stream("regions").map(e -> new Region(e, world)).forEach(regions::add);
             } catch (Throwable ex) {
                 plugin.getLogger().warning("Could not parse " + world.getName() + ".json.");
             }
@@ -72,10 +78,10 @@ public class JsonFile implements Storage {
         } catch (IOException ex) {
             plugin.getLogger().severe(ex.getMessage());
         }
-        return Stream.of();
+
+        return new ProtectedWorld(regions, worldFlags);
     }
 
     @Override
-    public void close() throws IOException {
-    }
+    public void close() throws IOException {}
 }

@@ -5,7 +5,8 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.mongodb.connection.ServerAddress;
-import ru.gtncraft.worldprotect.database.Types;
+import ru.gtncraft.worldprotect.region.Flags;
+import ru.gtncraft.worldprotect.storage.Types;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Region;
 import ru.gtncraft.worldprotect.region.Role;
@@ -31,15 +32,15 @@ public class Config extends YamlConfiguration {
         this.preventCommands = this.getStringList("region.prevent.commands").stream().map(String::toLowerCase).collect(Collectors.toList());
 
         this.preventUse = new ArrayList<>();
-        for (final String value : this.getStringList("region.prevent.use")) {
-            final Material material = Material.matchMaterial(value.toUpperCase());
+        for (String value : this.getStringList("region.prevent.use")) {
+            Material material = Material.matchMaterial(value.toUpperCase());
             if (material != null) {
                 this.preventUse.add(material);
             }
         }
 
-        final String material = this.getString("region.tool");
-        final Material tool = Material.matchMaterial(material.toUpperCase());
+        String material = this.getString("region.tool");
+        Material tool = Material.matchMaterial(material.toUpperCase());
         if (tool == null) {
             this.tool = Material.STICK;
         } else {
@@ -93,25 +94,30 @@ public class Config extends YamlConfiguration {
     }
 
     public String[] getMessage(final Region region) {
-        final Collection<String> messages = new ArrayList<>();
+        Collection<String> messages = new ArrayList<>();
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_name) + ": " + ChatColor.WHITE + region.getName());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_size) + ": " + ChatColor.WHITE + region.getSize());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + playerList(region.players(Role.owner)));
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + playerList(region.players(Role.member)));
-        final Collection<String> flags = new ArrayList<>();
-        for (final Map.Entry<String, Boolean> entry : region.flags().entrySet()) {
-            final String value = entry.getValue() ? ChatColor.RED + getMessage(Messages.flag_true) : ChatColor.GRAY + getMessage(Messages.flag_false);
-            flags.add(ChatColor.WHITE + entry.getKey() + ": " + value + ChatColor.WHITE);
-        }
-        messages.add(ChatColor.YELLOW + getMessage(Messages.region_flags) + ": " + Joiner.on(", ").join(flags));
+        messages.add(getFlags(region.flags()));
         return messages.toArray(new String[messages.size()]);
+    }
+
+    public String getFlags(final Flags flags) {
+        Collection<String> values = new ArrayList<>();
+        for (Prevent flag : Prevent.values()) {
+            String value = flags.get(flag) ?
+                           ChatColor.RED + getMessage(Messages.flag_true) :
+                           ChatColor.GRAY + getMessage(Messages.flag_false);
+            values.add(ChatColor.WHITE + flag.name() + ": " + value + ChatColor.WHITE);
+        }
+        return ChatColor.YELLOW + getMessage(Messages.flags) + ": " + Joiner.on(", ").join(values);
     }
 
     String playerList(Collection<UUID> uuids) {
         List<String> names = new LinkedList<>();
         for (UUID uuid : uuids) {
             OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-            // TODO remove from region?
             if (player == null) {
                 continue;
             }

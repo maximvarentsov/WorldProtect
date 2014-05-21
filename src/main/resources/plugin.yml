@@ -2,7 +2,7 @@ name: ${artifactId}
 main: ${groupId}.${artifactId}
 author: Mete0 <admin@gtn-craft.ru>
 version: ${version}
-softdepend: [WorldEdit]
+softdepend: [ WorldEdit ]
 
 permissions:
     worldprotect.admin:
@@ -17,7 +17,7 @@ permissions:
 commands:
     region:
         aliases: [ rg ]
-        description: Комманды для управления регионами.
+        description: Комманды управления регионами.
         permission: worldprotect.use
         usage: |
              /<command> define <регион> - Создать регион.
@@ -28,12 +28,15 @@ commands:
              /<command> deletemember <регион> <игрок> - Удалить игрока из региона.
              /<command> info [регион] - Показать информацию о регионе.
              /<command> list - Показать список доступных вам регионов.
-             /<command> flag <регион> set <flag> <true|false> - Установить флаг для региона.
+             /<command> flag <регион> set <флаг> <true|false> - Установить флаг для региона.
              /<command> help - Показать список комманд.
     worldprotect:
-        description: Админские комманды для управления регионами.
+        aliases: [ wp ]
+        description: Комманды управления плагином.
         permission: worldprotect.admin
         usage: |
              /<command> save - Сохранить регионы.
-             /<command> convert - Сохранить регионы.
+             /<command> convert - Сконвертировать регионы из mongodb в локальные файлы.
+             /<command> info [мир] - Показать установленные флаги в мире.
+             /<command> flag <мир> set <флаг> <true|false> - Установить флаг для мира.
              /<command> help - Показать список комманд.

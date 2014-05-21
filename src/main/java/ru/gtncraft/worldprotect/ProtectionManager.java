@@ -5,9 +5,11 @@ import com.google.common.collect.Table;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import ru.gtncraft.worldprotect.database.JsonFile;
-import ru.gtncraft.worldprotect.database.MongoDB;
-import ru.gtncraft.worldprotect.database.Storage;
+import ru.gtncraft.worldprotect.storage.JsonFile;
+import ru.gtncraft.worldprotect.storage.MongoDB;
+import ru.gtncraft.worldprotect.storage.ProtectedWorld;
+import ru.gtncraft.worldprotect.storage.Storage;
+import ru.gtncraft.worldprotect.region.Flags;
 import ru.gtncraft.worldprotect.region.Role;
 import ru.gtncraft.worldprotect.flags.Prevent;
 import ru.gtncraft.worldprotect.region.Cuboid;
@@ -15,6 +17,7 @@ import ru.gtncraft.worldprotect.region.Region;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ProtectionManager {
@@ -22,6 +25,7 @@ public class ProtectionManager {
     final Storage storage;
     final WorldProtect plugin;
     final Map<String, Collection<Region>> regions;
+    final Map<String, Flags> worldFlags;
     final Map<String, Table<Integer, Integer, Collection<Region>>> chunks;
     final Collection<String> preventCommands;
     final Collection<Material> preventUse;
@@ -29,6 +33,7 @@ public class ProtectionManager {
     public ProtectionManager(final WorldProtect plugin) throws IOException {
         this.plugin = plugin;
         this.regions = new HashMap<>();
+        this.worldFlags = new HashMap<>();
         this.chunks = new HashMap<>();
         switch (plugin.getConfig().getStorage()) {
             case mongodb:
@@ -52,8 +57,9 @@ public class ProtectionManager {
     public void load(final World world) {
         Collection<Region> values = new ArrayList<>();
         Table<Integer, Integer, Collection<Region>> table = HashBasedTable.create();
+        ProtectedWorld data = storage.load(world);
         if (plugin.getConfig().useRegions(world)) {
-            storage.load(world).forEach(region -> {
+            data.getRegions().forEach(region -> {
                 region.getCuboid().getChunks().entries().stream().forEach(entry -> {
                     int x = entry.getKey();
                     int z = entry.getValue();
@@ -65,6 +71,7 @@ public class ProtectionManager {
                 values.add(region);
             });
         }
+        worldFlags.put(world.getName(), data.getFlags());
         regions.put(world.getName(), values);
         chunks.put(world.getName(), table);
     }
@@ -97,7 +104,10 @@ public class ProtectionManager {
     public void save(final World world) {
         if (plugin.getConfig().useRegions(world)) {
             plugin.getLogger().info("Save region for world " + world.getName());
-            storage.save(world, get(world));
+            storage.save(world, new ProtectedWorld(
+                    get(world).collect(Collectors.toList()),
+                    getWorldFlags(world)
+            ));
         }
     }
     /**
@@ -120,6 +130,7 @@ public class ProtectionManager {
         save(world);
         regions.remove(world.getName());
         chunks.remove(world.getName());
+        worldFlags.remove(world.getName());
     }
     /**
      * Add new region in world.
@@ -281,6 +292,14 @@ public class ProtectionManager {
     }
 
     boolean WorldPrevent(final World world, final Prevent flag) {
-        return false;
+        return worldFlags.get(world.getName()).get(flag);
+    }
+
+    public Flags getWorldFlags(final World world) {
+        return worldFlags.get(world.getName());
+    }
+
+    public void setWorldFlag(final String world, final Prevent flag, final boolean value) {
+        worldFlags.get(world).set(flag, value);
     }
 }

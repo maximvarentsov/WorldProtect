@@ -65,12 +65,8 @@ public class Region extends Entity {
     /**
      * Return region flags with state.
      */
-    public Map<String, Boolean> flags() {
-        Map<String, Boolean> values = new HashMap<>();
-        for (Prevent flag : Prevent.values()) {
-            values.put(flag.name(), flags.get(flag));
-        }
-        return values;
+    public Flags flags() {
+        return flags;
     }
     /**
      * Get region flag state.
