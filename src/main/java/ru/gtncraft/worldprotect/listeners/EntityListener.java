@@ -40,7 +40,24 @@ class EntityListener implements Listener {
     public void onExplode(final EntityExplodeEvent event) {
         if (manager.prevent(event.getLocation(), Prevent.explode)) {
             event.setCancelled(true);
+        } else if (manager.prevent(event.getLocation(), Prevent.entityBlockDamage)) {
+            switch (event.getEntityType()) {
+                case CREEPER:
+                    event.getLocation().getWorld().createExplosion(event.getLocation(), 0F);
+                case ENDER_CRYSTAL:
+                case ENDER_DRAGON:
+                    event.getLocation().getWorld().createExplosion(event.getLocation(), 0F);
+                case WITHER:
+                case WITHER_SKULL:
+                case MINECART_TNT:
+                case PRIMED_TNT:
+                case FIREBALL:
+                case SMALL_FIREBALL:
+                    break;
+            }
+            event.setCancelled(true);
         }
+        System.out.println(event.getEntity().getType() + " onExplode");
     }
     /**
      * Called when an entity has made a decision to explode.
@@ -49,6 +66,7 @@ class EntityListener implements Listener {
     @SuppressWarnings("unused")
     public void onExplosionPrime(final ExplosionPrimeEvent event) {
         if (manager.prevent(event.getEntity().getLocation(), Prevent.explode)) {
+            System.out.println(event.getEntity().getType() + " decision to explode");
             event.setCancelled(true);
         }
     }

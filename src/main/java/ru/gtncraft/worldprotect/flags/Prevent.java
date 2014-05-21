@@ -9,21 +9,25 @@ public enum Prevent {
     damage,
     teleport,
     creatureSpawn,
+    entityBlockDamage,
     command,
     explode,
     leavesDecay,
     grow,
     fade,
     burn,
+    fireSpread,
     pvp,
     piston,
     vehicleNaturalDestroy,
-    fallingBlocks;
+    fallingBlocks,
+    bukkitEmptyWater,
+    bukkitEmptyLava;
 
     public final static Collection<String> values = new ArrayList<>();
 
     static {
-        for (final Prevent flag : values()) {
+        for (Prevent flag : values()) {
             values.add(flag.name());
         }
     }

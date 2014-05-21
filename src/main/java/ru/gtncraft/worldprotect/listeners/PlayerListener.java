@@ -141,4 +141,24 @@ class PlayerListener implements Listener {
             player.sendMessage(config.getMessage(Messages.error_region_protected));
         }
     }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
+    public void onBukkitEmpty(final PlayerBucketEmptyEvent event) {
+        Player player = event.getPlayer();
+        switch (event.getBucket().toString()) {
+            case "LAVA_BUCKET":
+                if (manager.prevent(player.getLocation(), player, Prevent.bukkitEmptyLava)) {
+                    player.sendMessage(config.getMessage(Messages.error_region_protected));
+                    event.setCancelled(true);
+                }
+                break;
+            case "WATER_BUCKET":
+                if (manager.prevent(player.getLocation(), player, Prevent.bukkitEmptyWater)) {
+                    player.sendMessage(config.getMessage(Messages.error_region_protected));
+                    event.setCancelled(true);
+                }
+                break;
+        }
+    }
 }
