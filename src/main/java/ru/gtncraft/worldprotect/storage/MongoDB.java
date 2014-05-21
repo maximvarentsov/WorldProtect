@@ -33,7 +33,6 @@ public class MongoDB implements Storage {
         );
 
         data.getRegions().forEach(region -> {
-            region.update();
             collection.find(new Document("name", region.getName())).upsert().updateOne(region);
         });
 

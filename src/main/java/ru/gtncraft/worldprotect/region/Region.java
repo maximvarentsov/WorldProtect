@@ -19,27 +19,17 @@ public class Region extends Entity {
 
     public Region(final Map<String, Object> map, final World world) {
         super(map);
-        Entity ff = asEntity("flags");
-        // Conver stuff
-        for (Map.Entry<String, Object> entry : Config.getInstance().getRegionFlags().entrySet()) {
-            ff.append(entry.getKey(), entry.getValue());
-        }
 
-        flags = new Flags(ff);
+        flags = new Flags(asEntity("flags"));
 
-        try {
-            this.<UUID>asCollection("owners").forEach(v -> players.put(v, Role.owner));
-            this.<UUID>asCollection("members").forEach(v -> players.put(v, Role.member));
-        } catch (Throwable ex) {
-            this.<String>asCollection("owners")
+        this.<String>asCollection("owners")
                 .stream()
                 .map(v -> Bukkit.getOfflinePlayer(v).getUniqueId())
                 .forEach(v -> players.put(v, Role.owner));
-            this.<String>asCollection("members")
-                    .stream()
-                    .map(v -> Bukkit.getOfflinePlayer(v).getUniqueId())
-                    .forEach(v -> players.put(v, Role.member));
-        }
+        this.<String>asCollection("members")
+                .stream()
+                .map(v -> Bukkit.getOfflinePlayer(v).getUniqueId())
+                .forEach(v -> players.put(v, Role.member));
 
         Entity p1 = asEntity("p1");
         Entity p2 = asEntity("p2");

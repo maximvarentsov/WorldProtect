@@ -105,7 +105,7 @@ public class ProtectionManager {
         if (plugin.getConfig().useRegions(world)) {
             plugin.getLogger().info("Save region for world " + world.getName());
             storage.save(world, new ProtectedWorld(
-                    get(world).collect(Collectors.toList()),
+                    get(world).map(Region::update).collect(Collectors.toList()),
                     getWorldFlags(world)
             ));
         }
