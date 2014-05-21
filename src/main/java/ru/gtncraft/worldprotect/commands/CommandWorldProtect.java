@@ -114,8 +114,10 @@ class CommandWorldProtect implements CommandExecutor, TabCompleter {
     }
 
     void convert(final CommandSender sender) throws CommandException {
-        if (config.getStorage() == Types.file) {
-            throw new CommandException("Only convert from " + Types.mongodb.name() + " to " + Types.file.name() + " support for now.");
+        if (!config.getStorage().equals(Types.mongodb)) {
+            throw new CommandException(
+                    config.getMessage(Messages.error_unsupported_convert, Types.mongodb.name(), Types.file.name())
+            );
         }
         final Storage storage = new JsonFile(plugin);
         Bukkit.getServer()
@@ -125,7 +127,7 @@ class CommandWorldProtect implements CommandExecutor, TabCompleter {
               .forEach(world -> storage.save(world, new ProtectedWorld(
                       manager.get(world).collect(Collectors.toList()), manager.getWorldFlags(world)
               )));
-        sender.sendMessage(config.getMessage(Messages.success_region_converted, Types.mongodb.name(), Types.file.name()));
+        sender.sendMessage(config.getMessage(Messages.success_converted, Types.mongodb.name(), Types.file.name()));
     }
 
     void info(final CommandSender sender, final String[] args) throws CommandException {
