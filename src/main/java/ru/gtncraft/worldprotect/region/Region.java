@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import ru.gtncraft.worldprotect.Config;
 import ru.gtncraft.worldprotect.Entity;
 import ru.gtncraft.worldprotect.flags.Prevent;
 
@@ -46,12 +47,7 @@ public class Region extends Entity {
 
     public Region(final Location point1, final Location point2) {
         super(ImmutableMap.of());
-        flags = new Flags(ImmutableMap.of(
-                Prevent.build.name(), true,
-                Prevent.use.name(), true,
-                Prevent.pvp.name(), true,
-                Prevent.piston.name(), true
-        ));
+        flags = new Flags(Config.getInstance().getRegionFlags());
 
         cuboid = new Cuboid(point1, point2);
         update();

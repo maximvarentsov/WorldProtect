@@ -137,4 +137,26 @@ public class Config extends YamlConfiguration {
             return Types.file;
         }
     }
+
+    public Map<Prevent, Boolean> getRegionFlags() {
+        Map<Prevent, Boolean> result = new HashMap<>();
+        for (String name : getStringList("region.flags.default")) {
+            try {
+                result.put(Prevent.valueOf(name.toLowerCase()), true);
+            } catch (Throwable ignore) {
+            }
+        }
+        return result;
+    }
+
+    public Map<Prevent, Boolean> getWorldFlags() {
+        Map<Prevent, Boolean> result = new HashMap<>();
+        for (String name : getStringList("world.flags.default")) {
+            try {
+                result.put(Prevent.valueOf(name.toLowerCase()), true);
+            } catch (Throwable ignore) {
+            }
+        }
+        return result;
+    }
 }

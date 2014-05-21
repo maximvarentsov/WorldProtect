@@ -3,6 +3,12 @@ storage:
     name: worldprotect
     hosts:
         - localhost:27017
+world:
+    flags:
+        default:
+            - burn
+            - bukkitEmptyLava
+            - entityBlockExplode
 region:
     worlds:
         - world
@@ -12,12 +18,20 @@ region:
     maxVolume: 30000
     tool: STICK
     flags:
-        allowed:
-            - piston
+        default:
+            - use
             - pvp
+            - burn
+            - build
+            - piston
+            - bukkitEmptyLava
+            - entityBlockExplode
+        allowed:
+            - pvp
+            - piston
             - leavesDecay
-            - vehicleNaturalDestroy
             - fallingBlocks
+            - vehicleNaturalDestroy
     prevent:
         use:
             - CHEST

@@ -63,7 +63,7 @@ public class JsonFile implements Storage {
     @Override
     public ProtectedWorld load(final World world) {
         Collection<Region> regions = new LinkedList<>();
-        Entity worldFlags = new Flags();
+        Entity worldFlags = new Flags(plugin.getConfig().getWorldFlags());
 
         try (InputStream is = new FileInputStream(getFile(world))) {
             String json = CharStreams.toString(new InputStreamReader(is, Charsets.UTF_8));
