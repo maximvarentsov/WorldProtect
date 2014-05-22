@@ -372,7 +372,7 @@ class CommandRegion implements CommandExecutor, TabCompleter {
     Collection<String> allRegionPlayers(final World world, final String name, final Role role) {
         Collection<String> result = new LinkedList<>();
         manager.get(world, name).ifPresent(
-                region -> region.players(role).stream().forEach(result::add)
+                region -> region.players(role).stream().map(v -> Bukkit.getOfflinePlayer(v).getName()).forEach(result::add)
         );
         return result;
     }

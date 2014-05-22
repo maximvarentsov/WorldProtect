@@ -1,6 +1,7 @@
 package ru.gtncraft.worldprotect.region;
 
 import com.google.common.collect.ImmutableMap;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 public class Region extends Entity {
 
     final Flags flags;
-    final Map<String, Role> players = new LinkedHashMap<>();
+    final Map<UUID, Role> players = new LinkedHashMap<>();
     final Cuboid cuboid;
 
     public Region(final Map<String, Object> map, final World world) {
@@ -23,8 +24,8 @@ public class Region extends Entity {
 
         flags = new Flags(asEntity("flags"));
 
-        this.<String>asCollection("owners").forEach(v -> players.put(v, Role.owner));
-        this.<String>asCollection("members").forEach(v -> players.put(v, Role.member));
+        this.<UUID>asCollection("owners").forEach(v -> players.put(v, Role.owner));
+        this.<UUID>asCollection("members").forEach(v -> players.put(v, Role.member));
 
         Entity p1 = asEntity("p1");
         Entity p2 = asEntity("p2");
@@ -66,13 +67,13 @@ public class Region extends Entity {
      * Get region players owners/members.
      * @param roles player role.
      */
-    public Collection<String> players(final Role...roles) {
+    public Collection<UUID> players(final Role...roles) {
 
         if (roles.length == 0) {
             return players.keySet();
         }
 
-        Collection<String> result = new TreeSet<>();
+        Collection<UUID> result = new TreeSet<>();
         Collection<Role> values = Arrays.asList(roles);
 
         players.entrySet().forEach(e -> {
@@ -90,12 +91,11 @@ public class Region extends Entity {
      * @param roles Player roles.
      */
     public boolean player(final Player player, final Role...roles) {
-        String name = player.getName().toLowerCase();
-        if (players.containsKey(name)) {
+        if (players.containsKey(player.getUniqueId())) {
             if (roles.length == 0) {
                 return true;
             }
-            return Arrays.asList(roles).contains(players.get(name));
+            return Arrays.asList(roles).contains(players.get(player.getUniqueId()));
         }
         return false;
     }
@@ -124,21 +124,23 @@ public class Region extends Entity {
     }
     /**
      * Remove player with role.
-     * @param player Player name.
+     * @param name Player name.
      * @param role Player region role Owner/Member.
      */
-    public boolean playerDelete(final String player, final Role role) {
-        return players.remove(player.toLowerCase(), role);
+    public boolean playerDelete(final String name, final Role role) {
+        OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+        return players.remove(player.getUniqueId(), role);
     }
     /**
      * Add owner/member to region.
      */
-    public boolean playerAdd(final String player, final Role role) {
-        String name = player.toLowerCase();
-        if (players.containsKey(name)) {
+    public boolean playerAdd(final String name, final Role role) {
+        OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+
+        if (players.containsKey(player.getUniqueId())) {
             return false;
         }
-        players.put(name, role);
+        players.put(player.getUniqueId(), role);
         return true;
     }
 

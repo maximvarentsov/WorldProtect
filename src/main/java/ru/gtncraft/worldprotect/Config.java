@@ -108,8 +108,8 @@ public class Config extends YamlConfiguration {
         Collection<String> messages = new ArrayList<>();
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_name) + ": " + ChatColor.WHITE + region.getName());
         messages.add(ChatColor.YELLOW + getMessage(Messages.region_size) + ": " + ChatColor.WHITE + region.getSize());
-        messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + playerList(region.players(Role.owner)));
-        messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + playerList(region.players(Role.member)));
+        messages.add(ChatColor.YELLOW + getMessage(Messages.region_owners) + ": " + ChatColor.WHITE + getPlayerNames(region.players(Role.owner)));
+        messages.add(ChatColor.YELLOW + getMessage(Messages.region_members) + ": " + ChatColor.WHITE + getPlayerNames(region.players(Role.member)));
         messages.add(getFlags(region.flags()));
         return messages.toArray(new String[messages.size()]);
     }
@@ -125,8 +125,13 @@ public class Config extends YamlConfiguration {
         return ChatColor.YELLOW + getMessage(Messages.flags) + ": " + Joiner.on(", ").join(values);
     }
 
-    String playerList(Collection<String> players) {
-        return Joiner.on(",").join(players);
+    String getPlayerNames(Collection<UUID> uuids) {
+        Collection<String> names = new LinkedList<>();
+        for (UUID uuid : uuids) {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+            names.add(player.getName());
+        }
+        return Joiner.on(",").join(names);
     }
 
     public boolean useRegions(final World world) {
