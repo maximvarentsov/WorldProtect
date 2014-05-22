@@ -38,6 +38,9 @@ class EntityListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
     public void onExplode(final EntityExplodeEvent event) {
+        if (event.getEntity() == null) {
+            return;
+        }
         if (manager.prevent(event.getLocation(), Prevent.explode)) {
             event.setCancelled(true);
         } else if (manager.prevent(event.getLocation(), Prevent.entityBlockExplode)) {
