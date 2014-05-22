@@ -105,5 +105,5 @@ messages:
     flags: "Флаги"
     flag_true: "запрещено"
     flag_false: "разрешено"
-    role_owner: "владелеца"
+    role_owner: "владельца"
     role_member: "игрока"
