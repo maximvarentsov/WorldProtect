@@ -23,7 +23,7 @@ public class ProtectedWorld {
     }
 
     public Flags getFlags() {
-        Flags result = new Flags(Config.getInstance().getRegionFlags());
+        Flags result = new Flags(Config.getInstance().getWorldFlags());
         Prevent flag;
         boolean value;
         for (Map.Entry<String, Object> entry : flags.entrySet()) {
