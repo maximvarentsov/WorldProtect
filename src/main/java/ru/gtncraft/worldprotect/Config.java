@@ -125,16 +125,8 @@ public class Config extends YamlConfiguration {
         return ChatColor.YELLOW + getMessage(Messages.flags) + ": " + Joiner.on(", ").join(values);
     }
 
-    String playerList(Collection<UUID> uuids) {
-        List<String> names = new LinkedList<>();
-        for (UUID uuid : uuids) {
-            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-            if (player == null) {
-                continue;
-            }
-            names.add(player.getName());
-        }
-        return Joiner.on(",").join(names);
+    String playerList(Collection<String> players) {
+        return Joiner.on(",").join(players);
     }
 
     public boolean useRegions(final World world) {

@@ -193,7 +193,7 @@ public class ProtectionManager {
      * @param role Player Roles in region.
      */
     public Stream<Region> get(final Player player, final Role role) {
-        return get(player.getWorld()).filter(region -> region.player(player.getUniqueId(), role));
+        return get(player.getWorld()).filter(region -> region.player(player, role));
     }
     /**
      * Get regions overlays.
@@ -244,7 +244,7 @@ public class ProtectionManager {
         Optional<Collection<Region>> regions = get(location);
         if (regions.isPresent()) {
             for (Region region : regions.get()) {
-                if (region.flag(flag) && !region.player(player.getUniqueId())) {
+                if (region.flag(flag) && !region.player(player)) {
                     return true;
                 }
             }
@@ -283,7 +283,7 @@ public class ProtectionManager {
         }
 
         for (Region region : regions.get()) {
-            if (region.player(player.getUniqueId())) {
+            if (region.player(player)) {
                 return true;
             }
         }

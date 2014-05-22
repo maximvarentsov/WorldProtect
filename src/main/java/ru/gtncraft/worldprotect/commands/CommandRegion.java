@@ -176,13 +176,13 @@ class CommandRegion implements CommandExecutor, TabCompleter {
 
         Region region = new Region(p1, p2);
         region.setName(name);
-        region.playerAdd(sender.getUniqueId(), Role.owner);
+        region.playerAdd(sender.getName(), Role.owner);
 
         if (!sender.hasPermission(Permissions.admin)) {
             /**
              *  Check region have overlay with another.
              */
-            if (manager.get(region).filter(rg -> !rg.player(sender.getUniqueId(), Role.owner)).findAny().isPresent()) {
+            if (manager.get(region).filter(rg -> !rg.player(sender, Role.owner)).findAny().isPresent()) {
                 throw new CommandException(config.getMessage(Messages.error_region_overlay));
             }
             if (!sender.hasPermission(Permissions.moder)) {
@@ -295,7 +295,7 @@ class CommandRegion implements CommandExecutor, TabCompleter {
 
         if (sender.hasPermission(Permissions.admin)) {
             perms = true;
-        } else if (sender.hasPermission(Permissions.moder) || region.player(sender.getUniqueId(), Role.owner)) {
+        } else if (sender.hasPermission(Permissions.moder) || region.player(sender, Role.owner)) {
             if (config.isAllowedFlag(prevent)) {
                 perms = true;
             }
@@ -324,8 +324,8 @@ class CommandRegion implements CommandExecutor, TabCompleter {
 
         checkPermission(sender, region);
 
-        if (!region.playerAdd(player.getUniqueId(), role)) {
-            String playerRole = region.getPlayerRole(player.getUniqueId()) == Role.owner ?
+        if (!region.playerAdd(player.getName(), role)) {
+            String playerRole = region.getPlayerRole(player) == Role.owner ?
                                 config.getMessage(Messages.role_owner) :
                                 config.getMessage(Messages.role_member);
             throw new CommandException(
@@ -349,7 +349,7 @@ class CommandRegion implements CommandExecutor, TabCompleter {
 
         checkPermission(sender, region);
 
-        if (!region.playerDelete(player.getUniqueId(), role)) {
+        if (!region.playerDelete(player.getName(), role)) {
             throw new CommandException(config.getMessage(Messages.error_region_player_exists, player.getName(), name));
         }
 
@@ -357,7 +357,7 @@ class CommandRegion implements CommandExecutor, TabCompleter {
     }
 
     void checkPermission(final Player sender, final Region region) throws CommandException {
-        if (!(sender.hasPermission(Permissions.admin) || region.player(sender.getUniqueId(), Role.owner))) {
+        if (!(sender.hasPermission(Permissions.admin) || region.player(sender, Role.owner))) {
             throw new CommandException(config.getMessage(Messages.error_no_permission));
         }
     }
@@ -372,7 +372,7 @@ class CommandRegion implements CommandExecutor, TabCompleter {
     Collection<String> allRegionPlayers(final World world, final String name, final Role role) {
         Collection<String> result = new LinkedList<>();
         manager.get(world, name).ifPresent(
-                region -> region.players(role).stream().map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).forEach(result::add)
+                region -> region.players(role).stream().forEach(result::add)
         );
         return result;
     }
