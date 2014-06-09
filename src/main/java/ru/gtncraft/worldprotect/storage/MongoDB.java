@@ -44,7 +44,7 @@ public class MongoDB implements Storage {
     }
 
     @Override
-    public ProtectedWorld load(final World world) {
+    public ProtectedWorld load(final World world) throws IOException {
         Collection<Region> regions = new LinkedList<>();
 
         Flags worldFlags = new Flags(Config.getInstance().getWorldFlags());

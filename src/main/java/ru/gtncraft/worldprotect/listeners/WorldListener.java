@@ -11,6 +11,8 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.flags.Prevent;
 
+import java.io.IOException;
+
 class WorldListener implements Listener {
 
     final WorldProtect plugin;
@@ -29,7 +31,13 @@ class WorldListener implements Listener {
     @EventHandler()
     @SuppressWarnings("unused")
     public void onLoad(final WorldLoadEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getProtectionManager().load(event.getWorld()));
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                plugin.getProtectionManager().load(event.getWorld());
+            } catch (IOException ex) {
+                plugin.getLogger().severe(ex.getMessage());
+            }
+        });
     }
 
     @EventHandler(ignoreCancelled = true)

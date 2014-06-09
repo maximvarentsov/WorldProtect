@@ -45,7 +45,9 @@ public class ProtectionManager {
             default:
                 throw new IOException("Unknown regions storage.");
         }
-        Bukkit.getServer().getWorlds().forEach(this::load);
+        for (World world : Bukkit.getServer().getWorlds()) {
+            load(world);
+        }
         this.preventCommands = plugin.getConfig().getPreventCommands();
         this.preventUse = plugin.getConfig().getPreventUse();
     }
@@ -54,7 +56,7 @@ public class ProtectionManager {
      *
      * @param world World
      */
-    public void load(final World world) {
+    public void load(final World world) throws IOException {
         Collection<Region> values = new ArrayList<>();
         Table<Integer, Integer, Collection<Region>> table = HashBasedTable.create();
         ProtectedWorld data = storage.load(world);
