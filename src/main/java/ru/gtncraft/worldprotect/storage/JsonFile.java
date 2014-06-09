@@ -52,7 +52,7 @@ public class JsonFile implements Storage {
         return new File(plugin.getDataFolder().getAbsolutePath() + File.separator + world.getName() + ".json");
     }
 
-    Entity parse(final String data) throws Exception {
+    Entity parse(final String data) {
         BSONReader bsonReader = new JSONReader(new JSONReaderSettings(JSONMode.STRICT), data);
         return new Entity(new DocumentCodec().decode(bsonReader));
     }
