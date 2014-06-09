@@ -10,6 +10,7 @@ world:
             - burn
             - bukkitEmptyLava
             - entityBlockExplode
+            - portalCreation
 region:
     worlds:
         - world
@@ -27,6 +28,7 @@ region:
             - piston
             - bukkitEmptyLava
             - entityBlockExplode
+            - portalCreation
         allowed:
             - pvp
             - piston
