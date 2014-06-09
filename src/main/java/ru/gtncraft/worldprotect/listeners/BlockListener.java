@@ -60,13 +60,7 @@ class BlockListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
     public void onIgnite(final BlockIgniteEvent event) {
-        Player player = event.getPlayer();
-        if (player != null) {
-            if (manager.prevent(event.getBlock().getLocation(), player, Prevent.burn)) {
-                event.setCancelled(true);
-                player.sendMessage(config.getMessage(Messages.error_region_protected));
-            }
-        } else {
+        if (event.getPlayer() == null) {
             if (manager.prevent(event.getBlock().getLocation(), Prevent.burn)) {
                 event.setCancelled(true);
             }
