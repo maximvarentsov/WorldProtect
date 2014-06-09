@@ -92,6 +92,7 @@ messages:
     error_player_command: "&4Комманда доступна только для игроков."
     error_cant_build: "&4Вы не можете здесь строить."
     error_unsupported_convert: "&4Поддерживается только конвертация из %s в %s."
+    error_emergency: $4Аварийная ситуация, мы уже работаем над её исправлением."
     success_region_flag_set: "&2Флаг %s в регионе %s установлен в значение %s."
     success_region_created: "&2Регион %s создан."
     success_region_deleted: "&2Регион %s удален."

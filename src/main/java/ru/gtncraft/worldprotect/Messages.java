@@ -29,6 +29,7 @@ public enum Messages {
     error_player_command,
     error_cant_build,
     error_unsupported_convert,
+    error_emergency,
     success_region_flag_set,
     success_region_created,
     success_region_deleted,
