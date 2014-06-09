@@ -257,11 +257,14 @@ public class ProtectionManager {
     public boolean prevent(final Location location, final Prevent flag) {
         Optional<Collection<Region>> regions = get(location);
         if (regions.isPresent()) {
+            boolean prevent = false;
             for (Region region : regions.get()) {
                 if (region.flag(flag)) {
-                    return true;
+                    prevent = true;
+                    break;
                 }
             }
+            return prevent;
         }
         return WorldPrevent(location.getWorld(), flag);
     }
