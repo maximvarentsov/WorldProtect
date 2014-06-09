@@ -19,7 +19,8 @@ public class MongoDB implements Storage {
 
     public MongoDB(final WorldProtect plugin) throws IOException {
         client = MongoClients.create(
-                plugin.getConfig().getReplicaSet()
+                plugin.getConfig().getReplicaSet(),
+                MongoClientOptions.builder().SSLEnabled(plugin.getConfig().getBoolean("storage.ssl")).build()
         );
         db = client.getDatabase(plugin.getConfig().getString("storage.name"));
     }

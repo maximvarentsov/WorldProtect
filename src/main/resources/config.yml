@@ -3,6 +3,7 @@ storage:
     name: worldprotect
     hosts:
         - localhost:27017
+    ssl: false
 world:
     flags:
         default:
