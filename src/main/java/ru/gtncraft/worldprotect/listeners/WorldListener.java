@@ -1,12 +1,15 @@
 package ru.gtncraft.worldprotect.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import ru.gtncraft.worldprotect.WorldProtect;
+import ru.gtncraft.worldprotect.flags.Prevent;
 
 class WorldListener implements Listener {
 
@@ -33,5 +36,16 @@ class WorldListener implements Listener {
     @SuppressWarnings("unused")
     public void onUnload(final WorldUnloadEvent event) {
         plugin.getProtectionManager().unload(event.getWorld());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    @SuppressWarnings("unused")
+    public void onPortalCreate(final PortalCreateEvent event) {
+        for (Block block : event.getBlocks()) {
+            if (plugin.getProtectionManager().prevent(block.getLocation(), Prevent.portalCreation)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
     }
 }

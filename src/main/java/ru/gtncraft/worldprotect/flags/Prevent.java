@@ -22,7 +22,8 @@ public enum Prevent {
     vehicleNaturalDestroy,
     fallingBlocks,
     bukkitEmptyWater,
-    bukkitEmptyLava;
+    bukkitEmptyLava,
+    portalCreation;
 
     public final static Collection<String> values = new ArrayList<>();
 
