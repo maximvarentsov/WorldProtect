@@ -4,12 +4,10 @@ import com.cedarsoftware.util.io.JsonWriter;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;
-import org.bson.BSONReader;
+import org.bson.BsonReader;
+import org.bson.json.JsonReader;
 import org.bukkit.World;
 import org.mongodb.codecs.DocumentCodec;
-import org.mongodb.json.JSONMode;
-import org.mongodb.json.JSONReader;
-import org.mongodb.json.JSONReaderSettings;
 import ru.gtncraft.worldprotect.Entity;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.region.Flags;
@@ -53,7 +51,7 @@ public class JsonFile implements Storage {
     }
 
     Entity parse(final String data) {
-        BSONReader bsonReader = new JSONReader(new JSONReaderSettings(JSONMode.STRICT), data);
+        BsonReader bsonReader = new JsonReader(data);
         return new Entity(new DocumentCodec().decode(bsonReader));
     }
 
