@@ -33,9 +33,9 @@ public class MongoDB implements Storage {
             ImmutableList.of(Index.builder().addKey("name").unique().build())
         );
 
-        data.getRegions().forEach(region -> collection.find(new Document("name", region.getName())).upsert().updateOne(region));
+        data.getRegions().forEach(region -> collection.find(new Document("name", region.getName())).upsert().updateOne(region.toDocument()));
 
-        collection.find(new Document("world", world.getName())).upsert().updateOne(data.getFlags());
+        collection.find(new Document("world", world.getName())).upsert().updateOne(data.getFlags().toDocument());
     }
 
     @Override

@@ -4,9 +4,10 @@ import com.cedarsoftware.util.io.JsonWriter;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;
-import org.bson.BsonReader;
+import org.bson.codecs.DecoderContext;
 import org.bson.json.JsonReader;
 import org.bukkit.World;
+import org.mongodb.Document;
 import org.mongodb.codecs.DocumentCodec;
 import ru.gtncraft.worldprotect.Entity;
 import ru.gtncraft.worldprotect.WorldProtect;
@@ -14,9 +15,7 @@ import ru.gtncraft.worldprotect.region.Flags;
 import ru.gtncraft.worldprotect.region.Region;
 
 import java.io.*;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class JsonFile implements Storage {
 
@@ -29,10 +28,16 @@ public class JsonFile implements Storage {
     @Override
     public void save(final World world, final ProtectedWorld data) {
         try {
-            Entity entity = new Entity(ImmutableMap.of(
-                    "world", new Entity(ImmutableMap.of("flags", data.getFlags())),
-                    "regions", data.getRegions())
-            );
+            List<Document> docs = new ArrayList<>();
+            for (Region region : data.getRegions()) {
+                docs.add(region.toDocument());
+            }
+            Document entity = new Document(ImmutableMap.of(
+                    "world", new Document(ImmutableMap.of(
+                            "flags", data.getFlags().toDocument()
+                    )),
+                    "regions", docs
+            ));
             byte[] bytes = JsonWriter.formatJson(entity.toString()).getBytes();
             if (!entity.isEmpty()) {
                 try (OutputStream os = new FileOutputStream(getFile(world))) {
@@ -51,8 +56,7 @@ public class JsonFile implements Storage {
     }
 
     Entity parse(final String data) {
-        BsonReader bsonReader = new JsonReader(data);
-        return new Entity(new DocumentCodec().decode(bsonReader));
+        return new Entity(new DocumentCodec().decode(new JsonReader(data), DecoderContext.builder().build()));
     }
 
     @Override
@@ -65,13 +69,10 @@ public class JsonFile implements Storage {
 
         try (InputStream is = new FileInputStream(getFile(world))) {
             String json = CharStreams.toString(new InputStreamReader(is, Charsets.UTF_8));
-            try {
-                Entity document = parse(json);
-                worldFlags = new Flags(document.asEntity("world").asEntity("flags"));
-                document.<Map<String, Object>>stream("regions").map(e -> new Region(e, world)).forEach(regions::add);
-            } catch (Throwable ex) {
-                plugin.getLogger().warning("Could not parse " + world.getName() + ".json.");
-            }
+            Entity document = parse(json);
+            worldFlags = new Flags(document.asEntity("world").asEntity("flags"));
+            document.<Map<String, Object>>stream("regions").map(map -> new Region(map, world)).forEach(regions::add);
+
         } catch (FileNotFoundException ignore) {
         } catch (IOException ex) {
             plugin.getLogger().severe(ex.getMessage());

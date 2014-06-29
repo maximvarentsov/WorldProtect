@@ -129,6 +129,9 @@ public class Config extends YamlConfiguration {
         Collection<String> names = new LinkedList<>();
         for (UUID uuid : uuids) {
             OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+            if (!player.hasPlayedBefore()) {
+                continue;
+            }
             names.add(player.getName());
         }
         return Joiner.on(",").join(names);

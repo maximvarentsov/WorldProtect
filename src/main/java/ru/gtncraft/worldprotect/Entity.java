@@ -1,13 +1,14 @@
 package ru.gtncraft.worldprotect;
 
 import com.google.common.collect.ImmutableMap;
+import org.mongodb.ConvertibleToDocument;
 import org.mongodb.Document;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class Entity extends Document {
+public class Entity extends Document implements ConvertibleToDocument {
 
     public Entity(final Map<String, Object> map) {
         putAll(map);
@@ -28,5 +29,10 @@ public class Entity extends Document {
             return new Entity((Document) get(key));
         }
         return new Entity(ImmutableMap.of());
+    }
+
+    @Override
+    public Document toDocument() {
+        return new Document(this);
     }
 }

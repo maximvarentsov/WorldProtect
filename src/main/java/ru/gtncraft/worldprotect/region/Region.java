@@ -24,8 +24,8 @@ public class Region extends Entity {
 
         flags = new Flags(asEntity("flags"));
 
-        this.<UUID>asCollection("owners").forEach(v -> players.put(v, Role.owner));
-        this.<UUID>asCollection("members").forEach(v -> players.put(v, Role.member));
+        this.<String>asCollection("owners").forEach(v -> players.put(UUID.fromString(v), Role.owner));
+        this.<String>asCollection("members").forEach(v -> players.put(UUID.fromString(v), Role.member));
 
         Entity p1 = asEntity("p1");
         Entity p2 = asEntity("p2");
@@ -65,20 +65,22 @@ public class Region extends Entity {
     }
     /**
      * Get region players owners/members.
-     * @param roles player role.
+     * @param values player role.
      */
-    public Collection<UUID> players(final Role...roles) {
+    public Collection<UUID> players(final Role...values) {
 
-        if (roles.length == 0) {
+        if (values.length == 0) {
             return players.keySet();
         }
 
         Collection<UUID> result = new TreeSet<>();
-        Collection<Role> values = Arrays.asList(roles);
+        Collection<Role> roles = Arrays.asList(values);
 
         players.entrySet().forEach(e -> {
-            if (values.contains(e.getValue())) {
-                result.add(e.getKey());
+            UUID uuid = e.getKey();
+            Role role = e.getValue();
+            if (roles.contains(role)) {
+                result.add(uuid);
             }
         });
 
@@ -145,16 +147,16 @@ public class Region extends Entity {
     }
 
     public Region update() {
-        put("p1", cuboid.asEntity("p1"));
-        put("p2", cuboid.asEntity("p2"));
-        put("flags", flags);
-        put("members", players.entrySet().stream().filter(e -> e.getValue() == Role.member).map(Entry::getKey).collect(Collectors.toList()));
-        put("owners", players.entrySet().stream().filter(e -> e.getValue() == Role.owner).map(Entry::getKey).collect(Collectors.toList()));
+        put("p1", cuboid.asEntity("p1").toDocument());
+        put("p2", cuboid.asEntity("p2").toDocument());
+        put("flags", flags.toDocument());
+        put("members", players.entrySet().stream().filter(e -> e.getValue() == Role.member).map(v -> v.getKey().toString()).collect(Collectors.toList()));
+        put("owners", players.entrySet().stream().filter(e -> e.getValue() == Role.owner).map(v -> v.getKey().toString()).collect(Collectors.toList()));
         return this;
     }
 
     public Role getPlayerRole(final OfflinePlayer player) {
-        return players.get(player.getName().toLowerCase());
+        return players.get(player.getUniqueId());
     }
 
     public int volume() {
@@ -173,4 +175,5 @@ public class Region extends Entity {
     public String toString() {
         return getName();
     }
+
 }

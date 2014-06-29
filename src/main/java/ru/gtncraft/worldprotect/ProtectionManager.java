@@ -59,9 +59,11 @@ public class ProtectionManager {
     public void load(final World world) throws IOException {
         Collection<Region> values = new ArrayList<>();
         Table<Integer, Integer, Collection<Region>> table = HashBasedTable.create();
+
         ProtectedWorld data = storage.load(world);
+
         if (plugin.getConfig().useRegions(world)) {
-            data.getRegions().forEach(region -> {
+            data.getRegions().stream().forEach(region -> {
                 region.getCuboid().getChunks().entries().stream().forEach(entry -> {
                     int x = entry.getKey();
                     int z = entry.getValue();
@@ -73,6 +75,7 @@ public class ProtectionManager {
                 values.add(region);
             });
         }
+
         worldFlags.put(world.getName(), data.getFlags());
         regions.put(world.getName(), values);
         chunks.put(world.getName(), table);
