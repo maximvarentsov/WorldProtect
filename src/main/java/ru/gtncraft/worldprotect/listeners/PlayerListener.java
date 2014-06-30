@@ -29,7 +29,7 @@ class PlayerListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onInteract(final PlayerInteractEvent event) {
+    void onInteract(final PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Location location = event.getClickedBlock().getLocation();
         switch (event.getAction()) {
@@ -72,7 +72,7 @@ class PlayerListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onBedEnter(final PlayerBedEnterEvent event) {
+    void onBedEnter(final PlayerBedEnterEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBed().getLocation(), player, Prevent.use)) {
             event.setCancelled(true);
@@ -84,7 +84,7 @@ class PlayerListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onBucketFill(final PlayerBucketFillEvent event) {
+    void onBucketFill(final PlayerBucketFillEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlockClicked().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
@@ -96,7 +96,7 @@ class PlayerListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onBucketEmpty(final PlayerBucketEmptyEvent event) {
+    void onBucketEmpty(final PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlockClicked().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
@@ -108,7 +108,7 @@ class PlayerListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onInteractEntity(final PlayerInteractEntityEvent event) {
+    void onInteractEntity(final PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getRightClicked().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
@@ -121,7 +121,7 @@ class PlayerListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
+    void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         String command = event.getMessage().substring(1).split(" ")[0];
         if (manager.prevent(player.getLocation(), player, command)) {
@@ -134,7 +134,7 @@ class PlayerListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onTeleport(final PlayerTeleportEvent event) {
+    void onTeleport(final PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(player.getLocation(), player, Prevent.teleport)) {
             event.setCancelled(true);
@@ -144,7 +144,7 @@ class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onBukkitEmpty(final PlayerBucketEmptyEvent event) {
+    void onBukkitEmpty(final PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
         switch (event.getBucket().toString()) {
             case "LAVA_BUCKET":

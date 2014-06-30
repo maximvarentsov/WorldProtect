@@ -21,19 +21,19 @@ public class EmergencyListeners implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onBlockBreak(final BlockBreakEvent event) {
+    void onBlockBreak(final BlockBreakEvent event) {
         event.getPlayer().sendMessage(message);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onBlockPlace(final BlockPlaceEvent event) {
+    void onBlockPlace(final BlockPlaceEvent event) {
         event.getPlayer().sendMessage(message);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onPlayerInteract(final PlayerInteractEvent event) {
+    void onPlayerInteract(final PlayerInteractEvent event) {
         event.getPlayer().sendMessage(message);
     }
 }

@@ -30,7 +30,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onBreak(final BlockBreakEvent event) {
+    void onBreak(final BlockBreakEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
@@ -44,7 +44,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onPlace(final BlockPlaceEvent event) {
+    void onPlace(final BlockPlaceEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
             event.setCancelled(true);
@@ -59,7 +59,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onIgnite(final BlockIgniteEvent event) {
+    void onIgnite(final BlockIgniteEvent event) {
         if (event.getPlayer() == null) {
             if (manager.prevent(event.getBlock().getLocation(), Prevent.burn)) {
                 event.setCancelled(true);
@@ -73,7 +73,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onSignChange(final SignChangeEvent event) {
+    void onSignChange(final SignChangeEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getBlock().getLocation(), player, Prevent.use)) {
             event.setCancelled(true);
@@ -87,7 +87,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onBurn(final BlockBurnEvent event) {
+    void onBurn(final BlockBurnEvent event) {
         if (manager.prevent(event.getBlock().getLocation(), Prevent.burn)) {
             event.setCancelled(true);
         }
@@ -103,7 +103,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     @SuppressWarnings("unused")
-    public void onFade(final BlockFadeEvent event) {
+    void onFade(final BlockFadeEvent event) {
         if (manager.prevent(event.getBlock().getLocation(), Prevent.fade)) {
             event.setCancelled(true);
         }
@@ -120,7 +120,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onForm(final BlockFormEvent event) {
+    void onForm(final BlockFormEvent event) {
         if (manager.prevent(event.getBlock().getLocation(), Prevent.grow)) {
             event.setCancelled(true);
         }
@@ -137,7 +137,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onSpread(final BlockSpreadEvent event) {
+    void onSpread(final BlockSpreadEvent event) {
         if (manager.prevent(event.getBlock().getLocation(), Prevent.grow)) {
             event.setCancelled(true);
         }
@@ -156,7 +156,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onGrow(final BlockGrowEvent event) {
+    void onGrow(final BlockGrowEvent event) {
         if (manager.prevent(event.getBlock().getLocation(), Prevent.grow)) {
             event.setCancelled(true);
         }
@@ -168,7 +168,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onLeavesDecay(final LeavesDecayEvent event) {
+    void onLeavesDecay(final LeavesDecayEvent event) {
         if (manager.prevent(event.getBlock().getLocation(), Prevent.leavesDecay)) {
             event.setCancelled(true);
         }
@@ -181,7 +181,7 @@ class BlockListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onEntityBlockForm(final EntityBlockFormEvent event) {
+    void onEntityBlockForm(final EntityBlockFormEvent event) {
         if (manager.prevent(event.getBlock().getLocation(), Prevent.build)) {
             event.setCancelled(true);
         }
@@ -189,7 +189,7 @@ class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onPistonEvent(final BlockPistonExtendEvent event) {
+    void onPistonEvent(final BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
             if (manager.prevent(block.getLocation(), Prevent.piston)) {
                 event.setCancelled(true);
@@ -200,7 +200,7 @@ class BlockListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onPistonEvent(final BlockPistonRetractEvent event) {
+    void onPistonEvent(final BlockPistonRetractEvent event) {
         if (manager.prevent(event.getRetractLocation(), Prevent.piston)) {
             event.setCancelled(true);
         }

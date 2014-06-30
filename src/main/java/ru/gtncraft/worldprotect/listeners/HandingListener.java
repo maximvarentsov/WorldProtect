@@ -30,7 +30,7 @@ class HandingListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onBreakByEntityEvent(final HangingBreakByEntityEvent event) {
+    void onBreakByEntityEvent(final HangingBreakByEntityEvent event) {
         Location location = event.getEntity().getLocation();
         if (event.getRemover().getType() == EntityType.PLAYER) {
             Player player = (Player) event.getRemover();
@@ -49,7 +49,7 @@ class HandingListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onPlace(final HangingPlaceEvent event) {
+    void onPlace(final HangingPlaceEvent event) {
         Player player = event.getPlayer();
         if (manager.prevent(event.getEntity().getLocation(), player, Prevent.use)) {
             event.setCancelled(true);

@@ -24,13 +24,13 @@ class WorldListener implements Listener {
 
     @EventHandler()
     @SuppressWarnings("unused")
-    public void onSave(final WorldSaveEvent event) {
+    void onSave(final WorldSaveEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getProtectionManager().save(event.getWorld()));
     }
 
     @EventHandler()
     @SuppressWarnings("unused")
-    public void onLoad(final WorldLoadEvent event) {
+    void onLoad(final WorldLoadEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 plugin.getProtectionManager().load(event.getWorld());
@@ -42,13 +42,13 @@ class WorldListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     @SuppressWarnings("unused")
-    public void onUnload(final WorldUnloadEvent event) {
+    void onUnload(final WorldUnloadEvent event) {
         plugin.getProtectionManager().unload(event.getWorld());
     }
 
     @EventHandler(ignoreCancelled = true)
     @SuppressWarnings("unused")
-    public void onPortalCreate(final PortalCreateEvent event) {
+    void onPortalCreate(final PortalCreateEvent event) {
         for (Block block : event.getBlocks()) {
             if (plugin.getProtectionManager().prevent(block.getLocation(), Prevent.portalCreation)) {
                 event.setCancelled(true);

@@ -30,7 +30,7 @@ class VehicleListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onDestory(final VehicleDestroyEvent event) {
+    void onDestory(final VehicleDestroyEvent event) {
         Entity attacker = event.getAttacker();
         if (attacker instanceof Player) {
             Player player = (Player) attacker;
@@ -51,7 +51,7 @@ class VehicleListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onEnter(final VehicleEnterEvent event) {
+    void onEnter(final VehicleEnterEvent event) {
         Entity passenger = event.getEntered().getPassenger();
         if (passenger instanceof Player) {
             Player player = (Player) passenger;

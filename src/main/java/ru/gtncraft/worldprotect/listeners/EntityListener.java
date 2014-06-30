@@ -37,7 +37,7 @@ class EntityListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onExplode(final EntityExplodeEvent event) {
+    void onExplode(final EntityExplodeEvent event) {
         if (event.getEntity() == null) {
             return;
         }
@@ -66,7 +66,7 @@ class EntityListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onExplosionPrime(final ExplosionPrimeEvent event) {
+    void onExplosionPrime(final ExplosionPrimeEvent event) {
         if (manager.prevent(event.getEntity().getLocation(), Prevent.explode)) {
             event.setCancelled(true);
         }
@@ -77,7 +77,7 @@ class EntityListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onCreatureSpawn(final CreatureSpawnEvent event) {
+    void onCreatureSpawn(final CreatureSpawnEvent event) {
         if (manager.prevent(event.getLocation(), Prevent.creatureSpawn)) {
             event.setCancelled(true);
         }
@@ -87,7 +87,7 @@ class EntityListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onChangeBlock(final EntityChangeBlockEvent event) {
+    void onChangeBlock(final EntityChangeBlockEvent event) {
         if (event.getEntityType() == EntityType.FALLING_BLOCK) {
             if (manager.prevent(event.getBlock().getLocation(), Prevent.fallingBlocks)) {
                 event.setCancelled(true);
@@ -103,7 +103,7 @@ class EntityListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     @SuppressWarnings("unused")
-    public void onDamage(final EntityDamageEvent event) {
+    void onDamage(final EntityDamageEvent event) {
         Entity target = event.getEntity();
         if (event instanceof EntityDamageByEntityEvent) {
             Entity attacker = ((EntityDamageByEntityEvent) event).getDamager();
