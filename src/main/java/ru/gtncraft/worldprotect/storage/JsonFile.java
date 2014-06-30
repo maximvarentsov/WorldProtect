@@ -63,7 +63,7 @@ public class JsonFile implements Storage {
     public void delete(final World world, final String name) {}
 
     @Override
-    public ProtectedWorld load(final World world) {
+    public ProtectedWorld load(final World world) throws IOException {
         Collection<Region> regions = new LinkedList<>();
         Entity worldFlags = new Flags(plugin.getConfig().getWorldFlags());
 
@@ -74,8 +74,6 @@ public class JsonFile implements Storage {
             document.<Map<String, Object>>stream("regions").map(map -> new Region(map, world)).forEach(regions::add);
 
         } catch (FileNotFoundException ignore) {
-        } catch (IOException ex) {
-            plugin.getLogger().severe(ex.getMessage());
         }
 
         return new ProtectedWorld(regions, worldFlags);
