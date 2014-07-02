@@ -123,6 +123,16 @@ class EntityListener implements Listener {
             event.setCancelled(true);
         }
     }
+    /**
+     * Called when a non-player entity is about to teleport because it is in contact with a portal.
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
+    void onPlayerPortal(final EntityPortalEvent event) {
+        if (manager.prevent(event.getTo(), Prevent.portalCreation)) {
+            event.useTravelAgent(false);
+        }
+    }
 
     boolean prevent(final Entity attacker, final Entity target, final Prevent flag, final Messages message) {
         if (attacker instanceof Player) {

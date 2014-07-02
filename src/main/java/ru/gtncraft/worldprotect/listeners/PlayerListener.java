@@ -161,4 +161,14 @@ class PlayerListener implements Listener {
                 break;
         }
     }
+    /**
+     * Called when a player is about to teleport because it is in contact with a portal.
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @SuppressWarnings("unused")
+    void onPlayerPortal(final PlayerPortalEvent event) {
+        if (manager.prevent(event.getTo(), Prevent.portalCreation)) {
+            event.useTravelAgent(false);
+        }
+    }
 }
