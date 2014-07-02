@@ -19,19 +19,19 @@ public class EmergencyListeners implements Listener {
         message = plugin.getConfig().getMessage(Messages.error_emergency);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBlockBreak(final BlockBreakEvent event) {
         event.getPlayer().sendMessage(message);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBlockPlace(final BlockPlaceEvent event) {
         event.getPlayer().sendMessage(message);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPlayerInteract(final PlayerInteractEvent event) {
         event.getPlayer().sendMessage(message);

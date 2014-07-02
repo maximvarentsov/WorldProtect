@@ -28,7 +28,7 @@ class HandingListener implements Listener {
     /**
      * Triggered when a hanging entity is removed by an entity.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBreakByEntityEvent(final HangingBreakByEntityEvent event) {
         Location location = event.getEntity().getLocation();
@@ -47,7 +47,7 @@ class HandingListener implements Listener {
     /**
      * Triggered when a hanging entity is created in the world.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPlace(final HangingPlaceEvent event) {
         Player player = event.getPlayer();

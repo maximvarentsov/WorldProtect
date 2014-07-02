@@ -3,6 +3,7 @@ package ru.gtncraft.worldprotect.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -46,7 +47,7 @@ class WorldListener implements Listener {
         plugin.getProtectionManager().unload(event.getWorld());
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPortalCreate(final PortalCreateEvent event) {
         for (Block block : event.getBlocks()) {

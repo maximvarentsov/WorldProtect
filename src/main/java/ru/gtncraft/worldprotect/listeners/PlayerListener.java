@@ -27,7 +27,7 @@ class PlayerListener implements Listener {
     /**
      * Called when a player interacts with an object or air.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onInteract(final PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -70,7 +70,7 @@ class PlayerListener implements Listener {
     /**
      * This event is fired when the player is almost about to enter the bed.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBedEnter(final PlayerBedEnterEvent event) {
         Player player = event.getPlayer();
@@ -82,7 +82,7 @@ class PlayerListener implements Listener {
     /**
      * Called when a player fill a Bucket.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBucketFill(final PlayerBucketFillEvent event) {
         Player player = event.getPlayer();
@@ -94,7 +94,7 @@ class PlayerListener implements Listener {
     /**
      * Called when a player empty a Bucket.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBucketEmpty(final PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
@@ -106,7 +106,7 @@ class PlayerListener implements Listener {
     /**
      * Represents an event that is called when a player right clicks an entity.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onInteractEntity(final PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
@@ -119,7 +119,7 @@ class PlayerListener implements Listener {
      * Called early in the command handling process. This event is only for very exceptional
      * cases and you should not normally use it.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
@@ -132,7 +132,7 @@ class PlayerListener implements Listener {
     /**
      * Holds information for player teleport events.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onTeleport(final PlayerTeleportEvent event) {
         Player player = event.getPlayer();
@@ -142,7 +142,7 @@ class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBukkitEmpty(final PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
@@ -164,7 +164,7 @@ class PlayerListener implements Listener {
     /**
      * Called when a player is about to teleport because it is in contact with a portal.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPlayerPortal(final PlayerPortalEvent event) {
         if (manager.prevent(event.getTo(), Prevent.portalCreation)) {

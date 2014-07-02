@@ -25,7 +25,7 @@ class EntityListener implements Listener {
     /**
      * Thrown when a non-player entity (such as an Enderman) tries to teleport from one location to another.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     public void onTeleport(final EntityTeleportEvent event) {
         if (manager.prevent(event.getTo(), Prevent.teleport) || manager.prevent(event.getFrom(), Prevent.teleport)) {
@@ -35,7 +35,7 @@ class EntityListener implements Listener {
     /**
      * Called when an entity explodes.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onExplode(final EntityExplodeEvent event) {
         if (event.getEntity() == null) {
@@ -64,7 +64,7 @@ class EntityListener implements Listener {
     /**
      * Called when an entity has made a decision to explode.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onExplosionPrime(final ExplosionPrimeEvent event) {
         if (manager.prevent(event.getEntity().getLocation(), Prevent.explode)) {
@@ -75,7 +75,7 @@ class EntityListener implements Listener {
      * Called when a creature is spawned into a world.
      * If a Creature Spawn event is cancelled, the creature will not spawn.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onCreatureSpawn(final CreatureSpawnEvent event) {
         if (manager.prevent(event.getLocation(), Prevent.creatureSpawn)) {
@@ -85,7 +85,7 @@ class EntityListener implements Listener {
     /**
      * Called when any Entity, excluding players, changes a block.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onChangeBlock(final EntityChangeBlockEvent event) {
         if (event.getEntityType() == EntityType.FALLING_BLOCK) {
@@ -101,7 +101,7 @@ class EntityListener implements Listener {
     /**
      * Stores data for damage events.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onDamage(final EntityDamageEvent event) {
         Entity target = event.getEntity();
@@ -126,7 +126,7 @@ class EntityListener implements Listener {
     /**
      * Called when a non-player entity is about to teleport because it is in contact with a portal.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPlayerPortal(final EntityPortalEvent event) {
         if (manager.prevent(event.getTo(), Prevent.portalCreation)) {
