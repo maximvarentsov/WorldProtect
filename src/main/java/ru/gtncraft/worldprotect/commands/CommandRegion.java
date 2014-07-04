@@ -30,7 +30,7 @@ class CommandRegion implements CommandExecutor, TabCompleter {
     final ProtectionManager manager;
     final WorldEditPlugin we;
     final Collection<String> commands = ImmutableList.of(
-        "define", "delete", "addowner", "deleteowner", "addmemeber", "deletemember", "info", "list", "flag", "help"
+        "define", "delete", "addowner", "deleteowner", "addmember", "deletemember", "info", "list", "flag", "help"
     );
 
     public CommandRegion(final WorldProtect plugin) {
