@@ -185,17 +185,19 @@ class CommandRegion implements CommandExecutor, TabCompleter {
             if (manager.get(region).filter(rg -> !rg.player(sender, Role.owner)).findAny().isPresent()) {
                 throw new CommandException(config.getMessage(Messages.error_region_overlay));
             }
-            if (!sender.hasPermission(Permissions.moder)) {
-                /**
-                 * Check region per player limit.
-                 */
+            /**
+             * Check region per player limit.
+             */
+            if (!sender.hasPermission(Permissions.region_unlimited) || !sender.hasPermission(Permissions.moder)) {
                 final long max = config.getLong("region.maxPerPlayer");
                 final long total = manager.get(sender, Role.owner).count();
                 if (max > 0 && total >= max) {
                     throw new CommandException(
-                        config.getMessage(Messages.error_region_created_max, max)
+                            config.getMessage(Messages.error_region_created_max, max)
                     );
                 }
+            }
+            if (!sender.hasPermission(Permissions.moder)) {
                 /**
                  * Check region volume
                  */
