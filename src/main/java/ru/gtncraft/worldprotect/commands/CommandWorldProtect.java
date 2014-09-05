@@ -1,3 +1,4 @@
+
 package ru.gtncraft.worldprotect.commands;
 
 import com.google.common.collect.ImmutableList;
@@ -6,47 +7,43 @@ import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.*;
-import ru.gtncraft.worldprotect.flags.Prevent;
-import ru.gtncraft.worldprotect.storage.JsonFile;
-import ru.gtncraft.worldprotect.storage.ProtectedWorld;
-import ru.gtncraft.worldprotect.storage.Storage;
-import ru.gtncraft.worldprotect.storage.Types;
+import ru.gtncraft.worldprotect.region.Flag;
+import ru.gtncraft.worldprotect.util.Region;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static ru.gtncraft.worldprotect.util.Commands.getParam;
 import static ru.gtncraft.worldprotect.util.Strings.partial;
 
-class CommandWorldProtect implements CommandExecutor, TabCompleter {
+public class CommandWorldProtect implements CommandExecutor, TabCompleter {
 
-    final Config config;
-    final ProtectionManager manager;
-    final WorldProtect plugin;
-    final Collection<String> commands = ImmutableList.of(
-            "save", "convert", "info", "flag", "help"
+    private final ProtectionManager manager;
+    private final WorldProtect plugin;
+    private final Collection<String> commands = ImmutableList.of(
+        "save", "info", "flag", "help"
     );
 
     public CommandWorldProtect(final WorldProtect plugin) {
-        this.config = plugin.getConfig();
         this.manager = plugin.getProtectionManager();
         this.plugin = plugin;
-
-        PluginCommand command = plugin.getCommand("worldprotect");
-        command.setExecutor(this);
-        command.setPermissionMessage(config.getMessage(Messages.error_no_permission));
+        plugin.getCommand("worldprotect").setExecutor(this);
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command pcommand, String commandLabel, String[] args) {
         if (args.length > 1) {
-            final String lastArg = args[args.length - 1];
-            final String command = args[0].toLowerCase();
+            String lastArg = args[args.length - 1];
+            String command = args[0].toLowerCase();
             switch (args.length) {
                 case 2:
                     if (commands.contains(command) && !("list".equals(command) || "help".equals(command))) {
-                        return partial(lastArg, Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList()));
+                        Collection<String> worlds = new ArrayList<>();
+                        for (World world : Bukkit.getWorlds()) {
+                            worlds.add(world.getName());
+                        }
+                        return partial(lastArg, worlds);
                     }
                     break;
                 case 3:
@@ -57,7 +54,7 @@ class CommandWorldProtect implements CommandExecutor, TabCompleter {
                     break;
                 case 4:
                     if ("flag".equals(command)) {
-                        return partial(lastArg, Prevent.toArray());
+                        return partial(lastArg, Flag.toArray());
                     }
                     break;
                 case 5:
@@ -74,14 +71,11 @@ class CommandWorldProtect implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-        boolean help = false;
+        boolean usage = false;
         try {
             switch (args[0].toLowerCase()) {
                 case "save":
                     save(sender);
-                    break;
-                case "convert":
-                    convert(sender);
                     break;
                 case "info":
                     info(sender, args);
@@ -94,76 +88,74 @@ class CommandWorldProtect implements CommandExecutor, TabCompleter {
                     }
                     break;
                 case "help":
-                    help = true;
+                    usage = true;
                     break;
                 default:
-                    sender.sendMessage(config.getMessage(Messages.error_unknown_command, commandLabel));
+                    sender.sendMessage(Messages.get(Message.error_unknown_command, commandLabel));
                     break;
             }
         } catch (CommandException ex) {
             sender.sendMessage(ex.getMessage());
         } catch (ArrayIndexOutOfBoundsException ex) {
-            sender.sendMessage(config.getMessage(Messages.error_unknown_command, commandLabel));
+            sender.sendMessage(Messages.get(Message.error_unknown_command, commandLabel));
         }
-        return !help;
+        return !usage;
     }
 
     void save(final CommandSender sender) throws CommandException {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> Bukkit.getWorlds().forEach(manager::save));
-        sender.sendMessage(config.getMessage(Messages.success_saved));
-    }
-
-    void convert(final CommandSender sender) throws CommandException {
-        if (!config.getStorage().equals(Types.mongodb)) {
-            throw new CommandException(
-                    config.getMessage(Messages.error_unsupported_convert, Types.mongodb.name(), Types.file.name())
-            );
-        }
-        final Storage storage = new JsonFile(plugin);
-        Bukkit.getServer()
-              .getWorlds()
-              .stream()
-              .filter(config::useRegions)
-              .forEach(world -> storage.save(world, new ProtectedWorld(
-                      manager.get(world).collect(Collectors.toList()), manager.getWorldFlags(world)
-              )));
-        sender.sendMessage(config.getMessage(Messages.success_converted, Types.mongodb.name(), Types.file.name()));
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                for (World world : Bukkit.getWorlds()) {
+                    try {
+                        manager.save(world);
+                    } catch (IOException ex) {
+                        plugin.getLogger().severe(ex.getMessage());
+                    }
+                }
+                sender.sendMessage(Messages.get(Message.success_saved));
+            }
+        });
     }
 
     void info(final CommandSender sender, final String[] args) throws CommandException {
         World world;
-        if (args.length > 0) {
+        if (args.length > 1) {
             world = Bukkit.getWorld(args[1].toLowerCase());
             if (world == null) {
-                throw new CommandException(config.getMessage(Messages.error_input_world_not_found, args[1]));
+                throw new CommandException(Messages.get(Message.error_input_world_not_found, args[1]));
             }
         } else {
             if (sender instanceof Player) {
                 world = ((Player) sender).getWorld();
             } else {
-                throw new CommandException(config.getMessage(Messages.error_player_command));
+                throw new CommandException(Messages.get(Message.error_player_command));
             }
         }
-        sender.sendMessage(config.getFlags(manager.getWorldFlags(world)));
+        sender.sendMessage(Region.showFlags(manager.getWorldFlags(world)));
     }
 
     void setFlag(final CommandSender sender, final String[] args) throws CommandException {
 
-        String name = getParam(args, 1).orElseThrow(() -> new CommandException(
-                config.getMessage(Messages.error_input_world_name)
-        ));
-
-        if (Bukkit.getWorld(name.toLowerCase()) == null) {
-            config.getMessage(Messages.error_input_world_not_found, name);
+        if (args.length < 2) {
+            throw new CommandException(Messages.get(Message.error_input_world_name));
         }
 
-        String flag = getParam(args, 3).orElseThrow(() -> new CommandException(
-                config.getMessage(Messages.error_input_flag)
-        ));
+        if (args.length < 4) {
+            throw new CommandException(Messages.get(Message.error_input_flag));
+        }
 
-        String value = getParam(args, 4).orElseThrow(() -> new CommandException(
-                config.getMessage(Messages.error_input_flag_value)
-        ));
+        if (args.length < 5) {
+            throw new CommandException(Messages.get(Message.error_input_flag_value));
+        }
+
+        String world = args[1];
+        String flag = args[3];
+        String value = args[4];
+
+        if (Bukkit.getWorld(world.toLowerCase()) == null) {
+            Messages.get(Message.error_input_world_not_found, world);
+        }
 
         boolean valueFlag;
         // reverse values, prevent true
@@ -175,22 +167,23 @@ class CommandWorldProtect implements CommandExecutor, TabCompleter {
                 valueFlag = true;
                 break;
             default:
-                throw new CommandException(config.getMessage(Messages.error_input_flag_invalid_value));
+                throw new CommandException(Messages.get(Message.error_input_flag_invalid_value));
         }
 
-        Prevent prevent;
+        Flag prevent;
         try {
-            prevent = Prevent.valueOf(flag);
+            prevent = Flag.valueOf(flag);
         } catch (IllegalArgumentException ex) {
-            throw new CommandException(config.getMessage(Messages.error_input_flag_unknown, flag));
+            throw new CommandException(Messages.get(Message.error_input_flag_unknown, flag));
         }
 
-        if (sender.hasPermission(Permissions.admin)) {
-            manager.setWorldFlag(name, prevent, valueFlag);
-            String flagState = valueFlag ? config.getMessage(Messages.flag_true) : config.getMessage(Messages.flag_false);
-            sender.sendMessage(config.getMessage(Messages.success_world_flag_set, flag, name, flagState));
+        if (sender.hasPermission(Permission.admin)) {
+            manager.setWorldFlag(world, prevent, valueFlag);
+            String flagState = valueFlag ? Messages.get(Message.flag_true) : Messages.get(Message.flag_false);
+            sender.sendMessage(Messages.get(Message.success_world_flag_set, flag, world, flagState));
         } else {
-            throw new CommandException(config.getMessage(Messages.error_no_permission));
+            throw new CommandException(Messages.get(Message.error_no_permission));
         }
     }
 }
+

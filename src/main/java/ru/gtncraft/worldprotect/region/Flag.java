@@ -1,9 +1,9 @@
-package ru.gtncraft.worldprotect.flags;
+package ru.gtncraft.worldprotect.region;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public enum Prevent {
+public enum Flag {
     build,
     use,
     damage,
@@ -25,10 +25,10 @@ public enum Prevent {
     bukkitEmptyLava,
     portalCreation;
 
-    public final static Collection<String> values = new ArrayList<>();
+    final static Collection<String> values = new ArrayList<>();
 
     static {
-        for (Prevent flag : values()) {
+        for (Flag flag : values()) {
             values.add(flag.name());
         }
     }

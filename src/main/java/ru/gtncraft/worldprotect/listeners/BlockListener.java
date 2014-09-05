@@ -7,34 +7,35 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import ru.gtncraft.worldprotect.Config;
+import ru.gtncraft.worldprotect.Message;
 import ru.gtncraft.worldprotect.Messages;
 import ru.gtncraft.worldprotect.ProtectionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
-import ru.gtncraft.worldprotect.flags.Prevent;
+import ru.gtncraft.worldprotect.region.Flag;
 
-class BlockListener implements Listener {
-
-    final ProtectionManager manager;
-    final Config config;
+public class BlockListener implements Listener {
+    private final ProtectionManager manager;
+    private final String cantBuild;
+    private final String protectedRegion;
 
     public BlockListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        this.manager = plugin.getProtectionManager();
-        this.config = plugin.getConfig();
+        manager = plugin.getProtectionManager();
+        cantBuild = Messages.get(Message.error_cant_build);
+        protectedRegion =  Messages.get(Message.error_region_protected);
     }
     /**
      * Called when a block is broken by a player.
      *
      * If a Block Break event is cancelled, the block will not break and experience will not drop.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBreak(final BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
+        if (manager.prevent(event.getBlock().getLocation(), player, Flag.build)) {
             event.setCancelled(true);
-            player.sendMessage(config.getMessage(Messages.error_cant_build));
+            player.sendMessage(cantBuild);
         }
     }
     /**
@@ -42,13 +43,13 @@ class BlockListener implements Listener {
      *
      * If a Block Place event is cancelled, the block will not be placed.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPlace(final BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getBlock().getLocation(), player, Prevent.build)) {
+        if (manager.prevent(event.getBlock().getLocation(), player, Flag.build)) {
             event.setCancelled(true);
-            player.sendMessage(config.getMessage(Messages.error_cant_build));
+            player.sendMessage(cantBuild);
         }
     }
     /**
@@ -57,11 +58,11 @@ class BlockListener implements Listener {
      *
      * If a Block Ignite event is cancelled, the block will not be ignited.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onIgnite(final BlockIgniteEvent event) {
         if (event.getPlayer() == null) {
-            if (manager.prevent(event.getBlock().getLocation(), Prevent.burn)) {
+            if (manager.prevent(event.getBlock().getLocation(), Flag.burn)) {
                 event.setCancelled(true);
             }
         }
@@ -71,13 +72,13 @@ class BlockListener implements Listener {
      *
      * If a Sign Change event is cancelled, the sign will not be changed.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onSignChange(final SignChangeEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getBlock().getLocation(), player, Prevent.use)) {
+        if (manager.prevent(event.getBlock().getLocation(), player, Flag.use)) {
             event.setCancelled(true);
-            player.sendMessage(config.getMessage(Messages.error_region_protected));
+            player.sendMessage(protectedRegion);
         }
     }
     /**
@@ -85,10 +86,10 @@ class BlockListener implements Listener {
      *
      * If a Block Burn event is cancelled, the block will not be destroyed as a result of being burnt by fire.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBurn(final BlockBurnEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Prevent.burn)) {
+        if (manager.prevent(event.getBlock().getLocation(), Flag.burn)) {
             event.setCancelled(true);
         }
     }
@@ -101,10 +102,10 @@ class BlockListener implements Listener {
      *
      * If a Block Fade event is cancelled, the block will not fade, melt or disappear.
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     @SuppressWarnings("unused")
     void onFade(final BlockFadeEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Prevent.fade)) {
+        if (manager.prevent(event.getBlock().getLocation(), Flag.fade)) {
             event.setCancelled(true);
         }
     }
@@ -118,10 +119,10 @@ class BlockListener implements Listener {
      *
      * If a Block Form event is cancelled, the block will not be formed.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onForm(final BlockFormEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Prevent.grow)) {
+        if (manager.prevent(event.getBlock().getLocation(), Flag.grow)) {
             event.setCancelled(true);
         }
     }
@@ -135,10 +136,10 @@ class BlockListener implements Listener {
      *
      * If a Block Spread event is cancelled, the block will not spread.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onSpread(final BlockSpreadEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Prevent.grow)) {
+        if (manager.prevent(event.getBlock().getLocation(), Flag.grow)) {
             event.setCancelled(true);
         }
     }
@@ -154,10 +155,10 @@ class BlockListener implements Listener {
      *
      * If a Block Grow event is cancelled, the block will not grow.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onGrow(final BlockGrowEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Prevent.grow)) {
+        if (manager.prevent(event.getBlock().getLocation(), Flag.grow)) {
             event.setCancelled(true);
         }
     }
@@ -166,10 +167,10 @@ class BlockListener implements Listener {
      *
      * If a Leaves Decay event is cancelled, the leaves will not decay.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onLeavesDecay(final LeavesDecayEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Prevent.leavesDecay)) {
+        if (manager.prevent(event.getBlock().getLocation(), Flag.leavesDecay)) {
             event.setCancelled(true);
         }
     }
@@ -179,29 +180,29 @@ class BlockListener implements Listener {
      * Examples:
      *  - Snow formed by a Snowman.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onEntityBlockForm(final EntityBlockFormEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Prevent.build)) {
+        if (manager.prevent(event.getBlock().getLocation(), Flag.build)) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPistonEvent(final BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
-            if (manager.prevent(block.getLocation(), Prevent.piston)) {
+            if (manager.prevent(block.getLocation(), Flag.piston)) {
                 event.setCancelled(true);
                 break;
             }
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPistonEvent(final BlockPistonRetractEvent event) {
-        if (manager.prevent(event.getRetractLocation(), Prevent.piston)) {
+        if (manager.prevent(event.getRetractLocation(), Flag.piston)) {
             event.setCancelled(true);
         }
     }

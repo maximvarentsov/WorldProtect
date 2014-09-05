@@ -1,49 +1,64 @@
 package ru.gtncraft.worldprotect;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.gtncraft.worldprotect.commands.Commands;
-import ru.gtncraft.worldprotect.listeners.EmergencyListeners;
-import ru.gtncraft.worldprotect.listeners.Listeners;
+import ru.gtncraft.worldprotect.commands.CommandRegion;
+import ru.gtncraft.worldprotect.commands.CommandWorldProtect;
+import ru.gtncraft.worldprotect.listeners.*;
 
 import java.io.IOException;
 
 public final class WorldProtect extends JavaPlugin {
 
-    ProtectionManager manager;
-    Config config;
+    private ProtectionManager manager;
+    private boolean emergency = false;
+
+    @Override
+    public void onLoad() {
+        saveDefaultConfig();
+        manager = new ProtectionManager(this);
+        Messages.load(getConfig().getConfigurationSection("messages"));
+    }
 
     @Override
     public void onEnable() {
+        for (World world : Bukkit.getServer().getWorlds()) {
+            try {
+                getProtectionManager().load(world);
+            } catch (IOException ex) {
+                getLogger().severe(ex.getMessage());
+                emergency = true;
+            }
+        }
 
-        saveDefaultConfig();
+        new CommandRegion(this);
+        new CommandWorldProtect(this);
 
-        config = new Config(super.getConfig());
-
-        try {
-            manager = new ProtectionManager(this);
-            new Listeners(this);
-            new Commands(this);
-        } catch (IOException ex) {
+        if (emergency) {
             new EmergencyListeners(this);
-            getLogger().severe("Emergency mode!");
-            getLogger().severe(ex.getMessage());
-
+        } else {
+            new BlockListener(this);
+            new EntityListener(this);
+            new HandingListener(this);
+            new PlayerListener(this);
+            new VehicleListener(this);
+            new WorldListener(this);
         }
     }
 
     @Override
-    public Config getConfig() {
-        return config;
+    public void onDisable() {
+        getServer().getScheduler().cancelTasks(this);
+        for (World world : Bukkit.getWorlds()) {
+            try {
+                getProtectionManager().save(world);
+            } catch (IOException ex) {
+                getLogger().severe(ex.getMessage());
+            }
+        }
     }
 
-    @Override
-    public void onDisable() {
-        getProtectionManager().disable();
-        getServer().getScheduler().cancelTasks(this);
-    }
-    /**
-     * API
-     */
     public ProtectionManager getProtectionManager() {
         return manager;
     }

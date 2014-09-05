@@ -7,51 +7,47 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import ru.gtncraft.worldprotect.WorldProtect;
-import ru.gtncraft.worldprotect.flags.Prevent;
+import ru.gtncraft.worldprotect.region.Flag;
 
 import java.io.IOException;
 
-class WorldListener implements Listener {
+public class WorldListener implements Listener {
 
-    final WorldProtect plugin;
+    private final WorldProtect plugin;
 
     public WorldListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         this.plugin = plugin;
     }
 
-    @EventHandler()
-    @SuppressWarnings("unused")
-    void onSave(final WorldSaveEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getProtectionManager().save(event.getWorld()));
-    }
-
-    @EventHandler()
+    @EventHandler
     @SuppressWarnings("unused")
     void onLoad(final WorldLoadEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                plugin.getProtectionManager().load(event.getWorld());
-            } catch (IOException ex) {
-                plugin.getLogger().severe(ex.getMessage());
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    plugin.getProtectionManager().load(event.getWorld());
+                } catch (IOException ex) {
+                    plugin.getLogger().severe(ex.getMessage());
+                }
             }
         });
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     @SuppressWarnings("unused")
     void onUnload(final WorldUnloadEvent event) {
         plugin.getProtectionManager().unload(event.getWorld());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPortalCreate(final PortalCreateEvent event) {
         for (Block block : event.getBlocks()) {
-            if (plugin.getProtectionManager().prevent(block.getLocation(), Prevent.portalCreation)) {
+            if (plugin.getProtectionManager().prevent(block.getLocation(), Flag.portalCreation)) {
                 event.setCancelled(true);
                 break;
             }

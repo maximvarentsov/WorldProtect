@@ -9,37 +9,32 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
-import ru.gtncraft.worldprotect.Config;
-import ru.gtncraft.worldprotect.Messages;
-import ru.gtncraft.worldprotect.ProtectionManager;
-import ru.gtncraft.worldprotect.WorldProtect;
-import ru.gtncraft.worldprotect.flags.Prevent;
+import ru.gtncraft.worldprotect.*;
+import ru.gtncraft.worldprotect.region.Flag;
 
-class HandingListener implements Listener {
+public class HandingListener implements Listener {
 
-    final ProtectionManager manager;
-    final Config config;
+    private final ProtectionManager manager;
 
     public HandingListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        this.manager = plugin.getProtectionManager();
-        this.config = plugin.getConfig();
+        manager = plugin.getProtectionManager();
     }
     /**
      * Triggered when a hanging entity is removed by an entity.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBreakByEntityEvent(final HangingBreakByEntityEvent event) {
         Location location = event.getEntity().getLocation();
         if (event.getRemover().getType() == EntityType.PLAYER) {
             Player player = (Player) event.getRemover();
-            if (manager.prevent(location, player, Prevent.build)) {
+            if (manager.prevent(location, player, Flag.build)) {
                 event.setCancelled(true);
-                player.sendMessage(config.getMessage(Messages.error_region_protected));
+                player.sendMessage(Messages.get(Message.error_region_protected));
             }
         } else {
-            if (manager.prevent(location, Prevent.build)) {
+            if (manager.prevent(location, Flag.build)) {
                 event.setCancelled(true);
             }
         }
@@ -47,13 +42,13 @@ class HandingListener implements Listener {
     /**
      * Triggered when a hanging entity is created in the world.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPlace(final HangingPlaceEvent event) {
         Player player = event.getPlayer();
-        if (manager.prevent(event.getEntity().getLocation(), player, Prevent.use)) {
+        if (manager.prevent(event.getEntity().getLocation(), player, Flag.use)) {
             event.setCancelled(true);
-            player.sendMessage(config.getMessage(Messages.error_region_protected));
+            player.sendMessage(Messages.get(Message.error_region_protected));
         }
     }
 }

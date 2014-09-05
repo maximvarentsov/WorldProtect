@@ -99,7 +99,6 @@ messages:
     success_region_player_add: "&2Игрок %s добавлен в регион %s."
     success_region_player_delete: "&2Игрок %s удален из региона %s."
     success_saved: "&2Сохранено."
-    success_converted: "&2Регионы сконвертированы из %s в %s."
     success_world_flag_set: "&2Флаг %s в мире %s установлен в значение %s."
     region_name: "Регион"
     region_own_list: "Список регионов принадлежащих вам"

@@ -8,9 +8,6 @@ permissions:
     worldprotect.admin:
         description: Полное управление регионами.
         default: op
-    worldprotect.moder:
-        description: Модерирование регионов.
-        default: false
     worldprotect.use:
         description: Доступ к использованию комманд управления регионами.
         default: true
@@ -36,7 +33,6 @@ commands:
         permission: worldprotect.admin
         usage: |
              /<command> save - Сохранить регионы.
-             /<command> convert - Сконвертировать регионы из mongodb в локальные файлы.
              /<command> info [мир] - Показать установленные флаги в мире.
              /<command> flag <мир> set <флаг> <true|false> - Установить флаг для мира.
              /<command> help - Показать список комманд.

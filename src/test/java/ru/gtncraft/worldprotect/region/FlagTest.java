@@ -1,4 +1,4 @@
-package ru.gtncraft.worldprotect.flags;
+package ru.gtncraft.worldprotect.region;
 
 import org.junit.Test;
 
@@ -7,13 +7,13 @@ import java.util.Collection;
 
 import static org.junit.Assert.assertArrayEquals;
 
-public class PreventTest {
+public class FlagTest {
     @Test
     public void testToArray() {
         Collection<String> values = new ArrayList<>();
-        for (Prevent flag : Prevent.values()) {
+        for (Flag flag : Flag.values()) {
             values.add(flag.name());
         }
-        assertArrayEquals(values.toArray(new String[0]), Prevent.toArray().toArray(new String[0]));
+        assertArrayEquals(values.toArray(new String[0]), Flag.toArray().toArray(new String[0]));
     }
 }
