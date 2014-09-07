@@ -102,7 +102,7 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         return !usage;
     }
 
-    void save(final CommandSender sender) throws CommandException {
+    private void save(final CommandSender sender) throws CommandException {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
@@ -118,7 +118,7 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         });
     }
 
-    void info(final CommandSender sender, final String[] args) throws CommandException {
+    private void info(final CommandSender sender, final String[] args) throws CommandException {
         World world;
         if (args.length > 1) {
             world = Bukkit.getWorld(args[1].toLowerCase());
@@ -135,8 +135,7 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         sender.sendMessage(Region.showFlags(manager.getWorldFlags(world)));
     }
 
-    void setFlag(final CommandSender sender, final String[] args) throws CommandException {
-
+    private void setFlag(final CommandSender sender, final String[] args) throws CommandException {
         if (args.length < 2) {
             throw new CommandException(Messages.get(Message.error_input_world_name));
         }

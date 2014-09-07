@@ -21,8 +21,8 @@ public class Region {
 
         messages.add(ChatColor.YELLOW + Messages.get(Message.region_name) + ": " + ChatColor.WHITE + region.getName());
         messages.add(ChatColor.YELLOW + Messages.get(Message.region_size) + ": " + ChatColor.WHITE + region);
-        messages.add(ChatColor.YELLOW + Messages.get(Message.region_owners) + ": " + ChatColor.WHITE + name(region.getOwners()));
-        messages.add(ChatColor.YELLOW + Messages.get(Message.region_members) + ": " + ChatColor.WHITE + name(region.getMembers()));
+        messages.add(ChatColor.YELLOW + Messages.get(Message.region_owners) + ": " + ChatColor.WHITE + Joiner.on(",").join(names(region.getOwners())));
+        messages.add(ChatColor.YELLOW + Messages.get(Message.region_members) + ": " + ChatColor.WHITE + Joiner.on(",").join(names(region.getMembers())));
         messages.add(showFlags(region.getFlags()));
 
         return messages.toArray(new String[messages.size()]);
@@ -39,15 +39,15 @@ public class Region {
         return ChatColor.YELLOW + Messages.get(Message.flags) + ": " + Joiner.on(", ").join(result);
     }
 
-    public static String name(Collection<UUID> uuids) {
-        Collection<String> names = new LinkedList<>();
+    public static Collection<String> names(Collection<UUID> uuids) {
+        Collection<String> result = new LinkedList<>();
         for (UUID uuid : uuids) {
             OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-            if (!player.hasPlayedBefore()) {
-                names.add(player.getName());
+            if (player.hasPlayedBefore()) {
+                result.add(player.getName());
             }
         }
-        return Joiner.on(",").join(names);
+        return result;
     }
 
 }

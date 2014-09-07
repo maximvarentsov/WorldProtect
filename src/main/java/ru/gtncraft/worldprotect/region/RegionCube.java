@@ -107,6 +107,7 @@ public class RegionCube {
 
     public boolean contains(int x, int y, int z) {
         return x >= lowerX && x <= upperX && y >= lowerY && y <= upperY && z >= lowerZ && z <= upperZ;
+
     }
 
     public boolean contains(Flag flag) {
@@ -119,8 +120,8 @@ public class RegionCube {
 
     @Override
     public String toString() {
-        return "p1(" + lowerX + "," + lowerY + "," + lowerZ + ")," +
-               "p2(" + upperX + "," + upperY + "," + upperZ + ")";
+        return "[" + lowerX + "," + lowerY + "," + lowerZ + "], " +
+               "[" + upperX + "," + upperY + "," + upperZ + "]";
     }
 
     @Override

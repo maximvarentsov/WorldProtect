@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 public class RegionCudeTest {
 
     @Test
-    public void test() {
+    public void serializationTest() {
         int x1 = 0;
         int y1 = 254;
         int z1 = 0;
@@ -38,4 +38,17 @@ public class RegionCudeTest {
         assertEquals(json, json2);
     }
 
+    @Test
+    public void overlayTest() {
+        RegionCube test = new RegionCube(-19, 13, -136, -11, 16, -129);
+        RegionCube inside = new RegionCube(-17, 13, -134, -13, 14, -131);
+        RegionCube outside = new RegionCube(-21, 13, -137, -10, -14, -127);
+
+        boolean cin = inside.contains(test) || test.contains(inside);
+        boolean cout = outside.contains(test) || test.contains(outside);
+
+        boolean contains = cin && cout;
+
+        assertEquals(contains, true);
+    }
 }

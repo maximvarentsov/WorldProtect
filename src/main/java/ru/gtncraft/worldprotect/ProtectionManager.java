@@ -53,25 +53,27 @@ public class ProtectionManager {
      * @param world World
      */
     public void load(final World world) throws IOException {
+        Collection<Flag> flags = new ArrayList<>();
         Collection<RegionCube> values = new ArrayList<>();
         Table<Integer, Integer, Collection<RegionCube>> table = HashBasedTable.create();
 
-        DataHolder data = storage.load(world);
-
         if (worlds.contains(world.getName())) {
-            for (RegionCube region : data.getRegions()) {
-                for (Map.Entry<Integer, Integer> entry : region.getChunks().entries()) {
-                    int x = entry.getKey();
-                    int z = entry.getValue();
-                    if (!table.contains(x, z)) {
-                        table.put(x, z, new ArrayList<RegionCube>());
+            DataHolder data = storage.load(world);
+            if (data != null) {
+                for (RegionCube region : data.getRegions()) {
+                    for (Map.Entry<Integer, Integer> entry : region.getChunks().entries()) {
+                        int x = entry.getKey();
+                        int z = entry.getValue();
+                        if (!table.contains(x, z)) {
+                            table.put(x, z, new ArrayList<RegionCube>());
+                        }
+                        table.get(x, z).add(region);
                     }
-                    table.get(x, z).add(region);
                 }
+                flags.addAll(data.getFlags());
             }
         }
-
-        worldFlags.put(world.getName(), data.getFlags());
+        worldFlags.put(world.getName(), flags);
         regions.put(world.getName(), values);
         chunks.put(world.getName(), table);
     }
@@ -79,7 +81,7 @@ public class ProtectionManager {
      * Delete region from world.
      *
      * @param world World
-     * @param name region name
+     * @param name region names
      */
     public void delete(final World world, final String name) {
         RegionCube region = get(world, name);
@@ -176,10 +178,10 @@ public class ProtectionManager {
         return result;
     }
     /**
-     * Get region in current world by name.
+     * Get region in current world by names.
      *
      * @param world World.
-     * @param name region name.
+     * @param name region names.
      */
     public RegionCube get(World world, String name) {
         String value = name.toLowerCase();
@@ -193,13 +195,13 @@ public class ProtectionManager {
     /**
      * Get regions overlays.
      *
-     * @param value region.
+     * @param region region.
      */
-    public Collection<RegionCube> get(final World world, final RegionCube value) {
+    public Collection<RegionCube> get(World world, RegionCube region) {
         Collection<RegionCube> result = new ArrayList<>();
-        for (RegionCube region : get(world)) {
-            if (region.contains(value) || value.contains(region)) {
-                result.add(region);
+        for (RegionCube overlay : get(world)) {
+            if (overlay.contains(region) || region.contains(overlay)) {
+                result.add(overlay);
             }
         }
         return result;

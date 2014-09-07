@@ -23,7 +23,11 @@ public class Json implements Storage {
 
     @Override
     public DataHolder load(World world) throws IOException {
-        try (FileReader reader = new FileReader(getFile(world))) {
+        File file = getFile(world);
+        if (!file.exists()) {
+            return null;
+        }
+        try (FileReader reader = new FileReader(file)) {
             return gson.fromJson(reader, DataHolder.class);
         }
     }
