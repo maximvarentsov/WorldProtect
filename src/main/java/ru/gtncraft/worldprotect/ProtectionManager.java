@@ -81,7 +81,7 @@ public class ProtectionManager {
      * Delete region from world.
      *
      * @param world World
-     * @param name region names
+     * @param name region name
      */
     public void delete(final World world, final String name) {
         RegionCube region = get(world, name);
@@ -178,10 +178,10 @@ public class ProtectionManager {
         return result;
     }
     /**
-     * Get region in current world by names.
+     * Get region in world by name.
      *
      * @param world World.
-     * @param name region names.
+     * @param name region name.
      */
     public RegionCube get(World world, String name) {
         String value = name.toLowerCase();
