@@ -41,7 +41,7 @@ public class Json implements Storage {
     }
 
     @Override
-    public void remove(World world) {
-        getFile(world).delete();
+    public boolean remove(World world) {
+        return getFile(world).delete();
     }
 }

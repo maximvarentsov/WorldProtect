@@ -67,6 +67,7 @@ public class ProtectionManager {
                         }
                         table.get(x, z).add(region);
                     }
+                    regions.add(region);
                 }
                 flags.addAll(data.getFlags());
             } else {
@@ -105,7 +106,8 @@ public class ProtectionManager {
      */
     public void save(World world) throws IOException {
         if (worlds.contains(world.getName())) {
-            storage.save(world, new DataHolder(get(world), getWorldFlags(world)));
+            DataHolder data = new DataHolder(get(world), getWorldFlags(world));
+            storage.save(world, data);
         }
     }
     /**

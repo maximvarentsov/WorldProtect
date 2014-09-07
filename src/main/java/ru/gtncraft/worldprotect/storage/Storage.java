@@ -8,5 +8,5 @@ import java.io.IOException;
 public interface Storage {
     DataHolder load(final World world) throws IOException;
     void save(final World world, final DataHolder data) throws IOException;
-    void remove(final World world);
+    boolean remove(final World world);
 }
