@@ -25,6 +25,7 @@ public class ProtectionManager {
     private final Collection<String> worlds = new ArrayList<>();
     private final Collection<String> preventCommands = new ArrayList<>();
     private final Collection<Material> preventUse = new ArrayList<>();
+    private final Collection<Flag> defaultFlags = new ArrayList<>();
 
     public ProtectionManager(final WorldProtect plugin) {
         storage = new Json(plugin);
@@ -35,6 +36,12 @@ public class ProtectionManager {
             Material material = Material.matchMaterial(value.toUpperCase());
             if (material != null) {
                 preventUse.add(material);
+            }
+        }
+        for (String flag : plugin.getConfig().getStringList("region.flags.default")) {
+            try {
+                defaultFlags.add(Flag.valueOf(flag));
+            } catch (IllegalArgumentException ignore) {
             }
         }
     }
@@ -62,6 +69,8 @@ public class ProtectionManager {
                     }
                 }
                 flags.addAll(data.getFlags());
+            } else {
+                flags.addAll(defaultFlags);
             }
         }
         worldFlags.put(world.getName(), flags);
