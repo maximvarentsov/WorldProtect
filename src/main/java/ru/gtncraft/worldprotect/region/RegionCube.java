@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
-public class RegionCube {
+public class RegionCube implements Comparable<RegionCube> {
     private final int lowerX, lowerY, lowerZ;
     private final int upperX, upperY, upperZ;
     private String name;
+    private int createdAt;
     private Collection<UUID> owners = new ArrayList<>();
     private Collection<UUID> members = new ArrayList<>();
     private Collection<Flag> flags = new ArrayList<>();
@@ -27,10 +28,19 @@ public class RegionCube {
         upperX = Math.max(x1, x2);
         upperY = Math.max(y1, y2);
         upperZ = Math.max(z1, z2);
+        createdAt = (int) (System.currentTimeMillis() / 1000L);
     }
 
     public String getName() {
         return name;
+    }
+
+    public int getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(int value) {
+        createdAt = value;
     }
 
     public void setName(String value) {
@@ -148,5 +158,10 @@ public class RegionCube {
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+    @Override
+    public int compareTo(RegionCube o) {
+        return getCreatedAt() - o.getCreatedAt();
     }
 }

@@ -11,12 +11,8 @@ public class RegionCubeTest {
 
     @Test
     public void serializationTest() {
-        int x1 = 0;
-        int y1 = 254;
-        int z1 = 0;
-        int x2 = 254;
-        int y2 = 0;
-        int z2 = 254;
+        int x1 = 0, y1 = 254, z1 = 0;
+        int x2 = 254, y2 = 0, z2 = 254;
         RegionCube region = new RegionCube(x1, y1, z1, x2, y2, z2);
         region.setName("TestRegion");
         region.addFlag(Flag.build);
@@ -27,10 +23,10 @@ public class RegionCubeTest {
         region.addMember(UUID.fromString("bc13bd90-34db-11e4-8c21-0800200c9a66"));
         region.addMember(UUID.fromString("c7a18110-34db-11e4-8c21-0800200c9a66"));
         region.removeMember(UUID.fromString("c7a18110-34db-11e4-8c21-0800200c9a66"));
+        region.setCreatedAt(42);
 
         String json = new Gson().toJson(region);
-
-        String result = "{\"lowerX\":0,\"lowerY\":0,\"lowerZ\":0,\"upperX\":254,\"upperY\":254,\"upperZ\":254,\"name\":\"testregion\",\"owners\":[\"b8089590-34db-11e4-8c21-0800200c9a66\"],\"members\":[\"bc13bd90-34db-11e4-8c21-0800200c9a66\"],\"flags\":[\"build\",\"pvp\"]}\n";
+        String result = "{\"lowerX\":0,\"lowerY\":0,\"lowerZ\":0,\"upperX\":254,\"upperY\":254,\"upperZ\":254,\"name\":\"testregion\",\"createdAt\":42,\"owners\":[\"b8089590-34db-11e4-8c21-0800200c9a66\"],\"members\":[\"bc13bd90-34db-11e4-8c21-0800200c9a66\"],\"flags\":[\"build\",\"pvp\"]}\n";
 
         RegionCube region2 = new Gson().fromJson(result, RegionCube.class);
         String json2 = new Gson().toJson(region2);

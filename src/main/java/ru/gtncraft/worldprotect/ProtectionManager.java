@@ -21,7 +21,7 @@ public class ProtectionManager {
     private final Storage storage;
     private final Map<String, Collection<RegionCube>> regions = new HashMap<>();
     private final Map<String, Collection<Flag>> worldFlags = new HashMap<>();
-    private final Map<String, Table<Integer, Integer, Collection<RegionCube>>> chunks = new HashMap<>();
+    private final Map<String, Table<Integer, Integer, SortedSet<RegionCube>>> chunks = new HashMap<>();
     private final Collection<String> worlds = new ArrayList<>();
     private final Collection<String> preventCommands = new ArrayList<>();
     private final Collection<Material> preventUse = new ArrayList<>();
@@ -46,7 +46,7 @@ public class ProtectionManager {
     public void load(World world) throws IOException {
         Collection<Flag> flags = new ArrayList<>();
         Collection<RegionCube> values = new ArrayList<>();
-        Table<Integer, Integer, Collection<RegionCube>> table = HashBasedTable.create();
+        Table<Integer, Integer, SortedSet<RegionCube>> table = HashBasedTable.create();
 
         if (worlds.contains(world.getName())) {
             DataHolder data = storage.load(world);
@@ -56,7 +56,7 @@ public class ProtectionManager {
                         int x = entry.getKey();
                         int z = entry.getValue();
                         if (!table.contains(x, z)) {
-                            table.put(x, z, new ArrayList<RegionCube>());
+                            table.put(x, z, new TreeSet<RegionCube>());
                         }
                         table.get(x, z).add(region);
                     }
@@ -117,12 +117,12 @@ public class ProtectionManager {
      */
     public void add(World world, RegionCube region) {
         regions.get(world.getName()).add(region);
-        Table<Integer, Integer, Collection<RegionCube>> table = chunks.get(world.getName());
+        Table<Integer, Integer, SortedSet<RegionCube>> table = chunks.get(world.getName());
         for (Map.Entry<Integer, Integer> entry : region.getChunks().entries()) {
             int x = entry.getKey();
             int z = entry.getValue();
             if (!table.contains(x, z)) {
-                table.put(x, z, new ArrayList<RegionCube>());
+                table.put(x, z, new TreeSet<RegionCube>());
             }
             table.get(x, z).add(region);
         }
