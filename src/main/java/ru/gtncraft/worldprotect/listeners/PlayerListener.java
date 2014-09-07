@@ -41,6 +41,9 @@ public class PlayerListener implements Listener {
     @SuppressWarnings("unused")
     void onInteract(final PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        if (event.getClickedBlock() == null) {
+            return;
+        }
         Location location = event.getClickedBlock().getLocation();
 
         switch (event.getAction()) {
