@@ -18,32 +18,23 @@ import java.io.IOException;
 import java.util.*;
 
 public class ProtectionManager {
-
     private final Storage storage;
-    private final WorldProtect plugin;
-    private final Map<String, Collection<RegionCube>> regions;
-    private final Map<String, Collection<Flag>> worldFlags;
-    private final Map<String, Table<Integer, Integer, Collection<RegionCube>>> chunks;
-
-    private final Collection<String> worlds;
-    private final Collection<String> preventCommands;
-    private final Collection<Material> preventUse;
+    private final Map<String, Collection<RegionCube>> regions = new HashMap<>();
+    private final Map<String, Collection<Flag>> worldFlags = new HashMap<>();
+    private final Map<String, Table<Integer, Integer, Collection<RegionCube>>> chunks = new HashMap<>();
+    private final Collection<String> worlds = new ArrayList<>();
+    private final Collection<String> preventCommands = new ArrayList<>();
+    private final Collection<Material> preventUse = new ArrayList<>();
 
     public ProtectionManager(final WorldProtect plugin) {
-        this.plugin = plugin;
-        this.regions = new HashMap<>();
-        this.worldFlags = new HashMap<>();
-        this.chunks = new HashMap<>();
-        this.storage = new Json(plugin);
+        storage = new Json(plugin);
+        worlds.addAll(plugin.getConfig().getStringList("region.worlds"));
+        preventCommands.addAll(plugin.getConfig().getStringList("region.prevent.commands"));
 
-        this.worlds = plugin.getConfig().getStringList("region.worlds");
-        this.preventCommands = plugin.getConfig().getStringList("region.prevent.commands");
-
-        this.preventUse = new ArrayList<>();
         for (String value : plugin.getConfig().getStringList("region.prevent.use")) {
             Material material = Material.matchMaterial(value.toUpperCase());
             if (material != null) {
-                this.preventUse.add(material);
+                preventUse.add(material);
             }
         }
     }
@@ -52,7 +43,7 @@ public class ProtectionManager {
      *
      * @param world World
      */
-    public void load(final World world) throws IOException {
+    public void load(World world) throws IOException {
         Collection<Flag> flags = new ArrayList<>();
         Collection<RegionCube> values = new ArrayList<>();
         Table<Integer, Integer, Collection<RegionCube>> table = HashBasedTable.create();
@@ -83,7 +74,7 @@ public class ProtectionManager {
      * @param world World
      * @param name region name
      */
-    public void delete(final World world, final String name) {
+    public void delete(World world, String name) {
         RegionCube region = get(world, name);
         if (region != null) {
             for (Map.Entry<Integer, Integer> entry : region.getChunks().entries()) {
@@ -103,9 +94,8 @@ public class ProtectionManager {
      *
      * @param world World.
      */
-    public void save(final World world) throws IOException {
+    public void save(World world) throws IOException {
         if (worlds.contains(world.getName())) {
-            plugin.getLogger().info("Save region for world " + world.getName());
             storage.save(world, new DataHolder(get(world), getWorldFlags(world)));
         }
     }
@@ -114,7 +104,7 @@ public class ProtectionManager {
      *
      * @param world World.
      */
-    public void unload(final World world) {
+    public void unload(World world) {
         regions.remove(world.getName());
         chunks.remove(world.getName());
         worldFlags.remove(world.getName());
@@ -125,7 +115,7 @@ public class ProtectionManager {
      * @param world World.
      * @param region region.
      */
-    public void add(final World world, final RegionCube region) {
+    public void add(World world, RegionCube region) {
         regions.get(world.getName()).add(region);
         Table<Integer, Integer, Collection<RegionCube>> table = chunks.get(world.getName());
         for (Map.Entry<Integer, Integer> entry : region.getChunks().entries()) {
@@ -155,7 +145,7 @@ public class ProtectionManager {
      *
      * @param world World.
      */
-    public Collection<RegionCube> get(final World world) {
+    public Collection<RegionCube> get(World world) {
         return regions.get(world.getName());
     }
     /**
@@ -163,7 +153,7 @@ public class ProtectionManager {
      *
      * @param location Current location.
      */
-    public Collection<RegionCube> get(final Location location) {
+    public Collection<RegionCube> get(Location location) {
         Collection<RegionCube> result = new ArrayList<>();
         Chunk chunk = location.getChunk();
         Collection<RegionCube> regions = chunks.get(location.getWorld().getName()).get(chunk.getX(), chunk.getZ());
@@ -209,7 +199,7 @@ public class ProtectionManager {
     /**
      * If player is region guest and command not allowed in region for guests.
      */
-    public boolean prevent(final Location location, final Player player, final String command) {
+    public boolean prevent(Location location, Player player, String command) {
         if (prevent(location, player, Flag.command)) {
             return true;
         }
@@ -221,13 +211,13 @@ public class ProtectionManager {
     /**
      * Prevent guests use some items like bone meal.
      */
-    public boolean prevent(final Location location, final Player player, final ItemStack item) {
+    public boolean prevent(Location location, Player player, ItemStack item) {
         return item != null && item.getType() == Material.INK_SACK && item.getDurability() == 15 && prevent(location, player, Flag.use);
     }
     /**
      * Check guest can use some material.
      */
-    public boolean prevent(final Location location, final Player player, final Material material) {
+    public boolean prevent(Location location, Player player, Material material) {
         if (preventUse.contains(material)) {
             return prevent(location, player, Flag.use);
         }
@@ -236,7 +226,7 @@ public class ProtectionManager {
     /**
      * Check player is owner/member of any region inside location with true prevent flag.
      */
-    public boolean prevent(final Location location, final Player player, final Flag flag) {
+    public boolean prevent(Location location, Player player, Flag flag) {
         if (player.hasPermission(Permission.admin)) {
             return false;
         }
@@ -253,7 +243,7 @@ public class ProtectionManager {
     /**
      * Search any region inside location with true prevent flag.
      */
-    public boolean prevent(final Location location, final Flag flag) {
+    public boolean prevent(Location location, Flag flag) {
         Collection<RegionCube> regions = get(location);
         if (regions.size() > 0) {
             boolean prevent = false;
@@ -272,33 +262,28 @@ public class ProtectionManager {
      *
      * @param player Player
      */
-    public boolean accesseble(final Player player) {
-
+    public boolean accesseble(Player player) {
         if (player.hasPermission(Permission.admin)) {
             return true;
         }
-
         Collection<RegionCube> regions = get(player.getLocation());
-
         if (regions.isEmpty()) {
             return true;
         }
-
         UUID uuid = player.getUniqueId();
         for (RegionCube region : regions) {
-            if (region.getOwners().contains(uuid) || region.getMembers().contains(uuid)) {
+            if (region.contains(uuid)) {
                 return true;
             }
         }
-
         return false;
     }
 
-    boolean WorldPrevent(final World world, final Flag flag) {
+    private boolean WorldPrevent(World world, Flag flag) {
         return worldFlags.get(world.getName()).contains(flag);
     }
 
-    public Collection<Flag> getWorldFlags(final World world) {
+    public Collection<Flag> getWorldFlags(World world) {
         return worldFlags.get(world.getName());
     }
 
