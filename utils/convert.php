@@ -15,7 +15,6 @@ foreach (glob("*.json") as $file) {
     $total = count($json['regions']);
     $i = 1;
     foreach ($json['regions'] as $region) {
-        echo "convert " . ($i++) . " of " . $total . PHP_EOL;
         $lowerX = $region['p1']['x'];
         $lowerY = $region['p1']['y'];
         $lowerZ = $region['p1']['z'];
