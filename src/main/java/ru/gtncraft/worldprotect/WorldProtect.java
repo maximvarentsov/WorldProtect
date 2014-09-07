@@ -26,7 +26,7 @@ public final class WorldProtect extends JavaPlugin {
         for (World world : Bukkit.getServer().getWorlds()) {
             try {
                 getProtectionManager().load(world);
-            } catch (IOException ex) {
+            } catch (Throwable ex) {
                 getLogger().severe(ex.getMessage());
                 emergency = true;
             }
