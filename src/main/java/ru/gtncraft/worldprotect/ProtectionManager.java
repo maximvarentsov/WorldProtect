@@ -38,7 +38,7 @@ public class ProtectionManager {
                 preventUse.add(material);
             }
         }
-        for (String flag : plugin.getConfig().getStringList("region.flags.default")) {
+        for (String flag : plugin.getConfig().getStringList("world.flags.default")) {
             try {
                 defaultFlags.add(Flag.valueOf(flag));
             } catch (IllegalArgumentException ignore) {
@@ -52,7 +52,7 @@ public class ProtectionManager {
      */
     public void load(World world) throws IOException {
         Collection<Flag> flags = new ArrayList<>();
-        Collection<RegionCube> values = new ArrayList<>();
+        Collection<RegionCube> regions = new ArrayList<>();
         Table<Integer, Integer, SortedSet<RegionCube>> table = HashBasedTable.create();
 
         if (worlds.contains(world.getName())) {
@@ -73,9 +73,9 @@ public class ProtectionManager {
                 flags.addAll(defaultFlags);
             }
         }
-        worldFlags.put(world.getName(), flags);
-        regions.put(world.getName(), values);
-        chunks.put(world.getName(), table);
+        this.worldFlags.put(world.getName(), flags);
+        this.regions.put(world.getName(), regions);
+        this.chunks.put(world.getName(), table);
     }
     /**
      * Delete region from world.
