@@ -1,15 +1,18 @@
 package ru.gtncraft.worldprotect.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.world.PortalCreateEvent;
-import ru.gtncraft.worldprotect.*;
+import ru.gtncraft.worldprotect.Message;
+import ru.gtncraft.worldprotect.Messages;
+import ru.gtncraft.worldprotect.ProtectionManager;
+import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.region.Flag;
 
 public class EntityListener implements Listener {
@@ -50,7 +53,8 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onExplosionPrime(final ExplosionPrimeEvent event) {
-        if (manager.prevent(event.getEntity().getLocation(), Flag.explode)) {
+        Location location = event.getEntity().getLocation();
+        if (manager.prevent(location, Flag.entityBlockExplode)|| manager.prevent(location, Flag.explode)) {
             event.setCancelled(true);
         }
     }
