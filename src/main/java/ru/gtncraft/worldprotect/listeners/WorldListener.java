@@ -1,6 +1,7 @@
 package ru.gtncraft.worldprotect.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,7 +41,13 @@ public class WorldListener implements Listener {
     @EventHandler
     @SuppressWarnings("unused")
     void onUnload(final WorldUnloadEvent event) {
-        plugin.getProtectionManager().unload(event.getWorld());
+        World world = event.getWorld();
+        try {
+            plugin.getProtectionManager().save(world);
+        } catch (IOException ex) {
+            plugin.getLogger().severe(ex.getMessage());
+        }
+        plugin.getProtectionManager().unload(world);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
