@@ -73,11 +73,20 @@ public class RegionCube {
         return members.remove(uuid);
     }
 
+    public int getSizeX() {
+        return (upperX - lowerX) + 1;
+    }
+
+    public int getSizeY() {
+        return (upperY - lowerY) + 1;
+    }
+
+    public int getSizeZ() {
+        return (upperZ - lowerZ) + 1;
+    }
+
     public long volume() {
-        int sizeX = (upperX - lowerX) + 1;
-        int sizeY = (upperY - lowerY) + 1;
-        int sizeZ = (upperZ - lowerZ) + 1;
-        return sizeX * sizeY * sizeZ;
+        return getSizeX() * getSizeY() * getSizeZ();
     }
 
     public Multimap<Integer, Integer> getChunks() {
@@ -101,13 +110,20 @@ public class RegionCube {
         return contains(x, y, z);
     }
 
-    public boolean contains(RegionCube region) {
-        return contains(region.lowerX, region.lowerY, region.lowerY) || contains(region.upperX, region.upperY, region.upperZ);
-    }
-
     public boolean contains(int x, int y, int z) {
         return x >= lowerX && x <= upperX && y >= lowerY && y <= upperY && z >= lowerZ && z <= upperZ;
+    }
 
+    // Axis Aligned Bounding Box
+    public boolean AABB(RegionCube region) {
+        if (Math.abs(lowerX - region.lowerX) < getSizeX() + region.getSizeX()) {
+            if (Math.abs(lowerY - region.lowerY) < getSizeY() + region.getSizeY()) {
+                if (Math.abs(lowerZ - region.lowerZ) < getSizeZ() + region.getSizeZ()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean contains(Flag flag) {

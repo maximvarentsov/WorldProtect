@@ -127,7 +127,11 @@ public class ProtectionManager {
             table.get(x, z).add(region);
         }
     }
-
+    /**
+     * Return player own regions.
+     *
+     * @param player player
+     */
     public Collection<RegionCube> getOwn(Player player) {
         Collection<RegionCube> result = new ArrayList<>();
         World world = player.getWorld();
@@ -139,7 +143,6 @@ public class ProtectionManager {
         }
         return result;
     }
-
     /**
      * Get world regions.
      *
@@ -187,10 +190,10 @@ public class ProtectionManager {
      *
      * @param region region.
      */
-    public Collection<RegionCube> get(World world, RegionCube region) {
+    public Collection<RegionCube> AABB(World world, RegionCube region) {
         Collection<RegionCube> result = new ArrayList<>();
         for (RegionCube overlay : get(world)) {
-            if (overlay.contains(region) || region.contains(overlay)) {
+            if (region.AABB(overlay)) {
                 result.add(overlay);
             }
         }

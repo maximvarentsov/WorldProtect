@@ -40,14 +40,13 @@ public class RegionCubeTest {
 
     @Test
     public void overlayTest() {
-        RegionCube test = new RegionCube(-19, 13, -136, -11, 16, -129);
-        RegionCube inside = new RegionCube(-17, 13, -134, -13, 14, -131);
-        RegionCube outside = new RegionCube(-21, 13, -137, -10, -14, -127);
+        //                                   x   y    z     x    y   z
+        RegionCube center =  new RegionCube(-19, 16, -136, -11, 13, -129);
+        RegionCube inside =  new RegionCube(-13, 14, -131, -17, 13, -134);
+        RegionCube outside = new RegionCube(-10, 13, -127, -21, 14, -137);
+        RegionCube near =    new RegionCube(-7,  18, -113, -10, 13, -116);
 
-        boolean cin = inside.contains(test) || test.contains(inside);
-        boolean cout = outside.contains(test) || test.contains(outside);
-
-        boolean contains = cin && cout;
+        boolean contains = inside.AABB(center) && outside.AABB(center) && !near.AABB(center);
 
         assertEquals(contains, true);
     }
