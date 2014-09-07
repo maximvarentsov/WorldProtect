@@ -12,7 +12,10 @@ foreach (glob("*.json") as $file) {
             $worldFlags[] = $key;
         }
     }
+    $total = count($json['regions']);
+    $i = 1;
     foreach ($json['regions'] as $region) {
+        echo "convert " . ($i++) . " of " . $total . PHP_EOL;
         $lowerX = $region['p1']['x'];
         $lowerY = $region['p1']['y'];
         $lowerZ = $region['p1']['z'];
@@ -53,10 +56,8 @@ foreach (glob("*.json") as $file) {
             'members' => $members,
             'flags' => $flags
         ];
-
-        $output = json_encode(['flags' => $worldFlags, 'regions' => $regions], JSON_PRETTY_PRINT);
-        file_put_contents($file . ".converted", $output);
+        echo "convert region (" . ($i++) . " of " . $total  . ")" . PHP_EOL;
     }
+    $output = json_encode(['flags' => $worldFlags, 'regions' => $regions], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    file_put_contents($file . ".converted", $output);
 }
-
-
