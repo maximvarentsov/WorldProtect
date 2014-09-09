@@ -1,5 +1,6 @@
 package ru.gtncraft.worldprotect.commands;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
@@ -10,11 +11,13 @@ import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import ru.gtncraft.worldprotect.*;
-import ru.gtncraft.worldprotect.region.RegionCube;
 import ru.gtncraft.worldprotect.region.Flag;
+import ru.gtncraft.worldprotect.region.RegionCube;
 import ru.gtncraft.worldprotect.util.Region;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static ru.gtncraft.worldprotect.util.Region.names;
 import static ru.gtncraft.worldprotect.util.Strings.partial;
@@ -195,10 +198,14 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
              *  Check region have overlay with another.
              */
             Collection<RegionCube> regions = manager.AABB(sender.getWorld(), region);
+            Collection<String> overlays = new ArrayList<>();
             for (RegionCube overlay : regions) {
                 if (!overlay.getOwners().contains(sender.getUniqueId())) {
-                    throw new CommandException(Messages.get(Message.error_region_overlay));
+                    overlays.add(overlay.getName());
                 }
+            }
+            if (overlays.size() > 0) {
+                throw new CommandException(Messages.get(Message.error_region_overlay, Joiner.on(',').join(overlays)));
             }
             if (!sender.hasPermission(Permission.unlimited)) {
                 /**
