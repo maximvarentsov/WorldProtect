@@ -30,5 +30,5 @@ function fixFlags(array $flags) {
         }
         $result[] = $flag;
     }
-    return array_unique($result);
+    return array_values(array_unique($result));
 }
