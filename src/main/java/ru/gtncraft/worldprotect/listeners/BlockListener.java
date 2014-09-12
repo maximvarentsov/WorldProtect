@@ -1,10 +1,8 @@
 package ru.gtncraft.worldprotect.listeners;
 
 import com.google.common.collect.ImmutableList;
-import com.sk89q.worldedit.blocks.BlockID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -231,21 +229,6 @@ public class BlockListener implements Listener {
     void onPistonEvent(final BlockPistonRetractEvent event) {
         if (manager.prevent(event.getRetractLocation(), Flag.piston)) {
             event.setCancelled(true);
-        }
-    }
-
-    private void checkAndDestroyAround(World world, int x, int y, int z, int required) {
-        checkAndDestroy(world, x, y, z + 1, required);
-        checkAndDestroy(world, x, y, z - 1, required);
-        checkAndDestroy(world, x, y + 1, z, required);
-        checkAndDestroy(world, x, y - 1, z, required);
-        checkAndDestroy(world, x + 1, y, z, required);
-        checkAndDestroy(world, x - 1, y, z, required);
-    }
-
-    private void checkAndDestroy(World world, int x, int y, int z, int required) {
-        if (world.getBlockTypeIdAt(x, y, z) == required) {
-            world.getBlockAt(x, y, z).setTypeId(BlockID.AIR);
         }
     }
 }
