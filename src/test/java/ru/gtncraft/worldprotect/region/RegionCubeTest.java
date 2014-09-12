@@ -42,7 +42,7 @@ public class RegionCubeTest {
         RegionCube outside = new RegionCube(-10, 13, -127, -21, 14, -137);
         RegionCube near =    new RegionCube(-7,  18, -113, -10, 13, -116);
 
-        boolean contains = inside.AABB(center) && outside.AABB(center) && !near.AABB(center);
+        boolean contains = inside.intersectsBoundingBox(center) && outside.intersectsBoundingBox(center) && !near.intersectsBoundingBox(center);
 
         assertEquals(contains, true);
     }

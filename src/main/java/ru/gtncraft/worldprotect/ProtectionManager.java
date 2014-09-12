@@ -201,10 +201,10 @@ public class ProtectionManager {
      *
      * @param region region.
      */
-    public Collection<RegionCube> AABB(World world, RegionCube region) {
+    public Collection<RegionCube> intersectsBoundingBox(World world, RegionCube region) {
         Collection<RegionCube> result = new ArrayList<>();
         for (RegionCube overlay : get(world)) {
-            if (region.AABB(overlay)) {
+            if (region.intersectsBoundingBox(overlay)) {
                 result.add(overlay);
             }
         }

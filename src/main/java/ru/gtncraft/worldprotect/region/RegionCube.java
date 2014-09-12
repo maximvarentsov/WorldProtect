@@ -124,16 +124,14 @@ public class RegionCube implements Comparable<RegionCube> {
         return x >= lowerX && x <= upperX && y >= lowerY && y <= upperY && z >= lowerZ && z <= upperZ;
     }
 
-    // Axis Aligned Bounding Box
-    public boolean AABB(RegionCube region) {
-        if (Math.abs(lowerX - region.lowerX) < getSizeX() + region.getSizeX()) {
-            if (Math.abs(lowerY - region.lowerY) < getSizeY() + region.getSizeY()) {
-                if (Math.abs(lowerZ - region.lowerZ) < getSizeZ() + region.getSizeZ()) {
-                    return true;
-                }
-            }
+    public boolean intersectsBoundingBox(RegionCube region) {
+        if (region.upperX < lowerX || region.upperY < lowerY || region.upperZ < lowerZ) {
+            return false;
         }
-        return false;
+        if (region.lowerX > upperX || region.lowerY > upperY || region.lowerZ > upperZ) {
+            return false;
+        }
+        return true;
     }
 
     public boolean contains(Flag flag) {

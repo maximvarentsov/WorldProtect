@@ -197,7 +197,7 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
             /**
              *  Check region have overlay with another.
              */
-            Collection<RegionCube> regions = manager.AABB(sender.getWorld(), region);
+            Collection<RegionCube> regions = manager.intersectsBoundingBox(sender.getWorld(), region);
             Collection<String> overlays = new ArrayList<>();
             for (RegionCube overlay : regions) {
                 if (!overlay.getOwners().contains(sender.getUniqueId())) {
