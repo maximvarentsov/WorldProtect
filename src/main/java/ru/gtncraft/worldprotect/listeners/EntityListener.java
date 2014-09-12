@@ -1,7 +1,6 @@
 package ru.gtncraft.worldprotect.listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -28,7 +27,7 @@ public class EntityListener implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
-    public void onTeleport(final EntityTeleportEvent event) {
+    void onTeleport(final EntityTeleportEvent event) {
         if (manager.prevent(event.getTo(), Flag.teleport) || manager.prevent(event.getFrom(), Flag.teleport)) {
             event.setCancelled(true);
         }
@@ -42,20 +41,8 @@ public class EntityListener implements Listener {
         if (event.getEntity() == null) {
             return;
         }
-        if (manager.prevent(event.getLocation(), Flag.entityBlockExplode) || manager.prevent(event.getLocation(), Flag.explode)) {
-            event.getLocation().getWorld().createExplosion(event.getLocation(), 0F);
-            event.setCancelled(true);
-        }
-    }
-    /**
-     * Called when an entity has made a decision to explode.
-     */
-    @EventHandler(priority = EventPriority.LOWEST)
-    @SuppressWarnings("unused")
-    void onExplosionPrime(final ExplosionPrimeEvent event) {
-        Location location = event.getEntity().getLocation();
-        if (manager.prevent(location, Flag.entityBlockExplode)|| manager.prevent(location, Flag.explode)) {
-            event.setCancelled(true);
+        if (manager.prevent(event.getLocation(), Flag.entityBlockExplode)) {
+           event.blockList().clear();
         }
     }
     /**
@@ -75,11 +62,7 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onChangeBlock(final EntityChangeBlockEvent event) {
-        if (event.getEntityType() == EntityType.FALLING_BLOCK) {
-            if (manager.prevent(event.getBlock().getLocation(), Flag.fallingBlocks)) {
-                event.setCancelled(true);
-            }
-        } else {
+        if (event.getEntityType() != EntityType.FALLING_BLOCK) {
             if (manager.prevent(event.getBlock().getLocation(), Flag.build)) {
                 event.setCancelled(true);
             }
@@ -124,7 +107,7 @@ public class EntityListener implements Listener {
         }
     }
 
-    boolean prevent(final Entity attacker, final Entity target, final Flag flag, final Message message) {
+    private boolean prevent(final Entity attacker, final Entity target, final Flag flag, final Message message) {
         if (attacker instanceof Player) {
             Player player = (Player) attacker;
             if (manager.prevent(target.getLocation(), player, flag)) {

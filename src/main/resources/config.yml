@@ -26,7 +26,6 @@ region:
         allowed:
             - pvp
             - piston
-            - leavesDecay
             - vehicleNaturalDestroy
     prevent:
         use:

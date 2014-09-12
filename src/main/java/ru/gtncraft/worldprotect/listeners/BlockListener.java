@@ -1,7 +1,12 @@
 package ru.gtncraft.worldprotect.listeners;
 
+import com.google.common.collect.ImmutableList;
+import com.sk89q.worldedit.blocks.BlockID;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -13,10 +18,15 @@ import ru.gtncraft.worldprotect.ProtectionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.region.Flag;
 
+import java.util.Collection;
+
 public class BlockListener implements Listener {
     private final ProtectionManager manager;
     private final String cantBuild;
     private final String protectedRegion;
+    private final Collection<BlockFace> directions = ImmutableList.of(
+            BlockFace.DOWN, BlockFace.UP, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.NORTH
+    );
 
     public BlockListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -65,6 +75,8 @@ public class BlockListener implements Listener {
             if (manager.prevent(event.getBlock().getLocation(), Flag.burn)) {
                 event.setCancelled(true);
             }
+        } else if (manager.prevent(event.getBlock().getLocation(), event.getPlayer(), Flag.build)) {
+            event.setCancelled(true);
         }
     }
     /**
@@ -89,7 +101,14 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onBurn(final BlockBurnEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Flag.burn)) {
+        Block block = event.getBlock();
+        if (manager.prevent(block.getLocation(), Flag.burn)) {
+            for (BlockFace face : directions) {
+                Block fire = block.getRelative(face);
+                if (fire.getType().equals(Material.FIRE)) {
+                    fire.setType(Material.AIR);
+                }
+            }
             event.setCancelled(true);
         }
     }
@@ -99,13 +118,18 @@ public class BlockListener implements Listener {
      * Examples:
      *  - Snow melting due to being near a light source.
      *  - Ice melting due to being near a light source.
+     *  - Fire burning out after time, without destroying fuel block.
      *
      * If a Block Fade event is cancelled, the block will not fade, melt or disappear.
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onFade(final BlockFadeEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Flag.fade)) {
+        Block block = event.getBlock();
+        if (block.getType().equals(Material.FIRE)) {
+            return;
+        }
+        if (manager.prevent(block.getLocation(), Flag.spread)) {
             event.setCancelled(true);
         }
     }
@@ -122,7 +146,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onForm(final BlockFormEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Flag.grow)) {
+        if (manager.prevent(event.getBlock().getLocation(), Flag.spread)) {
             event.setCancelled(true);
         }
     }
@@ -139,8 +163,11 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onSpread(final BlockSpreadEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Flag.grow)) {
-            event.setCancelled(true);
+        Block block = event.getBlock();
+        if (event.getSource().getType().equals(Material.FIRE)) {
+            if (manager.prevent(block.getLocation(), Flag.burn)) {
+                event.setCancelled(true);
+            }
         }
     }
     /**
@@ -170,7 +197,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onLeavesDecay(final LeavesDecayEvent event) {
-        if (manager.prevent(event.getBlock().getLocation(), Flag.leavesDecay)) {
+        if (manager.prevent(event.getBlock().getLocation(), Flag.grow)) {
             event.setCancelled(true);
         }
     }
@@ -204,6 +231,21 @@ public class BlockListener implements Listener {
     void onPistonEvent(final BlockPistonRetractEvent event) {
         if (manager.prevent(event.getRetractLocation(), Flag.piston)) {
             event.setCancelled(true);
+        }
+    }
+
+    private void checkAndDestroyAround(World world, int x, int y, int z, int required) {
+        checkAndDestroy(world, x, y, z + 1, required);
+        checkAndDestroy(world, x, y, z - 1, required);
+        checkAndDestroy(world, x, y + 1, z, required);
+        checkAndDestroy(world, x, y - 1, z, required);
+        checkAndDestroy(world, x + 1, y, z, required);
+        checkAndDestroy(world, x - 1, y, z, required);
+    }
+
+    private void checkAndDestroy(World world, int x, int y, int z, int required) {
+        if (world.getBlockTypeIdAt(x, y, z) == required) {
+            world.getBlockAt(x, y, z).setTypeId(BlockID.AIR);
         }
     }
 }

@@ -55,13 +55,11 @@ public class PlayerListener implements Listener {
                 }
                 if (manager.prevent(location, player, event.getClickedBlock().getType())) {
                     event.setCancelled(true);
-                    event.setUseInteractedBlock(Event.Result.DENY);
                     player.sendMessage(Messages.get(Message.error_region_protected));
                     return;
                 }
                 if (manager.prevent(location, player, event.getItem())) {
                     event.setCancelled(true);
-                    event.setUseInteractedBlock(Event.Result.DENY);
                     player.sendMessage(Messages.get(Message.error_region_protected));
                     return;
                 }
@@ -79,7 +77,6 @@ public class PlayerListener implements Listener {
             case PHYSICAL:
                 if (manager.prevent(location, player, Flag.use)) {
                     event.setCancelled(true);
-                    event.setUseInteractedBlock(Event.Result.DENY);
                     player.sendMessage(Messages.get(Message.error_region_protected));
                 }
                 break;
