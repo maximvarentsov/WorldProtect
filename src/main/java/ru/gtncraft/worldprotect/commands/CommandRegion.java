@@ -18,6 +18,7 @@ import ru.gtncraft.worldprotect.util.Region;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import static ru.gtncraft.worldprotect.util.Region.names;
 import static ru.gtncraft.worldprotect.util.Strings.partial;
@@ -357,9 +358,9 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
             throw new CommandException(Messages.get(Message.error_input_region_not_found, regionName));
         }
 
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+        UUID uuid = getPlayer(playerName);
 
-        if (!player.hasPlayedBefore()) {
+        if (uuid == null) {
             throw new CommandException(Messages.get(Message.error_player_not_found, playerName));
         }
 
@@ -367,16 +368,16 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
 
         boolean result;
         if (role) {
-            result = region.addOwner(player.getUniqueId());
+            result = region.addOwner(uuid);
         } else {
-            result = region.addMember(player.getUniqueId());
+            result = region.addMember(uuid);
         }
 
         if (!result) {
             String playerRole = role ? Messages.get(Message.role_owner) : Messages.get(Message.role_member);
-            throw new CommandException(Messages.get(Message.error_region_contains_player, player.getName(), regionName, playerRole));
+            throw new CommandException(Messages.get(Message.error_region_contains_player, playerName, regionName, playerRole));
         }
-        sender.sendMessage(Messages.get(Message.success_region_player_add, player.getName(), regionName));
+        sender.sendMessage(Messages.get(Message.success_region_player_add, playerName, regionName));
     }
 
     private void deletePlayer(final Player sender, final String[] args, final boolean role) throws CommandException {
@@ -397,24 +398,24 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
             throw new CommandException(Messages.get(Message.error_input_region_not_found, regionName));
         }
 
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+        UUID uuid = getPlayer(playerName);
 
-        if (!player.hasPlayedBefore()) {
+        if (uuid == null) {
             throw new CommandException(Messages.get(Message.error_player_not_found, playerName));
         }
 
         testPermission(sender, region);
 
         if (role) {
-            if (!region.removeOwner(player.getUniqueId())) {
-                throw new CommandException(Messages.get(Message.error_region_player_exists, player.getName(), regionName));
+            if (!region.removeOwner(uuid)) {
+                throw new CommandException(Messages.get(Message.error_region_player_exists, playerName, regionName));
             }
         } else {
-            if (!region.removeMember(player.getUniqueId())) {
-                throw new CommandException(Messages.get(Message.error_region_player_exists, player.getName(), regionName));
+            if (!region.removeMember(uuid)) {
+                throw new CommandException(Messages.get(Message.error_region_player_exists, playerName, regionName));
             }
         }
-        sender.sendMessage(Messages.get(Message.success_region_player_delete, player.getName(), regionName));
+        sender.sendMessage(Messages.get(Message.success_region_player_delete, playerName, regionName));
     }
 
     private void testPermission(Player sender, RegionCube region) throws CommandException {
@@ -445,5 +446,15 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
             return names(region.getOwners());
         }
         return names(region.getMembers());
+    }
+
+    private UUID getPlayer(String name) {
+        OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+
+        if (player.hasPlayedBefore() || player.isOnline()) {
+            return player.getUniqueId();
+        }
+
+        return null;
     }
 }
