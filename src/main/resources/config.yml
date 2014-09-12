@@ -27,7 +27,6 @@ region:
             - pvp
             - piston
             - leavesDecay
-            - fallingBlocks
             - vehicleNaturalDestroy
     prevent:
         use:
