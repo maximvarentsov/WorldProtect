@@ -197,7 +197,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onFoodLevelChange(final FoodLevelChangeEvent event) {
-        if (manager.prevent(event.getEntity().getLocation(), Flag.restoreHungry)) {
+        if (manager.prevent(event.getEntity().getLocation(), Flag.hungry)) {
             int foodLevel = event.getFoodLevel();
             if (foodLevel < maxFoodLevel) {
                 event.setFoodLevel(foodLevel + 1);

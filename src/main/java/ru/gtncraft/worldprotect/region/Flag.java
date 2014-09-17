@@ -20,7 +20,7 @@ public enum Flag {
     bukkitEmptyWater,
     bukkitEmptyLava,
     portalCreation,
-    restoreHungry;
+    hungry;
 
     final static Collection<String> values = new ArrayList<>();
 
