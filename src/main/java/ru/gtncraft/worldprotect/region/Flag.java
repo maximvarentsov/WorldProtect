@@ -19,7 +19,8 @@ public enum Flag {
     vehicleNaturalDestroy,
     bukkitEmptyWater,
     bukkitEmptyLava,
-    portalCreation;
+    portalCreation,
+    restoreHungry;
 
     final static Collection<String> values = new ArrayList<>();
 

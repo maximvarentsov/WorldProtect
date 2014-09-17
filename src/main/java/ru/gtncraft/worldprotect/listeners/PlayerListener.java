@@ -8,6 +8,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.*;
 import ru.gtncraft.worldprotect.Message;
 import ru.gtncraft.worldprotect.Messages;
@@ -21,6 +22,7 @@ public class PlayerListener implements Listener {
 
     private final ProtectionManager manager;
     private final Material infoTool;
+    private final int maxFoodLevel = 20;
 
     public PlayerListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -187,6 +189,19 @@ public class PlayerListener implements Listener {
         }
         if (manager.prevent(event.getTo(), Flag.portalCreation)) {
             event.useTravelAgent(false);
+        }
+    }
+    /**
+     * Called when a human entity's food level changes
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    @SuppressWarnings("unused")
+    void onFoodLevelChange(final FoodLevelChangeEvent event) {
+        if (manager.prevent(event.getEntity().getLocation(), Flag.restoreHungry)) {
+            int foodLevel = event.getFoodLevel();
+            if (foodLevel < maxFoodLevel) {
+                event.setFoodLevel(foodLevel + 1);
+            }
         }
     }
 }
