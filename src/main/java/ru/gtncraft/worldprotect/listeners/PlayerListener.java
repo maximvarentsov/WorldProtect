@@ -182,6 +182,9 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onPlayerPortal(final PlayerPortalEvent event) {
+        if (event.getTo() == null) {
+            return;
+        }
         if (manager.prevent(event.getTo(), Flag.portalCreation)) {
             event.useTravelAgent(false);
         }
