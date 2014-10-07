@@ -10,7 +10,6 @@ import ru.gtncraft.worldprotect.listeners.*;
 import java.io.IOException;
 
 public final class WorldProtect extends JavaPlugin {
-
     private ProtectionManager manager;
     private boolean emergency = false;
 

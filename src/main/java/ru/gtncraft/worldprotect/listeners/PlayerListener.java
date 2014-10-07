@@ -19,7 +19,6 @@ import ru.gtncraft.worldprotect.region.Flag;
 import ru.gtncraft.worldprotect.util.Region;
 
 public class PlayerListener implements Listener {
-
     private final ProtectionManager manager;
     private final Material infoTool;
     private final int maxFoodLevel = 20;

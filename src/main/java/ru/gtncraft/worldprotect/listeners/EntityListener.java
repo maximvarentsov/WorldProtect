@@ -15,7 +15,6 @@ import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.region.Flag;
 
 public class EntityListener implements Listener {
-
     private final ProtectionManager manager;
 
     public EntityListener(final WorldProtect plugin) {

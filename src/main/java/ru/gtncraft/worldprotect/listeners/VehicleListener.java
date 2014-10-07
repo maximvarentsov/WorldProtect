@@ -12,7 +12,6 @@ import ru.gtncraft.worldprotect.*;
 import ru.gtncraft.worldprotect.region.Flag;
 
 public class VehicleListener implements Listener {
-
     private final ProtectionManager manager;
 
     public VehicleListener(final WorldProtect plugin) {

@@ -24,7 +24,6 @@ import static ru.gtncraft.worldprotect.util.Region.names;
 import static ru.gtncraft.worldprotect.util.Strings.partial;
 
 public class CommandRegion implements CommandExecutor, TabCompleter {
-
     private final ProtectionManager manager;
     private final WorldEditPlugin we;
     private final Collection<String> commands = ImmutableList.of(
@@ -450,11 +449,9 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
 
     private UUID getPlayer(String name) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
-
         if (player.hasPlayedBefore() || player.isOnline()) {
             return player.getUniqueId();
         }
-
         return null;
     }
 }

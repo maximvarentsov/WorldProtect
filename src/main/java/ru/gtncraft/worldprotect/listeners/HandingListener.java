@@ -13,7 +13,6 @@ import ru.gtncraft.worldprotect.*;
 import ru.gtncraft.worldprotect.region.Flag;
 
 public class HandingListener implements Listener {
-
     private final ProtectionManager manager;
 
     public HandingListener(final WorldProtect plugin) {

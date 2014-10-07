@@ -15,7 +15,6 @@ import ru.gtncraft.worldprotect.region.Flag;
 import java.io.IOException;
 
 public class WorldListener implements Listener {
-
     private final WorldProtect plugin;
 
     public WorldListener(final WorldProtect plugin) {

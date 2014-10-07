@@ -18,7 +18,6 @@ import java.util.List;
 import static ru.gtncraft.worldprotect.util.Strings.partial;
 
 public class CommandWorldProtect implements CommandExecutor, TabCompleter {
-
     private final ProtectionManager manager;
     private final WorldProtect plugin;
     private final Collection<String> commands = ImmutableList.of(
