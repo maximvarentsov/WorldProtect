@@ -2,8 +2,6 @@ package ru.gtncraft.worldprotect.commands;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.bukkit.selections.Selection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -25,7 +23,6 @@ import static ru.gtncraft.worldprotect.util.Strings.partial;
 
 public class CommandRegion implements CommandExecutor, TabCompleter {
     private final ProtectionManager manager;
-    private final WorldEditPlugin we;
     private final Collection<String> commands = ImmutableList.of(
         "define", "delete", "addowner", "deleteowner", "addmember", "deletemember", "info", "list", "flag", "help"
     );
@@ -37,7 +34,6 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
 
     public CommandRegion(final WorldProtect plugin) {
         manager = plugin.getProtectionManager();
-        we = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
         maxRegions = plugin.getConfig().getInt("region.maxPerPlayer");
         maxVolume = plugin.getConfig().getInt("region.maxVolume");
         allowedFlags.addAll(plugin.getConfig().getStringList("region.flags.allowed"));
@@ -164,17 +160,10 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
     }
 
     private void define(final Player sender, final String[] args) throws CommandException {
-        if (we == null) {
-            throw new CommandException(Translations.get(Message.error_worldedit_not_found));
-        }
-
-        Selection selection = we.getSelection(sender);
-        if (selection == null) {
+        List<Location> selection = Selection.get(sender);
+        if (selection.size() < 2) {
             throw new CommandException(Translations.get(Message.error_region_selection));
         }
-
-        Location p1 = selection.getMinimumPoint();
-        Location p2 = selection.getMaximumPoint();
 
         if (args.length < 2) {
             throw new CommandException(Translations.get(Message.error_input_region_name));
@@ -186,7 +175,7 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
             throw new CommandException(Translations.get(Message.error_region_name_exists, regionName));
         }
 
-        RegionCube region = new RegionCube(p1, p2);
+        RegionCube region = new RegionCube(selection.get(0), selection.get(1));
         region.setName(regionName);
         region.addOwner(sender.getUniqueId());
         for (Flag flag : defaultFlags) {
