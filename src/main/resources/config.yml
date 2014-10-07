@@ -53,6 +53,16 @@ region:
             - IRON_PLATE
             - FURNACE
             - BURNING_FURNACE
+            - SPRUCE_FENCE_GATE
+            - BIRCH_FENCE_GATE
+            - JUNGLE_FENCE_GATE
+            - ACACIA_FENCE_GATE
+            - DARK_OAK_FENCE_GATE
+            - SPRUCE_DOOR_BLOCK
+            - BIRCH_DOOR_BLOCK
+            - JUNGLE_DOOR_BLOCK
+            - ACACIA_DOOR_BLOCK
+            - DARK_OAK_DOOR_BLOCK
         commands:
             - sethome
 
