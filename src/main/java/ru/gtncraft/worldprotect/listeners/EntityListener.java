@@ -83,10 +83,10 @@ public class EntityListener implements Listener {
                     return;
                 }
             } else if (target instanceof ItemFrame) {
-                if (attacker instanceof FishHook) {
-                    FishHook fishHook = (FishHook) attacker;
-                    if (fishHook.getShooter() instanceof Player) {
-                        Player player = (Player) fishHook.getShooter();
+                if (attacker instanceof Projectile) {
+                    Projectile projectile = (Projectile) attacker;
+                    if (projectile.getShooter() instanceof Player) {
+                        Player player = (Player) projectile.getShooter();
                         if (manager.prevent(target.getLocation(), player, Flag.build)) {
                             player.sendMessage(Messages.get(Message.error_region_protected));
                             event.setCancelled(true);
