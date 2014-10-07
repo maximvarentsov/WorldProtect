@@ -94,7 +94,7 @@ public class EntityListener implements Listener {
                         }
                     }
                 }
-                if (prevent(attacker, target, Flag.use, Message.error_region_protected)) {
+                if (manager.prevent(target.getLocation(), Flag.build)) {
                     event.setCancelled(true);
                     return;
                 }
