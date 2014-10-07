@@ -30,7 +30,7 @@ public class HandingListener implements Listener {
             Player player = (Player) event.getRemover();
             if (manager.prevent(location, player, Flag.build)) {
                 event.setCancelled(true);
-                player.sendMessage(Messages.get(Message.error_region_protected));
+                player.sendMessage(Translations.get(Message.error_region_protected));
             }
         } else {
             if (manager.prevent(location, Flag.build)) {
@@ -47,7 +47,7 @@ public class HandingListener implements Listener {
         Player player = event.getPlayer();
         if (manager.prevent(event.getEntity().getLocation(), player, Flag.use)) {
             event.setCancelled(true);
-            player.sendMessage(Messages.get(Message.error_region_protected));
+            player.sendMessage(Translations.get(Message.error_region_protected));
         }
     }
 }

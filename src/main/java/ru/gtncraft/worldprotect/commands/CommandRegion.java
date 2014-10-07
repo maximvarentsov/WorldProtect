@@ -102,14 +102,14 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
         boolean usage = false;
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Messages.get(Message.error_player_command));
+            sender.sendMessage(Translations.get(Message.error_player_command));
             return true;
         }
 
         Player player = (Player) sender;
 
         if (!regionWorlds.contains(player.getWorld().getName())) {
-            player.sendMessage(Messages.get(Message.error_regions_disabled, player.getWorld().getName()));
+            player.sendMessage(Translations.get(Message.error_regions_disabled, player.getWorld().getName()));
             return true;
         }
 
@@ -152,38 +152,38 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
                     usage = true;
                     break;
                 default:
-                    player.sendMessage(Messages.get(Message.error_unknown_command, label));
+                    player.sendMessage(Translations.get(Message.error_unknown_command, label));
                     break;
             }
         } catch (CommandException ex) {
             player.sendMessage(ex.getMessage());
         } catch (ArrayIndexOutOfBoundsException ignore) {
-            player.sendMessage(Messages.get(Message.error_unknown_command, label));
+            player.sendMessage(Translations.get(Message.error_unknown_command, label));
         }
         return !usage;
     }
 
     private void define(final Player sender, final String[] args) throws CommandException {
         if (we == null) {
-            throw new CommandException(Messages.get(Message.error_worldedit_not_found));
+            throw new CommandException(Translations.get(Message.error_worldedit_not_found));
         }
 
         Selection selection = we.getSelection(sender);
         if (selection == null) {
-            throw new CommandException(Messages.get(Message.error_region_selection));
+            throw new CommandException(Translations.get(Message.error_region_selection));
         }
 
         Location p1 = selection.getMinimumPoint();
         Location p2 = selection.getMaximumPoint();
 
         if (args.length < 2) {
-            throw new CommandException(Messages.get(Message.error_input_region_name));
+            throw new CommandException(Translations.get(Message.error_input_region_name));
         }
 
         String regionName = args[1];
 
         if (manager.get(sender.getWorld(), regionName) != null) {
-            throw new CommandException(Messages.get(Message.error_region_name_exists, regionName));
+            throw new CommandException(Translations.get(Message.error_region_name_exists, regionName));
         }
 
         RegionCube region = new RegionCube(p1, p2);
@@ -205,7 +205,7 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
                 }
             }
             if (overlays.size() > 0) {
-                throw new CommandException(Messages.get(Message.error_region_overlay, Joiner.on(',').join(overlays)));
+                throw new CommandException(Translations.get(Message.error_region_overlay, Joiner.on(',').join(overlays)));
             }
             if (!sender.hasPermission(Permission.unlimited)) {
                 /**
@@ -213,24 +213,24 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
                  */
                 int total = manager.getOwn(sender).size();
                 if (maxRegions > 0 && total >= maxRegions) {
-                    throw new CommandException( Messages.get(Message.error_region_created_max, maxRegions));
+                    throw new CommandException( Translations.get(Message.error_region_created_max, maxRegions));
                 }
                 /**
                  * Check region volume
                  */
                 if (region.volume() > maxVolume) {
-                    throw new CommandException(Messages.get(Message.error_region_max_volume, maxVolume, region.volume()));
+                    throw new CommandException(Translations.get(Message.error_region_max_volume, maxVolume, region.volume()));
                 }
             }
         }
         manager.add(sender.getWorld(), region);
-        sender.sendMessage(Messages.get(Message.success_region_created, regionName));
+        sender.sendMessage(Translations.get(Message.success_region_created, regionName));
     }
 
     private void list(final Player player) {
-        player.sendMessage(Messages.get(Message.region_own_list) + ":");
+        player.sendMessage(Translations.get(Message.region_own_list) + ":");
         for (RegionCube region : manager.getOwn(player)) {
-            player.sendMessage(Messages.get(Message.region_name) + ": " + region.getName() + " " + region);
+            player.sendMessage(Translations.get(Message.region_name) + ": " + region.getName() + " " + region);
         }
     }
 
@@ -239,13 +239,13 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
             String name = args[1];
             RegionCube region = manager.get(sender.getWorld(), name);
             if (region == null) {
-                throw new CommandException(Messages.get(Message.error_input_region_not_found, name));
+                throw new CommandException(Translations.get(Message.error_input_region_not_found, name));
             }
             sender.sendMessage(Region.showInfo(region));
         } else {
             Collection<RegionCube> values = manager.get(sender.getLocation());
             if (values.isEmpty()) {
-                sender.sendMessage(Messages.get(Message.error_region_not_found));
+                sender.sendMessage(Translations.get(Message.error_region_not_found));
             } else {
                 for (RegionCube region : values) {
                     sender.sendMessage(Region.showInfo(region));
@@ -256,7 +256,7 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
 
     private void delete(final Player player, final String[] args) throws CommandException {
         if (args.length < 2) {
-            throw new CommandException(Messages.get(Message.error_input_region_name));
+            throw new CommandException(Translations.get(Message.error_input_region_name));
         }
 
         String regionName = args[1];
@@ -264,26 +264,26 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
         RegionCube region = manager.get(player.getWorld(), regionName);
 
         if (region == null) {
-            throw new CommandException(Messages.get(Message.error_input_region_not_found, regionName));
+            throw new CommandException(Translations.get(Message.error_input_region_not_found, regionName));
         }
 
         testPermission(player, region);
 
         manager.delete(player.getWorld(), regionName);
-        player.sendMessage(Messages.get(Message.success_region_deleted, regionName));
+        player.sendMessage(Translations.get(Message.success_region_deleted, regionName));
     }
 
     private void flag(Player player, String[] args) throws CommandException {
         if (args.length < 2) {
-            throw new CommandException(Messages.get(Message.error_input_region_name));
+            throw new CommandException(Translations.get(Message.error_input_region_name));
         }
 
         if (args.length < 4) {
-            throw new CommandException(Messages.get(Message.error_input_flag));
+            throw new CommandException(Translations.get(Message.error_input_flag));
         }
 
         if (args.length < 5) {
-            throw new CommandException(Messages.get(Message.error_input_flag_value));
+            throw new CommandException(Translations.get(Message.error_input_flag_value));
         }
 
         String name = args[1];
@@ -293,7 +293,7 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
         RegionCube region = manager.get(player.getWorld(), name);
 
         if (region == null) {
-            throw new CommandException(Messages.get(Message.error_input_region_not_found, name));
+            throw new CommandException(Translations.get(Message.error_input_region_not_found, name));
         }
 
         boolean valueFlag;
@@ -306,14 +306,14 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
                 valueFlag = true;
                 break;
             default:
-                throw new CommandException(Messages.get(Message.error_input_flag_invalid_value));
+                throw new CommandException(Translations.get(Message.error_input_flag_invalid_value));
         }
 
         Flag prevent;
         try {
             prevent = Flag.valueOf(flag);
         } catch (IllegalArgumentException ex) {
-            throw new CommandException(Messages.get(Message.error_input_flag_unknown, flag));
+            throw new CommandException(Translations.get(Message.error_input_flag_unknown, flag));
         }
 
         boolean perms = false;
@@ -332,20 +332,20 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
             } else {
                 region.removeFlag(prevent);
             }
-            String flagState = valueFlag ? Messages.get(Message.flag_true) : Messages.get(Message.flag_false);
-            player.sendMessage(Messages.get(Message.success_region_flag_set, flag, name, flagState));
+            String flagState = valueFlag ? Translations.get(Message.flag_true) : Translations.get(Message.flag_false);
+            player.sendMessage(Translations.get(Message.success_region_flag_set, flag, name, flagState));
         } else {
-            throw new CommandException(Messages.get(Message.error_no_permission));
+            throw new CommandException(Translations.get(Message.error_no_permission));
         }
     }
 
     private void addPlayer(final Player sender, final String[] args, boolean role) throws CommandException {
         if (args.length < 2) {
-            throw new CommandException(Messages.get(Message.error_input_region_name));
+            throw new CommandException(Translations.get(Message.error_input_region_name));
         }
 
         if (args.length < 3) {
-            throw new CommandException(Messages.get(Message.error_input_player));
+            throw new CommandException(Translations.get(Message.error_input_player));
         }
 
         String regionName = args[1];
@@ -354,13 +354,13 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
         RegionCube region = manager.get(sender.getWorld(), regionName);
 
         if (region == null) {
-            throw new CommandException(Messages.get(Message.error_input_region_not_found, regionName));
+            throw new CommandException(Translations.get(Message.error_input_region_not_found, regionName));
         }
 
         UUID uuid = getPlayer(playerName);
 
         if (uuid == null) {
-            throw new CommandException(Messages.get(Message.error_player_not_found, playerName));
+            throw new CommandException(Translations.get(Message.error_player_not_found, playerName));
         }
 
         testPermission(sender, region);
@@ -373,19 +373,19 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
         }
 
         if (!result) {
-            String playerRole = role ? Messages.get(Message.role_owner) : Messages.get(Message.role_member);
-            throw new CommandException(Messages.get(Message.error_region_contains_player, playerName, regionName, playerRole));
+            String playerRole = role ? Translations.get(Message.role_owner) : Translations.get(Message.role_member);
+            throw new CommandException(Translations.get(Message.error_region_contains_player, playerName, regionName, playerRole));
         }
-        sender.sendMessage(Messages.get(Message.success_region_player_add, playerName, regionName));
+        sender.sendMessage(Translations.get(Message.success_region_player_add, playerName, regionName));
     }
 
     private void deletePlayer(final Player sender, final String[] args, final boolean role) throws CommandException {
         if (args.length < 2) {
-            throw new CommandException(Messages.get(Message.error_input_region_name));
+            throw new CommandException(Translations.get(Message.error_input_region_name));
         }
 
         if (args.length < 3) {
-            throw new CommandException(Messages.get(Message.error_input_player));
+            throw new CommandException(Translations.get(Message.error_input_player));
         }
 
         String regionName = args[1];
@@ -394,32 +394,32 @@ public class CommandRegion implements CommandExecutor, TabCompleter {
         RegionCube region = manager.get(sender.getWorld(), regionName);
 
         if (region == null) {
-            throw new CommandException(Messages.get(Message.error_input_region_not_found, regionName));
+            throw new CommandException(Translations.get(Message.error_input_region_not_found, regionName));
         }
 
         UUID uuid = getPlayer(playerName);
 
         if (uuid == null) {
-            throw new CommandException(Messages.get(Message.error_player_not_found, playerName));
+            throw new CommandException(Translations.get(Message.error_player_not_found, playerName));
         }
 
         testPermission(sender, region);
 
         if (role) {
             if (!region.removeOwner(uuid)) {
-                throw new CommandException(Messages.get(Message.error_region_player_exists, playerName, regionName));
+                throw new CommandException(Translations.get(Message.error_region_player_exists, playerName, regionName));
             }
         } else {
             if (!region.removeMember(uuid)) {
-                throw new CommandException(Messages.get(Message.error_region_player_exists, playerName, regionName));
+                throw new CommandException(Translations.get(Message.error_region_player_exists, playerName, regionName));
             }
         }
-        sender.sendMessage(Messages.get(Message.success_region_player_delete, playerName, regionName));
+        sender.sendMessage(Translations.get(Message.success_region_player_delete, playerName, regionName));
     }
 
     private void testPermission(Player sender, RegionCube region) throws CommandException {
         if (!(sender.hasPermission(Permission.admin) || region.getOwners().contains(sender.getUniqueId()))) {
-            throw new CommandException(Messages.get(Message.error_no_permission));
+            throw new CommandException(Translations.get(Message.error_no_permission));
         }
     }
 

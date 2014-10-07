@@ -17,7 +17,6 @@ public final class WorldProtect extends JavaPlugin {
     public void onLoad() {
         saveDefaultConfig();
         manager = new ProtectionManager(this);
-        Messages.load(getConfig().getConfigurationSection("messages"));
     }
 
     @Override

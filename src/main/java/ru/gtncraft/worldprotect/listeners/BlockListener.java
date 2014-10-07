@@ -11,7 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import ru.gtncraft.worldprotect.Message;
-import ru.gtncraft.worldprotect.Messages;
+import ru.gtncraft.worldprotect.Translations;
 import ru.gtncraft.worldprotect.ProtectionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.region.Flag;
@@ -29,8 +29,8 @@ public class BlockListener implements Listener {
     public BlockListener(final WorldProtect plugin) {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         manager = plugin.getProtectionManager();
-        cantBuild = Messages.get(Message.error_cant_build);
-        protectedRegion =  Messages.get(Message.error_region_protected);
+        cantBuild = Translations.get(Message.error_cant_build);
+        protectedRegion =  Translations.get(Message.error_region_protected);
     }
     /**
      * Called when a block is broken by a player.

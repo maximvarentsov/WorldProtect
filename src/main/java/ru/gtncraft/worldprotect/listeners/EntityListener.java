@@ -9,7 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.world.PortalCreateEvent;
 import ru.gtncraft.worldprotect.Message;
-import ru.gtncraft.worldprotect.Messages;
+import ru.gtncraft.worldprotect.Translations;
 import ru.gtncraft.worldprotect.ProtectionManager;
 import ru.gtncraft.worldprotect.WorldProtect;
 import ru.gtncraft.worldprotect.region.Flag;
@@ -87,7 +87,7 @@ public class EntityListener implements Listener {
                     if (projectile.getShooter() instanceof Player) {
                         Player player = (Player) projectile.getShooter();
                         if (manager.prevent(target.getLocation(), player, Flag.build)) {
-                            player.sendMessage(Messages.get(Message.error_region_protected));
+                            player.sendMessage(Translations.get(Message.error_region_protected));
                             event.setCancelled(true);
                             return;
                         }
@@ -121,7 +121,7 @@ public class EntityListener implements Listener {
         if (attacker instanceof Player) {
             Player player = (Player) attacker;
             if (manager.prevent(target.getLocation(), player, flag)) {
-                player.sendMessage(Messages.get(message));
+                player.sendMessage(Translations.get(message));
                 return true;
             }
         } else if (attacker instanceof Arrow) {
@@ -129,7 +129,7 @@ public class EntityListener implements Listener {
             if (arrow.getShooter() instanceof Player) {
                 Player player = (Player) arrow.getShooter();
                 if (manager.prevent(target.getLocation(), player, flag)) {
-                    player.sendMessage(Messages.get(message));
+                    player.sendMessage(Translations.get(message));
                     return true;
                 }
             }

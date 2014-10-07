@@ -30,7 +30,7 @@ public class VehicleListener implements Listener {
             Player player = (Player) attacker;
             if (manager.prevent(event.getVehicle().getLocation(), player, Flag.build)) {
                 event.setCancelled(true);
-                player.sendMessage(Messages.get(Message.error_region_protected));
+                player.sendMessage(Translations.get(Message.error_region_protected));
             }
         } else {
             if (manager.prevent(event.getVehicle().getLocation(), Flag.vehicleNaturalDestroy)) {
@@ -51,7 +51,7 @@ public class VehicleListener implements Listener {
             Player player = (Player) passenger;
             if (manager.prevent(event.getVehicle().getLocation(), player, Flag.use)) {
                 event.setCancelled(true);
-                player.sendMessage(Messages.get(Message.error_region_protected));
+                player.sendMessage(Translations.get(Message.error_region_protected));
             }
         }
     }

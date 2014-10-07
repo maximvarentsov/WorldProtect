@@ -90,13 +90,13 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
                     usage = true;
                     break;
                 default:
-                    sender.sendMessage(Messages.get(Message.error_unknown_command, commandLabel));
+                    sender.sendMessage(Translations.get(Message.error_unknown_command, commandLabel));
                     break;
             }
         } catch (CommandException ex) {
             sender.sendMessage(ex.getMessage());
         } catch (ArrayIndexOutOfBoundsException ex) {
-            sender.sendMessage(Messages.get(Message.error_unknown_command, commandLabel));
+            sender.sendMessage(Translations.get(Message.error_unknown_command, commandLabel));
         }
         return !usage;
     }
@@ -112,7 +112,7 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
                         plugin.getLogger().severe(ex.getMessage());
                     }
                 }
-                sender.sendMessage(Messages.get(Message.success_saved));
+                sender.sendMessage(Translations.get(Message.success_saved));
             }
         });
     }
@@ -122,13 +122,13 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         if (args.length > 1) {
             world = Bukkit.getWorld(args[1].toLowerCase());
             if (world == null) {
-                throw new CommandException(Messages.get(Message.error_input_world_not_found, args[1]));
+                throw new CommandException(Translations.get(Message.error_input_world_not_found, args[1]));
             }
         } else {
             if (sender instanceof Player) {
                 world = ((Player) sender).getWorld();
             } else {
-                throw new CommandException(Messages.get(Message.error_player_command));
+                throw new CommandException(Translations.get(Message.error_player_command));
             }
         }
         sender.sendMessage(Region.showFlags(manager.getWorldFlags(world)));
@@ -136,15 +136,15 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
 
     private void setFlag(final CommandSender sender, final String[] args) throws CommandException {
         if (args.length < 2) {
-            throw new CommandException(Messages.get(Message.error_input_world_name));
+            throw new CommandException(Translations.get(Message.error_input_world_name));
         }
 
         if (args.length < 4) {
-            throw new CommandException(Messages.get(Message.error_input_flag));
+            throw new CommandException(Translations.get(Message.error_input_flag));
         }
 
         if (args.length < 5) {
-            throw new CommandException(Messages.get(Message.error_input_flag_value));
+            throw new CommandException(Translations.get(Message.error_input_flag_value));
         }
 
         String world = args[1];
@@ -152,7 +152,7 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
         String value = args[4];
 
         if (Bukkit.getWorld(world.toLowerCase()) == null) {
-            Messages.get(Message.error_input_world_not_found, world);
+            Translations.get(Message.error_input_world_not_found, world);
         }
 
         boolean valueFlag;
@@ -165,22 +165,22 @@ public class CommandWorldProtect implements CommandExecutor, TabCompleter {
                 valueFlag = true;
                 break;
             default:
-                throw new CommandException(Messages.get(Message.error_input_flag_invalid_value));
+                throw new CommandException(Translations.get(Message.error_input_flag_invalid_value));
         }
 
         Flag prevent;
         try {
             prevent = Flag.valueOf(flag);
         } catch (IllegalArgumentException ex) {
-            throw new CommandException(Messages.get(Message.error_input_flag_unknown, flag));
+            throw new CommandException(Translations.get(Message.error_input_flag_unknown, flag));
         }
 
         if (sender.hasPermission(Permission.admin)) {
             manager.setWorldFlag(world, prevent, valueFlag);
-            String flagState = valueFlag ? Messages.get(Message.flag_true) : Messages.get(Message.flag_false);
-            sender.sendMessage(Messages.get(Message.success_world_flag_set, flag, world, flagState));
+            String flagState = valueFlag ? Translations.get(Message.flag_true) : Translations.get(Message.flag_false);
+            sender.sendMessage(Translations.get(Message.success_world_flag_set, flag, world, flagState));
         } else {
-            throw new CommandException(Messages.get(Message.error_no_permission));
+            throw new CommandException(Translations.get(Message.error_no_permission));
         }
     }
 }
