@@ -52,7 +52,7 @@ public class EntityListener implements Listener {
     @SuppressWarnings("unused")
     void onCreatureSpawn(final CreatureSpawnEvent event) {
         String name = event.getEntityType().toString();
-        if (name.equals("ARMOR_STAND") || name.equals("ITEM_FRAME")) {
+        if (event.getEntity() instanceof Hanging) {
             return;
         }
         if (manager.prevent(event.getLocation(), Flag.creatureSpawn)) {
@@ -85,7 +85,7 @@ public class EntityListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-            } else if (target instanceof ItemFrame || target.getType().toString().equals("ARMOR_STAND")) {
+            } else if (target instanceof Hanging) {
                 if (attacker instanceof Projectile) {
                     Projectile projectile = (Projectile) attacker;
                     if (projectile.getShooter() instanceof Player) {
