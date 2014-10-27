@@ -51,12 +51,10 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     void onCreatureSpawn(final CreatureSpawnEvent event) {
-        String name = event.getEntityType().toString();
-        if (event.getEntity() instanceof Hanging) {
-            return;
-        }
-        if (manager.prevent(event.getLocation(), Flag.creatureSpawn)) {
-            event.setCancelled(true);
+        if (event.getEntity() instanceof Creature) {
+            if (manager.prevent(event.getLocation(), Flag.creatureSpawn)) {
+                event.setCancelled(true);
+            }
         }
     }
     /**
@@ -128,10 +126,10 @@ public class EntityListener implements Listener {
                 player.sendMessage(Translations.get(message));
                 return true;
             }
-        } else if (attacker instanceof Arrow) {
-            Arrow arrow = (Arrow) attacker;
-            if (arrow.getShooter() instanceof Player) {
-                Player player = (Player) arrow.getShooter();
+        } else if (attacker instanceof Projectile) {
+            Projectile projectile = (Projectile) attacker;
+            if (projectile.getShooter() instanceof Player) {
+                Player player = (Player) projectile.getShooter();
                 if (manager.prevent(target.getLocation(), player, flag)) {
                     player.sendMessage(Translations.get(message));
                     return true;
